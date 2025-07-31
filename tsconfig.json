@@ -13,9 +13,9 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": ".", // ✅ Add this to resolve paths correctly
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"] // ✅ Fix path alias to project root (not src)
+      "@/*": ["./*"]
     },
     "plugins": [
       {

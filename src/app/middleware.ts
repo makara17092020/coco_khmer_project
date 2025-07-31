@@ -1,25 +1,26 @@
-import { getToken } from "next-auth/jwt";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from 'next/server'
+import jwt from 'jsonwebtoken'
 
-const ADMIN_PATH = "/admin";
+const SECRET = process.env.JWT_SECRET || 'super-secret'
 
-export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+export function middleware(req: NextRequest) {
+  const protectedPaths = ['/categories', '/products', '/users', '/dashboard']
+  const path = req.nextUrl.pathname
+  const token = req.cookies.get('token')?.value
+  const isProtected = protectedPaths.some(route => path.startsWith(route))
 
-  const isAdminPath = request.nextUrl.pathname.startsWith(ADMIN_PATH);
-
-  if (isAdminPath) {
-    // If no token or not admin, redirect to login
-    if (!token?.isAdmin) {
-      const loginUrl = new URL("/login", request.url);
-      return NextResponse.redirect(loginUrl);
-    }
+  if (isProtected && !token) {
+    return NextResponse.redirect(new URL('/login', req.url))
   }
 
-  return NextResponse.next();
+  try {
+    if (token) jwt.verify(token, SECRET)
+    return NextResponse.next()
+  } catch {
+    return NextResponse.redirect(new URL('/login', req.url))
+  }
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
-};
+  matcher: ['/categories/:path*', '/products/:path*', '/users/:path*', '/dashboard/:path*'],
+}

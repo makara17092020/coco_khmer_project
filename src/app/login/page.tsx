@@ -1,28 +1,78 @@
 'use client'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+const [email, setEmail] = useState('')
+const [password, setPassword] = useState('')
+const [error, setError] = useState('')
+const router = useRouter()
 
-  const login = async () => {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    })
-    if (res.ok) router.push('/categories')
-    else alert('Login failed')
+async function handleLogin(e: React.FormEvent) {
+e.preventDefault()
+setError('')
+
+try {
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  })
+
+  const data = await res.json()
+
+  if (res.ok) {
+    localStorage.setItem('token', data.token) // ✅ Store JWT
+    alert('Login successful!')
+    router.push('/dashboard') // ✅ Redirect
+  } else {
+    setError(data.message || 'Login failed')
   }
+} catch (err) {
+  setError('Something went wrong. Please try again.')
+  console.error('Login error:', err)
+}
 
-  return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Login</h1>
-      <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" className="border p-2 w-full mb-2" />
-      <input value={password} onChange={e => setPassword(e.target.value)} type="password" placeholder="Password" className="border p-2 w-full mb-4" />
-      <button onClick={login} className="bg-blue-600 text-white px-4 py-2 w-full">Login</button>
+}
+
+return (
+<div style={{ maxWidth: 400, margin: '0 auto', padding: '2rem' }}>
+<h2>Login</h2>
+<form onSubmit={handleLogin}>
+<div style={{ marginBottom: '1rem' }}>
+<label>Email:</label>
+<input
+type="email"
+value={email}
+required
+onChange={(e) => setEmail(e.target.value)}
+style={{ width: '100%', padding: '8px' }}
+/>
+</div>
+
+    <div style={{ marginBottom: '1rem' }}>
+      <label>Password:</label>
+      <input
+        type="password"
+        value={password}
+        required
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ width: '100%', padding: '8px' }}
+      />
     </div>
-  )
+
+    {error && (
+      <div style={{ color: 'red', marginBottom: '1rem' }}>
+        {error}
+      </div>
+    )}
+
+    <button type="submit" style={{ padding: '10px 20px' }}>
+      Login
+    </button>
+  </form>
+</div>
+
+)
 }

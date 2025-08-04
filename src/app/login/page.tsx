@@ -1,78 +1,160 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-const [email, setEmail] = useState('')
-const [password, setPassword] = useState('')
-const [error, setError] = useState('')
-const router = useRouter()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
-async function handleLogin(e: React.FormEvent) {
-e.preventDefault()
-setError('')
+  useEffect(() => {
+    const savedAvatar = localStorage.getItem("admin_avatar");
+    if (savedAvatar) setAvatar(savedAvatar);
+  }, []);
 
-try {
-  const res = await fetch('/api/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  })
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
 
-  const data = await res.json()
+    try {
+      let avatarUrl: string | null = avatar;
 
-  if (res.ok) {
-    localStorage.setItem('token', data.token) // ✅ Store JWT
-    alert('Login successful!')
-    router.push('/dashboard') // ✅ Redirect
-  } else {
-    setError(data.message || 'Login failed')
+      // Upload image if no avatar yet and file selected
+      if (!avatar && file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+
+        if (!uploadRes.ok) {
+          setError(uploadData.error || "Upload failed");
+          return;
+        }
+
+        avatarUrl = uploadData.result?.secure_url ?? null;
+        if (avatarUrl) {
+          localStorage.setItem("admin_avatar", avatarUrl);
+          setAvatar(avatarUrl);
+        }
+      }
+
+      // Call update profile API to save avatar URL and email
+      const updateRes = await fetch("/api/user/update-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, avatar: avatarUrl }),
+      });
+      const updateData = await updateRes.json();
+
+      if (!updateRes.ok) {
+        setError(updateData.error || "Profile update failed");
+        return;
+      }
+
+      // Simulate login success - store token if you have one here
+      localStorage.setItem("user_email", email);
+
+      router.push("/admin");
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong.");
+    }
   }
-} catch (err) {
-  setError('Something went wrong. Please try again.')
-  console.error('Login error:', err)
-}
 
-}
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-indigo-200 to-purple-200 px-4">
+      <div className="flex w-full max-w-5xl rounded-xl overflow-hidden shadow-xl bg-white/30 backdrop-blur-md ring-1 ring-white/40">
+        <div className="w-1/2 hidden md:flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-700">
+          <img
+            src="/images/loginn.jpg"
+            alt="Login Illustration"
+            className="w-full h-full drop-shadow-xl object-cover"
+          />
+        </div>
 
-return (
-<div style={{ maxWidth: 400, margin: '0 auto', padding: '2rem' }}>
-<h2>Login</h2>
-<form onSubmit={handleLogin}>
-<div style={{ marginBottom: '1rem' }}>
-<label>Email:</label>
-<input
-type="email"
-value={email}
-required
-onChange={(e) => setEmail(e.target.value)}
-style={{ width: '100%', padding: '8px' }}
-/>
-</div>
+        <div className="w-full md:w-1/2 p-10">
+          <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">
+            Sign in to your account
+          </h2>
 
-    <div style={{ marginBottom: '1rem' }}>
-      <label>Password:</label>
-      <input
-        type="password"
-        value={password}
-        required
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ width: '100%', padding: '8px' }}
-      />
-    </div>
+          <form
+            onSubmit={handleLogin}
+            className="space-y-5"
+            encType="multipart/form-data"
+          >
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                required
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-md border border-gray-300 bg-white/70 backdrop-blur-md"
+                placeholder="you@example.com"
+              />
+            </div>
 
-    {error && (
-      <div style={{ color: 'red', marginBottom: '1rem' }}>
-        {error}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                required
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-md border border-gray-300 bg-white/70 backdrop-blur-md"
+                placeholder="••••••••"
+              />
+            </div>
+
+            {!avatar && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Profile Image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  className="w-full px-4 py-2 rounded-md bg-white/80 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 transition"
+                />
+              </div>
+            )}
+
+            {(avatar || file) && (
+              <div className="mt-4">
+                <img
+                  src={file ? URL.createObjectURL(file) : avatar!}
+                  alt="Preview"
+                  className="w-20 h-20 rounded-full object-cover border border-gray-300"
+                />
+              </div>
+            )}
+
+            {error && (
+              <p className="text-sm text-red-500 font-medium">{error}</p>
+            )}
+
+            <button
+              type="submit"
+              className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-semibold transition duration-300"
+            >
+              Sign In
+            </button>
+          </form>
+        </div>
       </div>
-    )}
-
-    <button type="submit" style={{ padding: '10px 20px' }}>
-      Login
-    </button>
-  </form>
-</div>
-
-)
+    </div>
+  );
 }

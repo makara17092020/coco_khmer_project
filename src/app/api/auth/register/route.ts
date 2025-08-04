@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     // ✅ Validate required fields
     if (!name || !email || !password) {
       return NextResponse.json(
-        { message: 'Name, email, and password are required.' },
+        { message: "Name, email, and password are required." },
         { status: 400 }
       );
     }
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: 'User with this email already exists.' },
+        { message: "User with this email already exists." },
         { status: 400 }
       );
     }
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         name,
         email,
         password: hashedPassword,
-        avatar: avatar || '', // Optional avatar fallback
+        avatar: avatar || "", // Optional avatar fallback
       },
     });
 
@@ -46,15 +46,15 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message: 'User registered successfully.',
+        message: "User registered successfully.",
         user: userWithoutPassword,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error("Registration error:", error);
     return NextResponse.json(
-      { message: 'Internal Server Error' },
+      { message: "Internal Server Error" },
       { status: 500 }
     );
   }

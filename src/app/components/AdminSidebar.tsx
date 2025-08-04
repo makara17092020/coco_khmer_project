@@ -1,33 +1,32 @@
-'use client';
-
+import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Package } from "lucide-react"; // You can install lucide-react for icons
 
-const links = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/products", label: "Products" },
-  { href: "/admin/users", label: "Users" },
-];
-
-export default function AdminSidebar() {
-  const pathname = usePathname();
-
+export default function Sidebar() {
   return (
-    <aside className="w-64 bg-white shadow p-6 space-y-4">
-      <h2 className="text-lg font-semibold">Admin Panel</h2>
-      <nav className="space-y-2">
-        {links.map((link) => (
+    <aside className="w-64 h-screen bg-white shadow-lg flex flex-col justify-between p-6">
+      {/* Logo Section */}
+      <div>
+        <div className="flex items-center gap-3 mb-6">
+          <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex flex-col gap-4">
           <Link
-            key={link.href}
-            href={link.href}
-            className={`block px-4 py-2 rounded ${
-              pathname === link.href ? "bg-gray-200 font-bold" : "hover:bg-gray-100"
-            }`}
+            href="/admin"
+            className="flex items-center gap-3 text-gray-700 hover:text-green-600 hover:bg-green-100 px-4 py-2 rounded transition-colors duration-200"
           >
-            {link.label}
+            <Package className="w-5 h-5" />
+            <span className="text-sm font-medium">Products</span>
           </Link>
-        ))}
-      </nav>
+        </nav>
+      </div>
+
+      {/* Footer (optional) */}
+      <div className="text-xs text-gray-400 text-center">
+        &copy; {new Date().getFullYear()} Coco Khmer
+      </div>
     </aside>
   );
 }

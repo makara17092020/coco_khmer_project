@@ -1,21 +1,26 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  // ✅ Hide navbar on all /admin routes
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
-    { href: '/product', label: 'Product' },
-    { href: '/contact', label: 'Contact' },
+    { href: "/", label: "Home" },
+    { href: "/about", label: "About" },
+    { href: "/product", label: "Product" },
+    { href: "/contact", label: "Contact" },
   ];
 
   const isActive = (href: string) => pathname === href;
@@ -47,8 +52,8 @@ export default function Navbar() {
                   href={href}
                   className={`relative text-white text-lg font-medium transition-all duration-300 pb-1 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-white after:scale-x-0 after:origin-left after:transition-transform after:duration-300 ${
                     isActive(href)
-                      ? 'after:scale-x-100'
-                      : 'hover:after:scale-x-100 text-white/80 hover:text-white'
+                      ? "after:scale-x-100"
+                      : "hover:after:scale-x-100 text-white/80 hover:text-white"
                   }`}
                 >
                   {label}
@@ -84,9 +89,9 @@ export default function Navbar() {
             {/* Sliding Drawer - Slide from Right */}
             <motion.div
               className="fixed top-0 right-0 w-[70%] h-full bg-[#0C5C4C]/95 z-50 shadow-lg px-6 py-10 backdrop-blur-sm"
-              initial={{ x: '100%' }}
+              initial={{ x: "100%" }}
               animate={{ x: 0 }}
-              exit={{ x: '100%' }}
+              exit={{ x: "100%" }}
               transition={{ duration: 0.3 }}
             >
               <button
@@ -103,8 +108,8 @@ export default function Navbar() {
                     onClick={() => setIsOpen(false)}
                     className={`text-lg font-medium transition relative after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-white after:scale-x-0 after:origin-left after:transition-transform after:duration-300 ${
                       isActive(href)
-                        ? 'text-white after:scale-x-100'
-                        : 'text-white/80 hover:text-white hover:after:scale-x-100 hover:bg-white/10'
+                        ? "text-white after:scale-x-100"
+                        : "text-white/80 hover:text-white hover:after:scale-x-100 hover:bg-white/10"
                     }`}
                   >
                     {label}

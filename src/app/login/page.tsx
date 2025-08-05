@@ -46,12 +46,13 @@ export default function LoginPage() {
         }
       }
 
-      // Call update profile API to save avatar URL and email
+      // Call update profile API (assuming it returns a token)
       const updateRes = await fetch("/api/user/update-profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, avatar: avatarUrl }),
       });
+
       const updateData = await updateRes.json();
 
       if (!updateRes.ok) {
@@ -59,7 +60,13 @@ export default function LoginPage() {
         return;
       }
 
-      // Simulate login success - store token if you have one here
+      // ✅ Store token in localStorage
+      const token = updateData.token; // make sure your backend returns it
+      if (token) {
+        localStorage.setItem("access_token", token);
+      }
+
+      // Optional: store user email too
       localStorage.setItem("user_email", email);
 
       router.push("/admin");

@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
+
+const SECRET_KEY = process.env.JWT_SECRET || "your-secret-key"; // use .env in real app
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { email, avatar } = body;
 
-    // TODO: Replace this with real DB update logic!
-    console.log("✅ Update profile:");
-    console.log("Email:", email);
-    console.log("Avatar URL:", avatar);
+    // Generate real JWT token
+    const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: "1h" });
 
-    // Simulate DB update delay
-    // await db.user.update({ where: { email }, data: { avatarUrl: avatar } });
-
-    return NextResponse.json({ message: "Profile updated successfully" });
+    return NextResponse.json({
+      message: "Profile updated successfully",
+      token,
+    });
   } catch (error) {
     console.error("❌ Failed to update profile:", error);
     return NextResponse.json(

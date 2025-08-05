@@ -132,16 +132,6 @@ export default function LoginPage() {
               </div>
             )}
 
-            {(avatar || file) && (
-              <div className="mt-4">
-                <img
-                  src={file ? URL.createObjectURL(file) : avatar!}
-                  alt="Preview"
-                  className="w-20 h-20 rounded-full object-cover border border-gray-300"
-                />
-              </div>
-            )}
-
             {error && (
               <p className="text-sm text-red-500 font-medium">{error}</p>
             )}

@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
-// GET all products (with category)
 export async function GET() {
   try {
     const products = await prisma.product.findMany({
@@ -22,10 +21,11 @@ export async function GET() {
   }
 }
 
-// POST create a new product with JWT auth and category check
 export async function POST(req: NextRequest) {
   try {
     const authHeader = req.headers.get("authorization");
+    console.log("Auth Header:", authHeader);
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
         { message: "Missing or invalid token" },
@@ -34,25 +34,28 @@ export async function POST(req: NextRequest) {
     }
 
     const token = authHeader.split(" ")[1];
+    console.log("Token:", token);
+
     const decoded = jwt.verify(token, JWT_SECRET) as {
       id: number;
       email: string;
     };
+    console.log("Decoded token:", decoded);
 
     const body = await req.json();
-    const { name, price, categoryId } = body;
+    const { name, price, categoryId, desc, images } = body;
 
-    if (!name || !price || !categoryId) {
+    if (!name || !price || !categoryId || !desc || !images?.length) {
       return NextResponse.json(
         { message: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // Validate that category exists
     const category = await prisma.category.findUnique({
-      where: { id: categoryId },
+      where: { id: Number(categoryId) },
     });
+
     if (!category) {
       return NextResponse.json(
         { message: "Category not found" },
@@ -62,21 +65,17 @@ export async function POST(req: NextRequest) {
 
     const newProduct = await prisma.product.create({
       data: {
-        name: "Coconut Body Scrub",
-        price: 12.99,
-        categoryId: 1,
-        desc: "Exfoliates and moisturizes the skin",
-        images: [
-          "https://example.com/image1.jpg",
-          "https://example.com/image2.jpg",
-        ],
+        name,
+        price,
+        categoryId: Number(categoryId),
+        desc,
+        images,
       },
     });
 
     return NextResponse.json(newProduct, { status: 201 });
   } catch (err: any) {
     console.error("POST /product/create error:", err);
-    // Differentiate between JWT errors and other errors
     if (err.name === "JsonWebTokenError" || err.name === "TokenExpiredError") {
       return NextResponse.json(
         { message: "Invalid or expired token" },

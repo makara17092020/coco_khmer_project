@@ -2,53 +2,54 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import ButtonAllProducts from "../components/button-allproducts"; // Adjust path accordingly
 
 // Product categories
 const categories = ["All Products", "Skin Care", "Fragrances"];
 
-// Product list with SIZE added
+// Product list
 const products = [
   {
     category: "All Products",
     image: "/images/oil.jpg",
     title: "Virgin Coconut Oil",
-    desc: "Virgin Coconut Oil ",
-    size: "(90mL, 250mL)...",
+    desc: "Virgin Coconut Oil... ",
+    size: "(90mL, 250mL)",
   },
   {
     category: "Active Lifestyle",
     image: "/images/Coconut.jpg",
     title: "Body Scrub",
     desc: "Exfoliating Coconut & Coffee Scrub (200g)...",
-    size: "medium",
+    size: "(90mL, 250mL)",
   },
   {
     category: "Everyday",
     image: "/images/Lipbalm.jpg",
     title: "Balms",
     desc: "Moisturizing Body Balm (15g / 60g)...",
-    size: "medium",
+    size: "(90mL, 250mL)",
   },
   {
     category: "Essentials",
     image: "/images/BodyBalm.jpg",
     title: "Nurturing Baby Balm",
     desc: "A gentle balm for babies...",
-    size: "medium",
+    size: "(90mL, 250mL)",
   },
   {
     category: "Everyday",
     image: "/images/Lip-Pac.jpg",
     title: "Fruit Fusion Lip Balms",
     desc: "100% natural lip balms inspired ...",
-    size: "medium",
+    size: "(90mL, 250mL)",
   },
   {
     category: "Active Lifestyle",
     image: "/images/PineApple.jpg",
     title: "Vitalizing Hair & Face Balm",
     desc: "A versatile balm to style, nourish, ...",
-    size: "medium",
+    size: "(90mL, 250mL)",
   },
 ];
 
@@ -63,52 +64,42 @@ export default function ProductPage() {
   return (
     <main className="font-sans">
       {/* Hero Section */}
-      <section className="bg-green-50 px-4 py-12">
-        <div className="max-w-6xl mx-auto flex flex-col-reverse md:flex-row items-center gap-8">
-          {/* Text Content */}
-          <div className="text-center md:text-left">
-            <h2 className="text-4xl font-bold text-green-900 mb-4">
-              Natural Care for Everyday Wellness
-            </h2>
-            <p className="text-green-800 mb-6">
-              Explore our handcrafted skincare essentials made with love and
-              coconut oil.
-            </p>
-            <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full font-semibold transition">
-              Shop Now
+      <section className="relative w-full sm:h-140 h-100 flex items-center justify-between bg-slate-300 overflow-hidden">
+        <div className="absolute inset-0 sm:w-230 w-190 sm:h-140 h-100">
+          <Image
+            src="/images/1.jpg"
+            alt="Coco Khmer Hero"
+            layout="fill"
+            objectFit="cover"
+            className="object-left"
+            priority
+          />
+        </div>
+        <div className="relative z-20 ml-auto w-full max-w-xl p-20">
+          <p className="text-sm md:text-base sm:text-emerald-900 text-white font-medium mb-2 uppercase tracking-wide">
+            Welcome to CoCo Khmer Clean Skincare
+          </p>
+          <h1 className="text-4xl md:text-7xl font-extrabold sm:text-emerald-900 text-white mb-6">
+            Love Being <br /> in Your Skin
+          </h1>
+          <div className="flex gap-2">
+            <button className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">
+              Find Our Products
             </button>
-          </div>
-
-          {/* Hero Image */}
-          <div className="w-full md:w-1/2 relative h-72 md:h-96">
-            <Image
-              src="/images/1.jpg"
-              alt="Skincare Products"
-              fill
-              className="object-cover rounded-xl shadow-lg"
-            />
+            <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">
+              Learn More
+            </button>
           </div>
         </div>
       </section>
 
       {/* Category Filter */}
       <section className="px-4 py-6">
-        <div className="mt-6 flex flex-wrap justify-center gap-3 bg-white px-4 py-2 rounded-full shadow-md max-w-fit mx-auto">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition
-                ${
-                  activeCategory === category
-                    ? "bg-red-500 text-white shadow-md"
-                    : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-100"
-                }`}
-            >
-              {category.toUpperCase()}
-            </button>
-          ))}
-        </div>
+        <ButtonAllProducts
+          categories={categories}
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+        />
       </section>
 
       {/* Product Grid */}
@@ -141,7 +132,6 @@ function ProductCard({
   desc: string;
   size: "small" | "medium" | "large" | string;
 }) {
-  // Apply dynamic height
   const heightClass =
     size === "small" ? "h-40" : size === "medium" ? "h-60" : "h-80";
 
@@ -155,7 +145,7 @@ function ProductCard({
       <h3 className="mt-4 font-semibold text-gray-800">{title}</h3>
       <p className="text-sm text-gray-500 mt-1">{desc}</p>
       <p className="text-xs text-gray-400 mt-1 capitalize">Size: {size}</p>
-      <button className="mt-3 px-4 py-2 bg-green-700 text-white text-sm rounded hover:bg-green-800">
+      <button className="mt-3 px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-800">
         Read More
       </button>
     </div>

@@ -1,5 +1,3 @@
-// /app/api/product/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
@@ -25,7 +23,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    // Check Authorization header
+    // Check for Authorization header
     const authHeader = req.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
@@ -35,22 +33,32 @@ export async function POST(req: NextRequest) {
     }
 
     const token = authHeader.split(" ")[1];
-    // Verify JWT token
-    jwt.verify(token, JWT_SECRET);
+
+    // Verify JWT token safely
+    try {
+      jwt.verify(token, JWT_SECRET);
+    } catch {
+      return NextResponse.json(
+        { message: "Invalid or expired token" },
+        { status: 401 }
+      );
+    }
 
     // Parse request body
     const body = await req.json();
     const { name, price, categoryId, desc, images } = body;
 
     // Validate required fields
+    const priceNum = Number(price);
+    const categoryIdNum = Number(categoryId);
+
     if (
       !name ||
-      !price ||
-      !categoryId ||
+      isNaN(priceNum) ||
+      isNaN(categoryIdNum) ||
       !desc ||
       !images ||
-      !Array.isArray(images) ||
-      images.length === 0
+      !Array.isArray(images)
     ) {
       return NextResponse.json(
         { message: "Missing or invalid required fields" },
@@ -58,10 +66,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verify category exists
+    // Validate images array contents
+    const validImages = images.filter(
+      (img: string) => typeof img === "string" && img.trim() !== ""
+    );
+
+    if (validImages.length === 0) {
+      return NextResponse.json(
+        { message: "Images array cannot be empty" },
+        { status: 400 }
+      );
+    }
+
+    // Check category existence
     const category = await prisma.category.findUnique({
-      where: { id: Number(categoryId) },
+      where: { id: categoryIdNum },
     });
+
     if (!category) {
       return NextResponse.json(
         { message: "Category not found" },
@@ -73,25 +94,16 @@ export async function POST(req: NextRequest) {
     const newProduct = await prisma.product.create({
       data: {
         name,
-        price,
-        categoryId: Number(categoryId),
+        price: priceNum,
+        categoryId: categoryIdNum,
         desc,
-        images,
+        images: validImages,
       },
     });
 
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error: any) {
     console.error("POST /api/product error:", error);
-    if (
-      error.name === "JsonWebTokenError" ||
-      error.name === "TokenExpiredError"
-    ) {
-      return NextResponse.json(
-        { message: "Invalid or expired token" },
-        { status: 401 }
-      );
-    }
     return NextResponse.json(
       { message: "Failed to create product" },
       { status: 500 }

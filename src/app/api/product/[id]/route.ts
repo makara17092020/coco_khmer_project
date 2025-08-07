@@ -1,21 +1,24 @@
+// /app/api/product/[id]/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../../lib/prisma"; // ✅ use your shared client to avoid instantiating PrismaClient multiple times
 
-const prisma = new PrismaClient();
-
-// GET /api/product/:id
+// ✅ Get single product by ID
 export async function GET(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: { id?: string } }
 ) {
-  const id = parseInt(params.id);
-  if (isNaN(id)) {
+  const params = await context.params; // ✅ Must await
+  const id = params.id;
+  const numericId = parseInt(id || "");
+
+  if (isNaN(numericId)) {
     return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
   }
 
   try {
     const product = await prisma.product.findUnique({
-      where: { id },
+      where: { id: numericId },
       include: { category: true },
     });
 
@@ -36,33 +39,51 @@ export async function GET(
   }
 }
 
-// PUT /api/product/:id
+// ✅ Update product by ID
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id?: string } }
 ) {
-  const id = parseInt(params.id);
-  if (isNaN(id)) {
+  const params = await context.params; // ✅ Must await
+  const id = params.id;
+  const numericId = parseInt(id || "");
+
+  if (isNaN(numericId)) {
     return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
   }
 
   try {
     const { name, price, desc, images, categoryId } = await req.json();
 
-    if (!name || !price || !desc || !images?.length || !categoryId) {
+    if (
+      !name ||
+      typeof price !== "number" ||
+      !desc ||
+      !Array.isArray(images) ||
+      images.length === 0 ||
+      typeof categoryId !== "number"
+    ) {
       return NextResponse.json(
-        { message: "Missing required fields" },
+        { message: "Missing or invalid fields" },
         { status: 400 }
       );
     }
 
+    const sanitizedImages = images.filter((img: string) => img?.trim());
+
     const updatedProduct = await prisma.product.update({
-      where: { id },
-      data: { name, price, desc, images, categoryId },
+      where: { id: numericId },
+      data: {
+        name,
+        price,
+        desc,
+        images: sanitizedImages,
+        categoryId,
+      },
     });
 
     return NextResponse.json({
-      message: "Product updated",
+      message: "Product updated successfully",
       product: updatedProduct,
     });
   } catch (error) {
@@ -74,18 +95,24 @@ export async function PUT(
   }
 }
 
-// DELETE /api/product/:id
+// ✅ Delete product by ID
 export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: { id?: string } }
 ) {
-  const id = parseInt(params.id);
-  if (isNaN(id)) {
+  const params = await context.params; // ✅ Must await
+  const id = params.id;
+  const numericId = parseInt(id || "");
+
+  if (isNaN(numericId)) {
     return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
   }
 
   try {
-    await prisma.product.delete({ where: { id } });
+    await prisma.product.delete({
+      where: { id: numericId },
+    });
+
     return NextResponse.json({ message: "Product deleted successfully" });
   } catch (error) {
     console.error("DELETE error:", error);

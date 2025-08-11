@@ -11,6 +11,11 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  // ✅ Hide navbar on all /admin routes
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },

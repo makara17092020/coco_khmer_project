@@ -19,6 +19,7 @@ export default function EditProductPage() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [desc, setDesc] = useState("");
+  const [isTopSeller, setIsTopSeller] = useState(false);
   const [categoryId, setCategoryId] = useState("");
   const [images, setImages] = useState<string[]>([]); // existing + preview base64
   const [newFiles, setNewFiles] = useState<File[]>([]); // files to upload
@@ -45,6 +46,7 @@ export default function EditProductPage() {
         setName(data.name);
         setPrice(data.price.toString());
         setDesc(data.desc);
+        setIsTopSeller(data.isTopSeller ?? false);
         setCategoryId(data.categoryId.toString());
         setImages(data.images || []);
         setLoading(false);
@@ -153,6 +155,7 @@ export default function EditProductPage() {
         price: parseFloat(price),
         categoryId: parseInt(categoryId),
         images: finalImages,
+        isTopSeller,
       };
 
       const res = await fetch(`/api/product/${id}`, {
@@ -302,6 +305,22 @@ export default function EditProductPage() {
           >
             + Add Images
           </button>
+        </div>
+        <div className="p-4 bg-white rounded-lg shadow border border-gray-200 flex items-center space-x-3">
+          <input
+            id="isTopSeller"
+            type="checkbox"
+            checked={isTopSeller}
+            onChange={(e) => setIsTopSeller(e.target.checked)}
+            disabled={loading}
+            className="w-5 h-5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+          />
+          <label
+            htmlFor="isTopSeller"
+            className="text-sm font-semibold text-gray-700 select-none cursor-pointer"
+          >
+            Mark as Top Seller
+          </label>
         </div>
 
         {/* Submit button */}

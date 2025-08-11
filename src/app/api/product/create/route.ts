@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     console.log("Decoded token:", decoded);
 
     const body = await req.json();
-    const { name, price, categoryId, desc, images } = body;
+    const { name, price, categoryId, desc, images, isTopSeller } = body;
 
     if (!name || !price || !categoryId || !desc || !images?.length) {
       return NextResponse.json(
@@ -70,6 +70,7 @@ export async function POST(req: NextRequest) {
         categoryId: Number(categoryId),
         desc,
         images,
+        isTopSeller: Boolean(isTopSeller) || false,
       },
     });
 

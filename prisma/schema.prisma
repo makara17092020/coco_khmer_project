@@ -37,6 +37,7 @@ name String
 price Float
 categoryId Int
 desc String
+isTopSeller Boolean   @default(false)
 images      String[]
 category Category @relation(fields: [categoryId], references: [id])
 createdAt DateTime @default(now())

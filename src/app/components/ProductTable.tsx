@@ -235,7 +235,7 @@ export default function ProductsTable() {
                           ? new Date(createdAt).toLocaleDateString()
                           : "—"}
                       </td>
-                      <td className="px-6 py-7 flex gap-3">
+                      <td className="px-6 py-9 flex gap-3">
                         <button
                           onClick={() => handleEditProduct(id)}
                           className="px-3 py-1 rounded-full bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-900 font-semibold transition cursor-pointer"

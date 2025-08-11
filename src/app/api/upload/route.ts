@@ -1,32 +1,71 @@
+import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
-import cloudinary from "../../lib/cloudinary";
+
+export const config = {
+  runtime: "nodejs",
+};
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+  api_key: process.env.CLOUDINARY_API_KEY!,
+  api_secret: process.env.CLOUDINARY_API_SECRET!,
+});
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const file = formData.get("file") as File | null;
+
+    // Debug: log form keys to check incoming data
+    console.log("FormData keys:", [...formData.keys()]);
+
+    const file = formData.get("file") as File;
 
     if (!file) {
+      console.log("No file found in form data!");
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    }
+
+    console.log("File received:", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    });
+
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    if (file.size > MAX_SIZE) {
+      return NextResponse.json(
+        { error: "File too large. Max 10MB allowed." },
+        { status: 400 }
+      );
     }
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { resource_type: "image" },
+    const uploadResult = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { resource_type: "image", folder: "products" },
         (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
+          if (error) {
+            console.error("Cloudinary upload error:", error);
+            reject(error);
+          } else {
+            resolve(result);
+          }
         }
       );
-      stream.end(buffer);
+      uploadStream.end(buffer);
     });
 
-    return NextResponse.json({ message: "Upload success", result });
-  } catch (error) {
-    console.error("Upload error:", error);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    return NextResponse.json({
+      message: "Upload success",
+      url: (uploadResult as any).secure_url,
+    });
+  } catch (err: any) {
+    console.error("Upload error:", err);
+    return NextResponse.json(
+      { error: "Upload failed", details: err.message },
+      { status: 500 }
+    );
   }
 }

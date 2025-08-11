@@ -1,153 +1,254 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
+import { useState } from "react";
+import { XCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function CreateProduct() {
   const [name, setName] = useState("");
+  const [desc, setDesc] = useState("");
   const [price, setPrice] = useState("");
-  const [status, setStatus] = useState("In Stock");
-  const [created, setCreated] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [successToast, setSuccessToast] = useState(false);
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    setImage(file);
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
+      setImage(file);
       setPreview(URL.createObjectURL(file));
-    } else {
-      setPreview("");
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    if (!name || !price || !created || !image) {
-      alert("Please fill all required fields and select an image.");
-      return;
+    try {
+      let imageUrl = "";
+
+      if (image) {
+        const formData = new FormData();
+        formData.append("file", image);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const uploadData = await uploadRes.json();
+        imageUrl = uploadData?.url;
+
+        if (!imageUrl) throw new Error("Image upload failed");
+      }
+
+      const productData = {
+        name,
+        desc,
+        price: parseFloat(price),
+        categoryId: parseInt(categoryId),
+        images: imageUrl ? [imageUrl] : [],
+      };
+
+      const token = localStorage.getItem("access_token");
+
+      const res = await fetch("/api/product/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(productData),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Product creation failed");
+      }
+
+      // Reset form
+      setName("");
+      setDesc("");
+      setPrice("");
+      setCategoryId("");
+      setImage(null);
+      setPreview("");
+
+      // Show success toast
+      setSuccessToast(true);
+      setTimeout(() => setSuccessToast(false), 3000);
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-
-    const priceNumber = parseFloat(price);
-    if (isNaN(priceNumber) || priceNumber <= 0) {
-      alert("Please enter a valid positive price.");
-      return;
-    }
-
-    // For now, just show alert
-    alert(
-      `Product created:\nName: ${name}\nPrice: $${priceNumber.toFixed(
-        2
-      )}\nStatus: ${status}\nCreated: ${created}\nImage: ${image.name}`
-    );
-
-    // TODO: Replace with API call
-
-    // Reset form
-    setName("");
-    setPrice("");
-    setStatus("In Stock");
-    setCreated("");
-    setImage(null);
-    setPreview("");
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-xl max-w-lg w-full"
-      >
-        <h1 className="text-3xl font-bold mb-8 text-green-700 text-center">
+    <div className="min-h-screen bg-gray-100 p-10">
+      <div className="max-w-xl mx-auto bg-white p-10 rounded-xl shadow-lg">
+        <h1 className="text-3xl font-bold mb-8 text-gray-900">
           Create New Product
         </h1>
 
-        {/* Image preview */}
-        <div className="mb-6 flex flex-col items-center">
-          {preview ? (
-            <img
-              src={preview}
-              alt="Preview"
-              className="w-40 h-40 object-cover rounded-lg border border-gray-300 mb-4"
-            />
-          ) : (
-            <div className="w-40 h-40 bg-gray-200 rounded-lg flex items-center justify-center mb-4 text-gray-400">
-              No Image Selected
-            </div>
-          )}
-          <label className="cursor-pointer text-green-600 hover:text-green-800 font-semibold underline">
-            Select Image
+        {error && (
+          <div className="mb-6 p-4 bg-red-100 border border-red-200 text-red-700 font-semibold rounded-lg shadow">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="p-4 bg-white rounded-lg shadow border border-gray-200">
+            <label
+              htmlFor="name"
+              className="block text-sm font-semibold mb-2 text-gray-700"
+            >
+              Product Name
+            </label>
             <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="hidden"
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              disabled={loading}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             />
-          </label>
-        </div>
+          </div>
 
-        <label className="block mb-4">
-          <span className="block text-gray-700 font-semibold mb-1">
-            Product Name <span className="text-red-500">*</span>
-          </span>
-          <input
-            type="text"
-            placeholder="Enter product name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            required
-          />
-        </label>
+          <div className="p-4 bg-white rounded-lg shadow border border-gray-200">
+            <label
+              htmlFor="desc"
+              className="block text-sm font-semibold mb-2 text-gray-700"
+            >
+              Description
+            </label>
+            <textarea
+              id="desc"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              required
+              disabled={loading}
+              rows={4}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
 
-        <label className="block mb-4">
-          <span className="block text-gray-700 font-semibold mb-1">
-            Price ($) <span className="text-red-500">*</span>
-          </span>
-          <input
-            type="number"
-            step="0.01"
-            min="0"
-            placeholder="Enter price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            required
-          />
-        </label>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="p-4 bg-white rounded-lg shadow border border-gray-200">
+              <label
+                htmlFor="price"
+                className="block text-sm font-semibold mb-2 text-gray-700"
+              >
+                Price (USD)
+              </label>
+              <input
+                id="price"
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+                step="0.01"
+                disabled={loading}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+            <div className="p-4 bg-white rounded-lg shadow border border-gray-200">
+              <label
+                htmlFor="categoryId"
+                className="block text-sm font-semibold mb-2 text-gray-700"
+              >
+                Category ID
+              </label>
+              <input
+                id="categoryId"
+                type="number"
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                required
+                disabled={loading}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+          </div>
 
-        <label className="block mb-4">
-          <span className="block text-gray-700 font-semibold mb-1">Status</span>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+          <div className="p-4 bg-white rounded-lg shadow border border-gray-200">
+            <label className="block text-sm font-semibold mb-2 text-gray-700">
+              Product Image
+            </label>
+
+            <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-md p-6 cursor-pointer hover:border-green-500 transition">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                disabled={loading}
+                className="hidden"
+                id="fileInput"
+              />
+              <label
+                htmlFor="fileInput"
+                className="text-gray-500 cursor-pointer select-none"
+              >
+                Click to select or drag and drop image here
+              </label>
+
+              {preview && (
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="mt-4 max-h-48 rounded-md shadow-md object-contain"
+                />
+              )}
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-semibold text-white transition ${
+              loading
+                ? "bg-green-400 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300"
+            }`}
           >
-            <option>In Stock</option>
-            <option>Out of Stock</option>
-          </select>
-        </label>
+            {loading ? "Creating..." : "Create Product"}
+          </button>
+        </form>
+      </div>
 
-        <label className="block mb-6">
-          <span className="block text-gray-700 font-semibold mb-1">
-            Created Date <span className="text-red-500">*</span>
-          </span>
-          <input
-            type="date"
-            value={created}
-            onChange={(e) => setCreated(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            required
-          />
-        </label>
-
-        <button
-          type="submit"
-          className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-lg transition transform hover:scale-105"
-        >
-          Create Product
-        </button>
-      </form>
+      {/* ✅ Success Toast */}
+      <AnimatePresence>
+        {successToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed bottom-6 right-6 bg-green-700 text-white px-7 py-3 rounded-3xl shadow-lg flex items-center space-x-4"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span>Product created successfully!</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

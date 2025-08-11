@@ -11,16 +11,15 @@ type Product = {
   name: string;
   price: number;
   createdAt: string;
-  images: string[];
-  desc: string;
+  images?: string[]; // optional now
+  desc?: string; // optional now
 };
 
-// Image slideshow component for auto-switching images on hover
 function ProductImageSlideshow({
-  images,
+  images = [],
   alt,
 }: {
-  images: string[];
+  images?: string[];
   alt: string;
 }) {
   const [hovering, setHovering] = useState(false);
@@ -34,7 +33,7 @@ function ProductImageSlideshow({
 
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % images.length);
-    }, 1000); // 1 second
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [hovering, images]);
@@ -54,13 +53,12 @@ function ProductImageSlideshow({
           alt={alt}
           className="w-full h-full object-cover"
         />
-        {hovering && (
+        {hovering && images.length > 0 && (
           <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 rounded bg-black bg-opacity-70 text-white text-xs whitespace-nowrap select-none pointer-events-none">
             Image {index + 1} / {images.length}
           </div>
         )}
       </div>
-      {/* Image count label below image */}
       <span className="text-xs text-gray-500">
         {images.length} image{images.length !== 1 ? "s" : ""}
       </span>
@@ -83,7 +81,7 @@ export default function ProductsTable() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/product/create"); // Adjust to your API list endpoint
+      const res = await fetch("/api/product/create");
       const data = await res.json();
 
       if (Array.isArray(data)) {
@@ -91,10 +89,12 @@ export default function ProductsTable() {
       } else if (Array.isArray(data.products)) {
         setProducts(data.products);
       } else {
-        throw new Error("Invalid product data format");
+        setProducts([]);
+        console.error("Invalid product data format");
       }
     } catch (error) {
       console.error("Failed to fetch products:", error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -105,10 +105,14 @@ export default function ProductsTable() {
   }, []);
 
   const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(search.toLowerCase())
+    (product.name || "").toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredProducts.length / ITEMS_PER_PAGE)
+  );
+
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -159,6 +163,7 @@ export default function ProductsTable() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-xl p-8">
+        {/* Search and Create */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <input
             type="text"
@@ -179,6 +184,7 @@ export default function ProductsTable() {
           </button>
         </div>
 
+        {/* Table */}
         <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-md">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-green-100 text-green-900 font-semibold">
@@ -198,13 +204,16 @@ export default function ProductsTable() {
                   ({ id, name, price, createdAt, images, desc }) => (
                     <tr key={id} className="hover:bg-green-50 transition">
                       <td className="px-4 py-4 whitespace-nowrap">
-                        <ProductImageSlideshow images={images} alt={name} />
+                        <ProductImageSlideshow
+                          images={Array.isArray(images) ? images : []}
+                          alt={name || "No name"}
+                        />
                       </td>
                       <td className="px-6 py-4">{id}</td>
-                      <td className="px-6 py-4 font-medium">{name}</td>
+                      <td className="px-6 py-4 font-medium">{name || "—"}</td>
                       <td
                         className="px-6 py-4 max-w-xs cursor-help"
-                        title={desc}
+                        title={desc || ""}
                         style={{
                           whiteSpace: "nowrap",
                           overflow: "hidden",
@@ -212,17 +221,24 @@ export default function ProductsTable() {
                           maxWidth: "250px",
                         }}
                       >
-                        {desc.length > 15 ? desc.slice(0, 15) + "..." : desc}
+                        {desc && desc.length > 15
+                          ? desc.slice(0, 15) + "..."
+                          : desc || "—"}
                       </td>
-                      <td className="px-6 py-4">${price.toFixed(2)}</td>
                       <td className="px-6 py-4">
-                        {new Date(createdAt).toLocaleDateString()}
+                        {typeof price === "number"
+                          ? `$${price.toFixed(2)}`
+                          : "—"}
+                      </td>
+                      <td className="px-6 py-4">
+                        {createdAt
+                          ? new Date(createdAt).toLocaleDateString()
+                          : "—"}
                       </td>
                       <td className="px-6 py-7 flex gap-3">
                         <button
                           onClick={() => handleEditProduct(id)}
                           className="px-3 py-1 rounded-full bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-900 font-semibold transition cursor-pointer"
-                          aria-label={`Edit product ${name}`}
                         >
                           Edit
                         </button>
@@ -230,7 +246,6 @@ export default function ProductsTable() {
                           onClick={() => handleDeleteProduct(id)}
                           disabled={loading}
                           className="px-3 py-1 rounded-full bg-red-100 text-red-700 hover:bg-red-200 hover:text-red-900 font-semibold transition cursor-pointer"
-                          aria-label={`Delete product ${name}`}
                         >
                           Delete
                         </button>
@@ -252,6 +267,7 @@ export default function ProductsTable() {
           </table>
         </div>
 
+        {/* Pagination */}
         <div className="mt-6 flex justify-between items-center text-gray-700 text-sm">
           <button
             onClick={() => goToPage(currentPage - 1)}

@@ -176,10 +176,13 @@ export default function HomePage() {
                     with nature. Our skincare line is thoughtfully crafted using
                     safe, effective, and natural ingredients that nourish,
                     protect, and restore your skin — without the worry of harsh
-                    chemicals or toxins.
+                    chemicals or toxins. Whether you’re caring for your face or
+                    body, our products are designed to support your skin’s
+                    natural beauty and leave you feeling confident in your own
+                    glow.
                   </p>
-                  <Link href="/product">
-                    <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300 cursor-pointer">
+                  <Link href="/">
+                    <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">
                       Learn More
                     </button>
                   </Link>
@@ -187,7 +190,6 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
             <div className="flex items-center">
               <div className="w-full h-full bg-[url('/images/orange.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
@@ -200,10 +202,12 @@ export default function HomePage() {
                     room care collection. Infused with pure essential oils and
                     plant-based ingredients, our sprays are designed to refresh
                     the air, uplift your mood, and create a calm, welcoming
-                    atmosphere.
+                    atmosphere. Whether you need a relaxing moment or a burst of
+                    freshness, our products offer a safe, natural way to enhance
+                    any space.
                   </p>
-                  <Link href="/product">
-                    <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300 cursor-pointer">
+                  <Link href="/">
+                    <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">
                       Learn More
                     </button>
                   </Link>

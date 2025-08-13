@@ -11,8 +11,9 @@ type Product = {
   name: string;
   price: number;
   createdAt: string;
-  images?: string[]; // optional now
-  desc?: string; // optional now
+  images?: string[];
+  desc?: string;
+  isTopseller?: boolean;
 };
 
 function ProductImageSlideshow({

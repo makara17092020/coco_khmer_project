@@ -53,7 +53,8 @@ export async function PUT(
   }
 
   try {
-    const { name, price, desc, images, categoryId } = await req.json();
+    const { name, price, desc, images, categoryId, isTopSeller } =
+      await req.json();
 
     if (
       !name ||
@@ -79,6 +80,7 @@ export async function PUT(
         desc,
         images: sanitizedImages,
         categoryId,
+        isTopSeller: isTopSeller ?? false,
       },
     });
 

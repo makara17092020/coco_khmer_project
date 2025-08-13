@@ -9,6 +9,7 @@ export default function CreateProduct() {
   const [desc, setDesc] = useState("");
   const [price, setPrice] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [isTopSeller, setIsTopSeller] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -52,6 +53,7 @@ export default function CreateProduct() {
         price: parseFloat(price),
         categoryId: parseInt(categoryId),
         images: imageUrl ? [imageUrl] : [],
+        isTopSeller,
       };
 
       const token = localStorage.getItem("access_token");
@@ -77,7 +79,7 @@ export default function CreateProduct() {
       setCategoryId("");
       setImage(null);
       setPreview("");
-
+      setIsTopSeller(false);
       // Show success toast
       setSuccessToast(true);
       setTimeout(() => setSuccessToast(false), 3000);
@@ -205,6 +207,22 @@ export default function CreateProduct() {
                 />
               )}
             </div>
+          </div>
+          <div className="p-4 bg-white rounded-lg shadow border border-gray-200 flex items-center space-x-3">
+            <input
+              id="isTopSeller"
+              type="checkbox"
+              checked={isTopSeller}
+              onChange={(e) => setIsTopSeller(e.target.checked)}
+              disabled={loading}
+              className="w-5 h-5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+            />
+            <label
+              htmlFor="isTopSeller"
+              className="text-sm font-semibold text-gray-700 select-none cursor-pointer"
+            >
+              Mark as Top Seller
+            </label>
           </div>
 
           <button

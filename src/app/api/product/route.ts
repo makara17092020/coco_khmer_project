@@ -98,6 +98,7 @@ export async function POST(req: NextRequest) {
         categoryId: categoryIdNum,
         desc,
         images: validImages,
+        isTopSeller: body.isTopSeller ?? false,
       },
     });
 

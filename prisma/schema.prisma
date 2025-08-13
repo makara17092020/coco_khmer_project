@@ -42,3 +42,19 @@ images      String[]
 category Category @relation(fields: [categoryId], references: [id])
 createdAt DateTime @default(now())
 }
+
+model Partnership {
+  id                       Int                     @id @default(autoincrement())
+  name                     String
+  image                    String
+  categoryPartnershipId    Int
+  categoryPartnership      CategoryPartnership     @relation(fields: [categoryPartnershipId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model CategoryPartnership {
+  id            Int            @id @default(autoincrement())
+  name          String
+  partnerships  Partnership[] 
+  createdAt     DateTime        @default(now())
+}

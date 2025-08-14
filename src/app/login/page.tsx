@@ -125,24 +125,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {!avatar && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Profile Image
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  className="w-full px-4 py-2 rounded-md bg-white/80 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 transition"
-                />
-              </div>
-            )}
-
-            {error && (
-              <p className="text-sm text-red-500 font-medium">{error}</p>
-            )}
-
             <button
               type="submit"
               className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-semibold transition duration-300"

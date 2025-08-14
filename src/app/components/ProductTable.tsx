@@ -13,7 +13,7 @@ type Product = {
   createdAt: string;
   images?: string[];
   desc?: string;
-  isTopseller?: boolean;
+  isTopSeller?: boolean;
 };
 
 function ProductImageSlideshow({
@@ -196,13 +196,22 @@ export default function ProductsTable() {
                 <th className="px-6 py-3 text-left max-w-xs">Description</th>
                 <th className="px-6 py-3 text-left">Price</th>
                 <th className="px-6 py-3 text-left">Created</th>
+                <th className="px-6 py-3 text-left">TopSeller</th>
                 <th className="px-6 py-3 text-left">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {paginatedProducts.length > 0 ? (
                 paginatedProducts.map(
-                  ({ id, name, price, createdAt, images, desc }) => (
+                  ({
+                    id,
+                    name,
+                    price,
+                    createdAt,
+                    images,
+                    desc,
+                    isTopSeller,
+                  }) => (
                     <tr key={id} className="hover:bg-green-50 transition">
                       <td className="px-4 py-4 whitespace-nowrap">
                         <ProductImageSlideshow
@@ -236,7 +245,19 @@ export default function ProductsTable() {
                           ? new Date(createdAt).toLocaleDateString()
                           : "—"}
                       </td>
-                      <td className="px-6 py-7 flex gap-3">
+                      <td className="px-6 py-4">
+                        {isTopSeller ? (
+                          <span className="px-3 py-1 rounded-full text-green-700  font-semibold">
+                            Yes
+                          </span>
+                        ) : (
+                          <span className="px-3 py-1 rounded-full text-red-700 font-semibold">
+                            No
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="px-6 py-10 flex gap-3">
                         <button
                           onClick={() => handleEditProduct(id)}
                           className="px-3 py-1 rounded-full bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-900 font-semibold transition cursor-pointer"

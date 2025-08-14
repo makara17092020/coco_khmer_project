@@ -1,146 +1,124 @@
 "use client";
 
 import Image from "next/image";
-import { FaFacebookF, FaInstagram, FaTiktok } from "react-icons/fa";
+import Link from "next/link";
+import { FaFacebookF, FaInstagram, FaTelegramPlane } from "react-icons/fa";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Footer() {
   const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Hide footer on all /admin routes
-  if (pathname.startsWith("/admin")) {
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // ✅ Avoid hydration mismatch by checking after mount
+  if (!isMounted || pathname.startsWith("/admin")) {
     return null;
   }
 
+  const companyLinks = [
+    { href: "/", label: "HOME" },
+    { href: "/product", label: "PRODUCT" },
+    { href: "/about", label: "ABOUT" },
+    { href: "/contact", label: "CONTACT" },
+    { href: "/whereToFind", label: "WHERE TO FIND" },
+  ];
+
   return (
     <>
-      <footer className="bg-green-100 text-black px-6 pt-10 pb-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-10">
-          {/* Left Side: Logo and Info */}
+      <footer className="relative bg-green-100 text-black px-6 pt-12 pb-6 overflow-hidden font-[Alegreya]">
+        <div
+          className="hidden md:block absolute right-0 top-0 h-full w-48 bg-no-repeat bg-contain bg-right opacity-20"
+          style={{ backgroundImage: "url('/images/pattern.png')" }}
+        ></div>
+
+        <div className="relative max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-10 z-10">
+          {/* Left Column */}
           <div className="flex-1">
-            <div className="flex flex-col sm:flex-row gap-8 sm:gap-16 items-start">
-              {/* Logo */}
-              <div className="flex-shrink-0 -mt-6">
-                <Image
-                  src="/images/logo.png"
-                  alt="Coco Khmer Logo"
-                  width={100}
-                  height={40}
-                  className="object-contain"
-                />
-              </div>
+            <Image
+              src="/images/logo.png"
+              alt="Coco Khmer Logo"
+              width={150}
+              height={50}
+              className="mb-4"
+            />
+            <p className="text-sm leading-relaxed text-[#0C5C4C]">
+              Coco Khmer - we blend tradition with modern innovation, delivering
+              clean pain relief solutions to soothe, relieve, and heal.
+            </p>
+            <p className="mt-3 font-bold text-sm text-[#0C5C4C]">
+              MADE IN CAMBODIA
+            </p>
+          </div>
 
-              {/* Grid links */}
-              <div className="grid grid-cols-2 gap-x-10 gap-y-6 text-sm sm:text-base">
-                <div>
-                  <h3 className="font-bold mb-2">SHOP</h3>
-                  <ul className="space-y-1">
-                    <li className="hover:text-green-700 transition duration-200 hover:scale-105 cursor-pointer">
-                      FACE CARE
-                    </li>
-                    <li className="hover:text-green-700 transition duration-200 hover:scale-105 cursor-pointer">
-                      BODY CARE
-                    </li>
-                  </ul>
-                </div>
+          {/* Middle Column */}
+          <div className="flex-1 flex flex-col sm:flex-row gap-10">
+            <div>
+              <h3 className="font-bold mb-2 text-[#0C5C4C]">COMPANY</h3>
+              <ul className="space-y-1 text-sm">
+                {companyLinks.map(({ href, label }) => (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      className="relative text-[#0C5C4C] transition-all duration-300 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-[#0C5C4C] after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-                <div>
-                  <h3 className="font-bold mb-2">HELP</h3>
-                  <ul className="space-y-1">
-                    <li className="hover:text-green-700 transition duration-200 hover:scale-105 cursor-pointer">
-                      SHIPPING & RETURNS
-                    </li>
-                    <li className="hover:text-green-700 transition duration-200 hover:scale-105 cursor-pointer">
-                      PAYMENT
-                    </li>
-                    <li className="hover:text-green-700 transition duration-200 hover:scale-105 cursor-pointer">
-                      FAQ
-                    </li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="font-bold mb-2">COCO KHMER</h3>
-                  <ul className="space-y-1">
-                    <li className="hover:text-green-700 transition duration-200 hover:scale-105 cursor-pointer">
-                      OUR STORY
-                    </li>
-                    <li className="hover:text-green-700 transition duration-200 hover:scale-105 cursor-pointer">
-                      CONTACT US
-                    </li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="font-bold mb-2">CONTACT US</h3>
-                  <p className="hover:text-green-700 transition-colors cursor-pointer">
-                    +855 92 534 669
-                  </p>
-                  <p className="hover:text-green-700 transition-colors cursor-pointer">
-                    INFO@COCOKHMER.COM
-                  </p>
-                </div>
-              </div>
+            <div>
+              <h3 className="font-bold mb-2 text-[#0C5C4C]">PRODUCTS</h3>
+              <Link
+                href="/ingredients"
+                className="text-red-500 text-sm hover:underline"
+              >
+                INGREDIENTS
+              </Link>
             </div>
           </div>
 
-          {/* Right Side: Map and Social */}
-          <div className="flex-1 flex flex-col items-center gap-6">
-            <div className="w-full h-56 sm:h-64 md:w-[300px] md:h-[230px]">
-              <iframe
-                title="Coco Khmer Location"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.086924021383!2d104.89218411531088!3d11.55887679188783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3109511915e88b51%3A0xb0c9d21a3a55a7!2sPhnom%20Penh%2C%20Cambodia!5e0!3m2!1sen!2sus!4v1690626758111!5m2!1sen!2sus"
-                width="100%"
-                height="100%"
-                style={{ border: 0, borderRadius: "8px" }}
-                allowFullScreen={false}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
+          {/* Right Column */}
+          <div className="flex-1">
+            <h3 className="font-bold mb-2 text-[#0C5C4C]">CONTACT US</h3>
+            <p className="text-sm hover:text-green-700 cursor-pointer">
+              info@cocokhmer.com
+            </p>
+            <p className="text-sm hover:text-green-700 cursor-pointer">
+              +855 12 269 359
+            </p>
+
+            <h3 className="font-bold mt-4 mb-2 text-[#0C5C4C]">FOLLOW US</h3>
+            <div className="flex space-x-4 text-lg">
+              <a href="#" className="hover:text-blue-600">
+                <FaFacebookF />
+              </a>
+              <a href="#" className="hover:text-pink-600">
+                <FaInstagram />
+              </a>
+              <a href="#" className="hover:text-green-600">
+                <FaTelegramPlane />
+              </a>
             </div>
 
-            {/* Social Links */}
-            <div className="flex space-x-6 text-lg">
-              <a
-                href="https://www.facebook.com/yourpage"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-blue-600 transition-all duration-200 transform hover:scale-110 flex items-center gap-2"
-              >
-                <FaFacebookF />
-                Facebook
-              </a>
-              <a
-                href="https://www.instagram.com/yourpage"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-pink-600 transition-all duration-200 transform hover:scale-110 flex items-center gap-2"
-              >
-                <FaInstagram />
-                Instagram
-              </a>
-              <a
-                href="https://www.tiktok.com/@yourpage"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-black transition-all duration-200 transform hover:scale-110 flex items-center gap-2"
-              >
-                <FaTiktok />
-                TikTok
-              </a>
-            </div>
+            <h3 className="font-bold mt-4 mb-2 text-[#0C5C4C]">VISIT US</h3>
+            <p className="text-sm leading-snug text-[#0C5C4C]">
+              Coco Khmer Co., Ltd. <br />
+              #1529, NR. 2, Chakangre Krom <br />
+              Khan Mean Chey, Phnom Penh <br />
+              Cambodia
+            </p>
           </div>
         </div>
       </footer>
-      {/* Bottom Line */}
-      <div className="bg-green-400 text-center text-sm text-gray-600 space-y-1 py-4">
-        <p>© 2025 CoCo Khmer. All Rights Reserved.</p>
-        <p>
-          Made in Cambodia |{" "}
-          <span className="underline hover:text-green-800 cursor-pointer">
-            Privacy Policy
-          </span>
-        </p>
+
+      <div className="bg-[#0C5C4C] text-center text-sm text-white py-4 font-[Alegreya]">
+        <p>© 2025 COCO KHMER®. ALL RIGHTS RESERVED.</p>
       </div>
     </>
   );

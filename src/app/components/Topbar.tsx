@@ -1,18 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function Topbar() {
-  const [avatarUrl, setAvatarUrl] = useState<string>("/avatar.png");
+  const avatarUrl = "/images/profile.png";
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const storedUrl = localStorage.getItem("admin_avatar");
-    if (storedUrl) {
-      setAvatarUrl(storedUrl);
-    }
-  }, []);
 
   // Close dropdown if click outside
   useEffect(() => {

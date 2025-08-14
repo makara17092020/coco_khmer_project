@@ -1,67 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [avatar, setAvatar] = useState<string | null>(null);
   const [error, setError] = useState("");
   const router = useRouter();
-
-  useEffect(() => {
-    const savedAvatar = localStorage.getItem("admin_avatar");
-    if (savedAvatar) setAvatar(savedAvatar);
-  }, []);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
     try {
-      let avatarUrl: string | null = avatar;
-
-      // Upload image if no avatar yet and file selected
-      if (!avatar && file) {
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-        const uploadData = await uploadRes.json();
-
-        if (!uploadRes.ok) {
-          setError(uploadData.error || "Upload failed");
-          return;
-        }
-
-        avatarUrl = uploadData.result?.secure_url ?? null;
-        if (avatarUrl) {
-          localStorage.setItem("admin_avatar", avatarUrl);
-          setAvatar(avatarUrl);
-        }
-      }
-
-      // Call update profile API (assuming it returns a token)
-      const updateRes = await fetch("/api/user/update-profile", {
+      // Call login API (make sure your backend validates password and returns token)
+      const loginRes = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, avatar: avatarUrl }),
+        body: JSON.stringify({ email, password }),
       });
 
-      const updateData = await updateRes.json();
+      const loginData = await loginRes.json();
 
-      if (!updateRes.ok) {
-        setError(updateData.error || "Profile update failed");
+      if (!loginRes.ok) {
+        setError(loginData.error || "Login failed");
         return;
       }
 
       // ✅ Store token in localStorage
-      const token = updateData.token; // make sure your backend returns it
+      const token = loginData.token;
       if (token) {
         localStorage.setItem("access_token", token);
       }
@@ -92,11 +60,13 @@ export default function LoginPage() {
             Sign in to your account
           </h2>
 
-          <form
-            onSubmit={handleLogin}
-            className="space-y-5"
-            encType="multipart/form-data"
-          >
+          {error && (
+            <div className="bg-red-100 text-red-700 p-2 rounded-md text-sm mb-4">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email

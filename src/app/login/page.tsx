@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -9,52 +9,58 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
+  // Redirect to /admin if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      router.push("/admin");
+    }
+  }, [router]);
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
     try {
-      // Call login API (make sure your backend validates password and returns token)
-      const loginRes = await fetch("/api/auth/login", {
+      // Call login API
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      const loginData = await loginRes.json();
+      const data = await res.json();
 
-      if (!loginRes.ok) {
-        setError(loginData.error || "Login failed");
+      if (!res.ok) {
+        setError(data.message || "Login failed");
         return;
       }
 
-      // ✅ Store token in localStorage
-      const token = loginData.token;
-      if (token) {
-        localStorage.setItem("access_token", token);
-      }
-
-      // Optional: store user email too
+      // Store token & email in localStorage
+      localStorage.setItem("access_token", data.token);
       localStorage.setItem("user_email", email);
 
+      // Redirect to admin dashboard
       router.push("/admin");
     } catch (err) {
       console.error(err);
-      setError("Something went wrong.");
+      setError("Something went wrong. Please try again.");
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-indigo-200 to-purple-200 px-4">
       <div className="flex w-full max-w-5xl rounded-xl overflow-hidden shadow-xl bg-white/30 backdrop-blur-md ring-1 ring-white/40">
+        {/* Left side image */}
         <div className="w-1/2 hidden md:flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-700">
           <img
             src="/images/loginn.jpg"
             alt="Login Illustration"
-            className="w-full h-full drop-shadow-xl object-cover"
+            className="w-full h-full object-cover drop-shadow-xl"
           />
         </div>
 
+        {/* Login form */}
         <div className="w-full md:w-1/2 p-10">
           <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">
             Sign in to your account
@@ -76,8 +82,8 @@ export default function LoginPage() {
                 value={email}
                 required
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-md border border-gray-300 bg-white/70 backdrop-blur-md"
                 placeholder="you@example.com"
+                className="w-full px-4 py-3 rounded-md border border-gray-300 bg-white/70 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 
@@ -90,8 +96,8 @@ export default function LoginPage() {
                 value={password}
                 required
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-md border border-gray-300 bg-white/70 backdrop-blur-md"
                 placeholder="••••••••"
+                className="w-full px-4 py-3 rounded-md border border-gray-300 bg-white/70 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 

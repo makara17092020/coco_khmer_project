@@ -1,3 +1,4 @@
+// /app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
@@ -32,21 +33,34 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const token = jwt.sign(
+    // Generate access token (short-lived)
+    const accessToken = jwt.sign(
       {
         id: user.id,
         email: user.email,
         role: user.role,
       },
       JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "15m" } // short-lived token
+    );
+
+    // Generate refresh token (long-lived)
+    const refreshToken = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
+      JWT_SECRET,
+      { expiresIn: "7d" } // refresh token lasts longer
     );
 
     const { password: _, ...userWithoutPassword } = user;
 
     return NextResponse.json({
       message: "Login successful",
-      token,
+      token: accessToken,
+      refreshToken, // new added
       user: userWithoutPassword,
     });
   } catch (error) {

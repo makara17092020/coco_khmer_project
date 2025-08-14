@@ -1,101 +1,80 @@
-"use client";
-import { useState } from "react";
-
-export default function ContactPage() {
-  const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    message: "",
-    phone: "",
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(form);
-  };
-
+export default function ContactUs() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center">
-      <div className=" bg-[url('/images/cocolo.png')] h-52 w-full opacity-20"></div>
-      <div className="w-full  py-15 text-center -mt-52">
-        <h1 className="text-4xl font-bold text-green-900">Contact Us</h1>
-        <p className="text-gray-600 mt-2">
-          Fill in the form and we’ll get back to you soon.
-        </p>
-      </div>
-
-      <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-2xl -mt-2 opacity-100">
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
-        >
-          <div>
-            <label className="block mb-1 font-medium">Full Name :</label>
-            <input
-              type="text"
-              name="fullName"
-              value={form.fullName}
-              onChange={handleChange}
-              placeholder="Full Name"
-              className="w-full border border-green-900 rounded-lg px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">Email :</label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="Email"
-              className="w-full border border-green-900 rounded-lg px-3 py-2"
-            />
-          </div>
-          <div className="md:col-span-1">
-            <label className="block mb-1 font-medium">Message :</label>
-            <textarea
-              name="message"
-              value={form.message}
-              onChange={handleChange}
-              placeholder="Message"
-              className="w-full border border-green-900 rounded-lg px-3 py-2 h-28"
-            ></textarea>
-          </div>
-          <div>
+    <main className="min-h-screen bg-gray-50 px-4 py-12">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-lg rounded-xl overflow-hidden items-stretch">
+        {/* Left Column - Contact Form */}
+        <div className="p-6 md:p-10 flex flex-col justify-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Contact Us</h2>
+          <form className="space-y-5 flex-1">
             <div>
-              <label className="block mb-1 font-medium">Phone :</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Full Name
+              </label>
               <input
                 type="text"
-                name="phone"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="Phone Number"
-                className="w-full border border-green-900 rounded-lg px-3 py-2"
+                placeholder="Your full name"
+                className="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
 
-            <div className="md:col-span-2 mt-7.5">
-              <button
-                type="submit"
-                className="bg-green-900 text-white px-6 py-2 rounded-lg hover:bg-green-800"
-              >
-                Submit
-              </button>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="Your email"
+                className="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Message
+              </label>
+              <textarea
+                placeholder="Write your message..."
+                rows={5}
+                className="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+
+            <button
+              type="button"
+              className="w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition"
+            >
+              Send Message
+            </button>
+          </form>
+        </div>
+
+        {/* Right Column - Contact Info */}
+        <div className="bg-green-50 p-6 md:p-10 flex flex-col justify-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            Get in Touch
+          </h2>
+          <div className="space-y-4 flex-1">
+            <div>
+              <p className="font-semibold text-gray-700">📍 Location</p>
+              <p className="text-gray-600">
+                123 Main Street, Phnom Penh, Cambodia
+              </p>
+            </div>
+
+            <div>
+              <p className="font-semibold text-gray-700">📞 Phone</p>
+              <p className="text-gray-600">+855 12 345 678</p>
+            </div>
+
+            <div>
+              <p className="font-semibold text-gray-700">🕒 Business Hours</p>
+              <p className="text-gray-600">Mon - Fri: 9:00 AM - 6:00 PM</p>
+              <p className="text-gray-600">Sat: 9:00 AM - 1:00 PM</p>
+              <p className="text-gray-600">Sun: Closed</p>
             </div>
           </div>
-        </form>
+        </div>
       </div>
-      <div className="text-center mt-8 pb-10">
-        <h2 className="text-xl font-semibold text-green-900">Contact Number</h2>
-        <p className="text-gray-600">For quick response, call or message.</p>
-        <p className="text-orange-600 font-bold text-lg">Phone: 012 249 539</p>
-      </div>
-    </div>
+    </main>
   );
 }

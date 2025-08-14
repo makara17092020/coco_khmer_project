@@ -1,34 +1,99 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../lib/prisma"; // adjust path if needed
 
 interface Params {
   params: { id: string };
 }
 
-export async function GET(_req: Request, { params }: Params) {
-  const id = Number(params.id);
-
-  if (isNaN(id)) {
+// GET /api/category/[id] - fetch category
+export async function GET(req: NextRequest, { params }: Params) {
+  const categoryId = Number(params.id);
+  if (isNaN(categoryId))
     return NextResponse.json({ error: "Invalid category ID" }, { status: 400 });
-  }
 
   try {
     const category = await prisma.category.findUnique({
-      where: { id },
+      where: { id: categoryId },
     });
-
-    if (!category) {
+    if (!category)
       return NextResponse.json(
         { error: "Category not found" },
         { status: 404 }
       );
-    }
-
     return NextResponse.json(category, { status: 200 });
-  } catch (error) {
-    console.error("GET /category/[id] error:", error);
+  } catch (err: any) {
     return NextResponse.json(
-      { error: (error as Error).message || "Failed to fetch category" },
+      { error: err.message || "Failed to fetch category" },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT /api/category/[id] - update category name
+export async function PUT(req: NextRequest, { params }: Params) {
+  const categoryId = Number(params.id);
+  if (isNaN(categoryId))
+    return NextResponse.json({ error: "Invalid category ID" }, { status: 400 });
+
+  try {
+    const body = await req.json();
+    const { name } = body;
+
+    if (!name || typeof name !== "string")
+      return NextResponse.json(
+        { error: "Category name is required" },
+        { status: 400 }
+      );
+
+    const updatedCategory = await prisma.category.update({
+      where: { id: categoryId },
+      data: { name },
+    });
+
+    return NextResponse.json(updatedCategory, { status: 200 });
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: err.message || "Failed to update category" },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/category/[id] - reassign products and delete category
+export async function DELETE(req: NextRequest, { params }: Params) {
+  const categoryId = Number(params.id);
+  if (isNaN(categoryId))
+    return NextResponse.json({ error: "Invalid category ID" }, { status: 400 });
+
+  try {
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+    });
+    if (!category)
+      return NextResponse.json(
+        { error: "Category not found" },
+        { status: 404 }
+      );
+
+    // Reassign products to "All Products" category (assume ID = 1)
+    await prisma.product.updateMany({
+      where: { categoryId },
+      data: { categoryId: 1 },
+    });
+
+    // Delete the category
+    await prisma.category.delete({ where: { id: categoryId } });
+
+    return NextResponse.json(
+      {
+        message:
+          "Category deleted successfully and products reassigned to All Products",
+      },
+      { status: 200 }
+    );
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: err.message || "Failed to delete category" },
       { status: 500 }
     );
   }

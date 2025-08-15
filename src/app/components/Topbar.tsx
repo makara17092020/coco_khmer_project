@@ -42,7 +42,7 @@ export default function Topbar() {
   }
 
   return (
-    <header className="w-full bg-white shadow-md p-4 flex justify-between items-center">
+    <header className="w- bg-white shadow-md p-4 flex justify-between items-center">
       <div className="text-xl font-semibold text-gray-800">Dashboard</div>
       <div
         ref={dropdownRef}

@@ -163,7 +163,7 @@ export default function ProductsTable() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-xl p-8">
+      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-xl p-8">
         {/* Search and Create */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <input

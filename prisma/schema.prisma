@@ -56,5 +56,4 @@ model CategoryPartnership {
   id            Int            @id @default(autoincrement())
   name          String
   partnerships  Partnership[] 
-  createdAt     DateTime        @default(now())
 }

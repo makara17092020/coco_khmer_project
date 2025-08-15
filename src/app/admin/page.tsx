@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import ProductTable from "../components/ProductTable";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -14,11 +13,4 @@ export default function AdminDashboardPage() {
       router.push("/login");
     }
   }, [router]);
-
-  return (
-    <section>
-      <h1 className="text-2xl font-bold mb-4">Products List</h1>
-      <ProductTable />
-    </section>
-  );
 }

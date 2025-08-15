@@ -1,6 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../lib/prisma";
 
+export async function GET() {
+  try {
+    // Check if categories exist
+    const categories = await prisma.category.findMany({
+      orderBy: { id: "asc" },
+    });
+
+    // If no categories, create defaults
+    if (categories.length === 0) {
+      const defaultCategories = ["All Products", "Skin Care", "Fragrances"];
+      const createdCategories = await Promise.all(
+        defaultCategories.map((name) =>
+          prisma.category.create({ data: { name } })
+        )
+      );
+      return NextResponse.json(createdCategories, { status: 200 });
+    }
+
+    return NextResponse.json(categories, { status: 200 });
+  } catch (error) {
+    console.error("GET /category error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch categories" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();

@@ -11,6 +11,11 @@ import { useRouter, useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 
+interface Category {
+  id: number;
+  name: string;
+}
+
 export default function EditProductPage() {
   const router = useRouter();
   const { id } = useParams();
@@ -24,12 +29,30 @@ export default function EditProductPage() {
   const [images, setImages] = useState<string[]>([]); // existing + preview base64
   const [newFiles, setNewFiles] = useState<File[]>([]); // files to upload
 
+  // Categories
+  const [categories, setCategories] = useState<Category[]>([]);
+
   // UI state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successToast, setSuccessToast] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Fetch categories
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const res = await fetch(`${window.location.origin}/api/category`);
+        if (!res.ok) throw new Error("Failed to fetch categories");
+        const data = await res.json();
+        setCategories(data);
+      } catch (err: any) {
+        console.error("Category fetch error:", err);
+      }
+    }
+    fetchCategories();
+  }, []);
 
   // Fetch existing product data
   useEffect(() => {
@@ -38,16 +61,18 @@ export default function EditProductPage() {
     async function fetchProduct() {
       try {
         setLoading(true);
-        const res = await fetch(`/api/product/${id}`);
+        const res = await fetch(`${window.location.origin}/api/product/${id}`);
         if (!res.ok) throw new Error("Failed to fetch product");
-
         const data = await res.json();
 
         setName(data.name);
         setPrice(data.price.toString());
         setDesc(data.desc);
         setIsTopSeller(data.isTopSeller ?? false);
-        setCategoryId(data.categoryId.toString());
+
+        // Set product categoryId or leave empty to default to All Products
+        setCategoryId(data.categoryId?.toString() || "");
+
         setImages(data.images || []);
         setLoading(false);
       } catch (err: any) {
@@ -59,13 +84,22 @@ export default function EditProductPage() {
     fetchProduct();
   }, [id]);
 
+  // Default category to "All Products" if none selected
+  useEffect(() => {
+    if (categories.length > 0 && categoryId === "") {
+      const defaultCategory = categories.find(
+        (cat) => cat.name === "All Products"
+      );
+      if (defaultCategory) setCategoryId(defaultCategory.id.toString());
+    }
+  }, [categories, categoryId]);
+
   // Handle file selection + preview
   const handleFilesChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
     const fileArray = Array.from(files);
-
     setNewFiles((prev) => [...prev, ...fileArray]);
 
     fileArray.forEach((file) => {
@@ -129,10 +163,7 @@ export default function EditProductPage() {
     setLoading(true);
 
     try {
-      // Upload new images
       const uploadedUrls = await uploadImages();
-
-      // Combine old images (not removed) + newly uploaded URLs
       const existingImagesCount = images.length - newFiles.length;
       const existingImages = images.slice(0, existingImagesCount);
       const finalImages = [...existingImages, ...uploadedUrls];
@@ -197,7 +228,7 @@ export default function EditProductPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-10">
-        {/* Product Name */}
+        {/* Name */}
         <div>
           <label className="block mb-2 font-semibold text-gray-700">
             Product Name
@@ -244,28 +275,31 @@ export default function EditProductPage() {
           />
         </div>
 
-        {/* Category ID */}
+        {/* Category */}
         <div>
           <label className="block mb-2 font-semibold text-gray-700">
-            Category ID
+            Category
           </label>
-          <input
-            type="number"
-            min="1"
-            placeholder="Category ID"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+          <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
             required
-          />
+          >
+            <option value="">Select a category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* Images Preview + Upload */}
+        {/* Images */}
         <div>
           <label className="block mb-3 text-gray-700 font-semibold">
             Product Images
           </label>
-
           <div className="flex flex-wrap gap-4 mb-4">
             {images.map((img, idx) => (
               <div
@@ -288,7 +322,6 @@ export default function EditProductPage() {
               </div>
             ))}
           </div>
-
           <input
             type="file"
             multiple
@@ -306,6 +339,8 @@ export default function EditProductPage() {
             + Add Images
           </button>
         </div>
+
+        {/* Top seller */}
         <div className="p-4 bg-white rounded-lg shadow border border-gray-200 flex items-center space-x-3">
           <input
             id="isTopSeller"
@@ -323,7 +358,7 @@ export default function EditProductPage() {
           </label>
         </div>
 
-        {/* Submit button */}
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}

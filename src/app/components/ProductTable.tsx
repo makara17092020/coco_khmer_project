@@ -14,6 +14,12 @@ type Product = {
   images?: string[];
   desc?: string;
   isTopSeller?: boolean;
+  categoryId?: number;
+};
+
+type Category = {
+  id: number;
+  name: string;
 };
 
 function ProductImageSlideshow({
@@ -71,7 +77,9 @@ export default function ProductsTable() {
   const router = useRouter();
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<number | "">("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -82,7 +90,7 @@ export default function ProductsTable() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/product/create");
+      const res = await fetch("/api/product/create"); // your fetch endpoint
       const data = await res.json();
 
       if (Array.isArray(data)) {
@@ -101,13 +109,33 @@ export default function ProductsTable() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch("/api/category");
+      if (!res.ok) throw new Error("Failed to fetch categories");
+      const data = await res.json();
+      setCategories(data);
+    } catch (err) {
+      console.error(err);
+      setCategories([]);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
-  const filteredProducts = products.filter((product) =>
-    (product.name || "").toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredProducts = products.filter((product) => {
+    const matchesName = (product.name || "")
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === "" || product.categoryId === selectedCategory;
+
+    return matchesName && matchesCategory;
+  });
 
   const totalPages = Math.max(
     1,
@@ -143,12 +171,8 @@ export default function ProductsTable() {
       const res = await fetch(`/api/product/${id}`, {
         method: "DELETE",
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to delete product");
-      }
+      if (!res.ok) throw new Error(data.message || "Failed to delete product");
 
       await fetchProducts();
       setShowDeleteModal(false);
@@ -163,8 +187,8 @@ export default function ProductsTable() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-xl p-8">
-        {/* Search and Create */}
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-xl p-8">
+        {/* Search and Category Filter */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <input
             type="text"
@@ -177,6 +201,24 @@ export default function ProductsTable() {
             className="w-full md:w-72 px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition"
             aria-label="Search products"
           />
+
+          <select
+            value={selectedCategory}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSelectedCategory(val === "" ? "" : parseInt(val));
+              setCurrentPage(1);
+            }}
+            className="w-full md:w-48 px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+          >
+            <option value="">All Products</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+
           <button
             onClick={handleCreateProduct}
             className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition transform hover:scale-105 cursor-pointer"
@@ -278,7 +320,7 @@ export default function ProductsTable() {
               ) : (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="text-center py-10 text-gray-400 italic"
                   >
                     No products found.

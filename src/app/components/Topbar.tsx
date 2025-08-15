@@ -1,18 +1,13 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Topbar() {
-  const [avatarUrl, setAvatarUrl] = useState<string>("/avatar.png");
+  const avatarUrl = "/images/profile.png";
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const storedUrl = localStorage.getItem("admin_avatar");
-    if (storedUrl) {
-      setAvatarUrl(storedUrl);
-    }
-  }, []);
+  const router = useRouter();
 
   // Close dropdown if click outside
   useEffect(() => {
@@ -36,9 +31,26 @@ export default function Topbar() {
     };
   }, [dropdownOpen]);
 
-  function handleLogout() {
-    alert("Logged out!");
-    setDropdownOpen(false);
+  async function handleLogout() {
+    try {
+      // Call logout API (optional, for server-side cleanup)
+      await fetch("/api/auth/logout", { method: "POST" });
+
+      // Clear localStorage
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user_email");
+
+      // Clear cookies if any were set
+      document.cookie = "access_token=; path=/; max-age=0";
+      document.cookie = "refresh_token=; path=/; max-age=0";
+
+      // Close dropdown and redirect
+      setDropdownOpen(false);
+      router.push("/login");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
   }
 
   return (

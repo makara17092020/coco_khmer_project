@@ -47,11 +47,12 @@ export default function ProductPage() {
       <section className="relative w-full sm:h-[560px] h-[400px] flex items-center justify-between bg-slate-300 overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="/images/home1.jpg"
+            src="/images/1.jpg"
             alt="Coco Khmer Hero"
             fill
-            className="object-cover object-left"
+            className="object-cover"
             priority
+            quality={100} // ensures max clarity
           />
           <div className="absolute inset-0 bg-black/40"></div>
         </div>

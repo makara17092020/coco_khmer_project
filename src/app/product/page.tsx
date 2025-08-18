@@ -43,6 +43,38 @@ export default function ProductPage() {
 
   return (
     <main className="font-sans">
+      {/* Hero Section */}
+      <section className="relative w-full sm:h-140 h-100 flex items-center justify-between bg-slate-300 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 sm:w-230 w-190 sm:h-140 h-100">
+          <Image
+            src="/images/home1.jpg"
+            alt="Coco Khmer Hero"
+            fill
+            className="object-cover object-left"
+            priority
+          />
+        </div>
+
+        {/* Hero Content */}
+        <div className="relative z-20 ml-auto w-full max-w-xl p-20">
+          <p className="text-sm md:text-base sm:text-emerald-900 text-white font-medium mb-2 uppercase tracking-wide">
+            Welcome to CoCo Khmer Clean Skincare
+          </p>
+          <h1 className="text-4xl md:text-7xl font-extrabold sm:text-emerald-900 text-white mb-6">
+            Love Being <br /> in Your Skin
+          </h1>
+          <div className="flex gap-2">
+            <button className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">
+              Find Our Products
+            </button>
+            <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">
+              Learn More
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Category Filter */}
       <CategoryFilter
         activeCategory={activeCategory}
@@ -73,7 +105,13 @@ function ProductCard({ product }: { product: Product }) {
   const sizeClass = "medium"; // you can adapt if size is available
 
   const heightClass =
-    sizeClass === "small" ? "h-40" : sizeClass === "medium" ? "h-60" : "h-80";
+    sizeClass === "small"
+      ? "h-40"
+      : sizeClass === "medium"
+      ? "h-60"
+      : sizeClass === "large"
+      ? "h-80"
+      : "h-60";
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300">

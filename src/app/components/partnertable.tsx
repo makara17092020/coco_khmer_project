@@ -6,143 +6,83 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const ITEMS_PER_PAGE = 10;
 
-type Product = {
+type Partnership = {
   id: number;
   name: string;
-  price: number;
   createdAt: string;
-  images?: string[];
-  desc?: string;
-  isTopSeller?: boolean;
-  categoryId?: number;
+  image?: string;
+  categoryPartnershipId?: number;
 };
 
-type Category = {
+type CategoryPartnership = {
   id: number;
   name: string;
 };
 
-function ProductImageSlideshow({
-  images = [],
-  alt,
-}: {
-  images?: string[];
-  alt: string;
-}) {
-  const [hovering, setHovering] = useState(false);
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (!hovering || images.length <= 1) {
-      setIndex(0);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [hovering, images]);
-
-  return (
-    <div className="flex flex-col items-center space-y-1">
-      <div
-        onMouseEnter={() => setHovering(true)}
-        onMouseLeave={() => setHovering(false)}
-        className="relative w-14 h-14 rounded-lg overflow-hidden border border-gray-300 shadow-md hover:shadow-lg transition-shadow cursor-pointer"
-        role="img"
-        aria-label={`${alt} image slideshow`}
-        tabIndex={0}
-      >
-        <img
-          src={images[index] || "https://via.placeholder.com/60"}
-          alt={alt}
-          className="w-full h-full object-cover"
-        />
-        {hovering && images.length > 0 && (
-          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 rounded bg-black bg-opacity-70 text-white text-xs whitespace-nowrap select-none pointer-events-none">
-            Image {index + 1} / {images.length}
-          </div>
-        )}
-      </div>
-      <span className="text-xs text-gray-500">
-        {images.length} image{images.length !== 1 ? "s" : ""}
-      </span>
-    </div>
-  );
-}
-
-export default function ProductsTable() {
+export default function PartnershipsTable() {
   const router = useRouter();
-
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [partnerships, setPartnerships] = useState<Partnership[]>([]);
+  const [categoriesPartnership, setCategoriesPartnership] = useState<
+    CategoryPartnership[]
+  >([]);
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<number | "">("");
+  const [selectedCategoryPartnership, setSelectedCategoryPartnership] =
+    useState<number | "">("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(
-    null
-  );
+  const [selectedPartnershipId, setSelectedPartnershipId] = useState<
+    number | null
+  >(null);
 
-  const fetchProducts = async () => {
+  const fetchPartnerships = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/product/create"); // your fetch endpoint
+      const res = await fetch("/api/partnership/create");
+      if (!res.ok) throw new Error("Failed to fetch partnerships");
       const data = await res.json();
-
-      if (Array.isArray(data)) {
-        setProducts(data);
-      } else if (Array.isArray(data.products)) {
-        setProducts(data.products);
-      } else {
-        setProducts([]);
-        console.error("Invalid product data format");
-      }
+      setPartnerships(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Failed to fetch products:", error);
-      setProducts([]);
+      console.error("Failed to fetch partnerships:", error);
+      setPartnerships([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchCategories = async () => {
+  const fetchCategoriesPartnership = async () => {
     try {
-      const res = await fetch("/api/category");
+      const res = await fetch("/api/categorypartnership");
       if (!res.ok) throw new Error("Failed to fetch categories");
       const data = await res.json();
-      setCategories(data);
+      setCategoriesPartnership(data);
     } catch (err) {
       console.error(err);
-      setCategories([]);
+      setCategoriesPartnership([]);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
-    fetchCategories();
+    fetchPartnerships();
+    fetchCategoriesPartnership();
   }, []);
 
-  const filteredProducts = products.filter((product) => {
-    const matchesName = (product.name || "")
+  const filteredPartnerships = partnerships.filter((p) => {
+    const matchesName = (p.name || "")
       .toLowerCase()
       .includes(search.toLowerCase());
-
     const matchesCategory =
-      selectedCategory === "" || product.categoryId === selectedCategory;
-
+      selectedCategoryPartnership === "" ||
+      p.categoryPartnershipId === selectedCategoryPartnership;
     return matchesName && matchesCategory;
   });
 
   const totalPages = Math.max(
     1,
-    Math.ceil(filteredProducts.length / ITEMS_PER_PAGE)
+    Math.ceil(filteredPartnerships.length / ITEMS_PER_PAGE)
   );
 
-  const paginatedProducts = filteredProducts.slice(
+  const paginatedPartnerships = filteredPartnerships.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -152,34 +92,27 @@ export default function ProductsTable() {
     setCurrentPage(page);
   };
 
-  const handleCreateProduct = () => {
-    router.push("/admin/products/create");
-  };
+  const handleCreatePartnership = () =>
+    router.push("/admin/partnerships/create");
 
-  const handleEditProduct = (id: number) => {
-    router.push(`/admin/products/edit/${id}`);
-  };
-
-  const handleDeleteProduct = (id: number) => {
-    setSelectedProductId(id);
+  const handleDeletePartnership = (id: number) => {
+    setSelectedPartnershipId(id);
     setShowDeleteModal(true);
   };
 
   const handleDeleteConfirmed = async (id: number) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/product/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`/api/partnership/${id}`, { method: "DELETE" });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to delete product");
-
-      await fetchProducts();
+      if (!res.ok)
+        throw new Error(data.message || "Failed to delete partnership");
+      await fetchPartnerships();
       setShowDeleteModal(false);
-      setSelectedProductId(null);
+      setSelectedPartnershipId(null);
     } catch (error) {
-      console.error("Delete error:", error);
-      alert("Failed to delete product.");
+      console.error(error);
+      alert("Failed to delete partnership.");
     } finally {
       setLoading(false);
     }
@@ -188,42 +121,39 @@ export default function ProductsTable() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-xl p-8">
-        {/* Search and Category Filter */}
+        {/* Search + Filter + Add */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <input
             type="text"
-            placeholder="Search products..."
+            placeholder="Search partnerships..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
               setCurrentPage(1);
             }}
             className="w-full md:w-72 px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            aria-label="Search products"
           />
-
           <select
-            value={selectedCategory}
+            value={selectedCategoryPartnership}
             onChange={(e) => {
               const val = e.target.value;
-              setSelectedCategory(val === "" ? "" : parseInt(val));
+              setSelectedCategoryPartnership(val === "" ? "" : parseInt(val));
               setCurrentPage(1);
             }}
             className="w-full md:w-48 px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition"
           >
-            <option value="">All Products</option>
-            {categories.map((cat) => (
+            <option value="">All Category Partnerships</option>
+            {categoriesPartnership.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>
             ))}
           </select>
-
           <button
-            onClick={handleCreateProduct}
+            onClick={handleCreatePartnership}
             className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition transform hover:scale-105 cursor-pointer"
           >
-            Create Product
+            Add Partnership
           </button>
         </div>
 
@@ -233,54 +163,43 @@ export default function ProductsTable() {
             <thead className="bg-green-100 text-green-900 font-semibold">
               <tr>
                 <th className="px-4 py-3 text-left">Image</th>
-                <th className="px-6 py-3 text-left">ID</th>
+                <th className="px-4 py-3 text-left">ID</th>
                 <th className="px-6 py-3 text-left">Name</th>
-                <th className="px-6 py-3 text-left max-w-xs">Description</th>
-                <th className="px-6 py-3 text-left">Price</th>
+                <th className="px-6 py-3 text-left">Category Partnership</th>
                 <th className="px-6 py-3 text-left">Created</th>
-                <th className="px-6 py-3 text-left">TopSeller</th>
                 <th className="px-6 py-3 text-left">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {paginatedProducts.length > 0 ? (
-                paginatedProducts.map(
-                  ({
-                    id,
-                    name,
-                    price,
-                    createdAt,
-                    images,
-                    desc,
-                    isTopSeller,
-                  }) => (
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-10 text-gray-500">
+                    Loading partnerships...
+                  </td>
+                </tr>
+              ) : paginatedPartnerships.length > 0 ? (
+                paginatedPartnerships.map(
+                  ({ id, name, createdAt, categoryPartnershipId, image }) => (
                     <tr key={id} className="hover:bg-green-50 transition">
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <ProductImageSlideshow
-                          images={Array.isArray(images) ? images : []}
-                          alt={name || "No name"}
-                        />
+                      <td className="px-4 py-4">
+                        {image ? (
+                          <img
+                            src={image}
+                            alt={name || "No name"}
+                            className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 flex items-center justify-center bg-gray-100 rounded-lg text-gray-400 text-xs">
+                            No Image
+                          </div>
+                        )}
                       </td>
                       <td className="px-6 py-4">{id}</td>
                       <td className="px-6 py-4 font-medium">{name || "—"}</td>
-                      <td
-                        className="px-6 py-4 max-w-xs cursor-help"
-                        title={desc || ""}
-                        style={{
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          maxWidth: "250px",
-                        }}
-                      >
-                        {desc && desc.length > 15
-                          ? desc.slice(0, 15) + "..."
-                          : desc || "—"}
-                      </td>
                       <td className="px-6 py-4">
-                        {typeof price === "number"
-                          ? `$${price.toFixed(2)}`
-                          : "—"}
+                        {categoriesPartnership.find(
+                          (c) => c.id === categoryPartnershipId
+                        )?.name || "—"}
                       </td>
                       <td className="px-6 py-4">
                         {createdAt
@@ -288,26 +207,8 @@ export default function ProductsTable() {
                           : "—"}
                       </td>
                       <td className="px-6 py-4">
-                        {isTopSeller ? (
-                          <span className="px-3 py-1 rounded-full text-green-700  font-semibold">
-                            Yes
-                          </span>
-                        ) : (
-                          <span className="px-3 py-1 rounded-full text-red-700 font-semibold">
-                            No
-                          </span>
-                        )}
-                      </td>
-
-                      <td className="px-6 py-10 flex gap-3">
                         <button
-                          onClick={() => handleEditProduct(id)}
-                          className="px-3 py-1 rounded-full bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-900 font-semibold transition cursor-pointer"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteProduct(id)}
+                          onClick={() => handleDeletePartnership(id)}
                           disabled={loading}
                           className="px-3 py-1 rounded-full bg-red-100 text-red-700 hover:bg-red-200 hover:text-red-900 font-semibold transition cursor-pointer"
                         >
@@ -320,10 +221,10 @@ export default function ProductsTable() {
               ) : (
                 <tr>
                   <td
-                    colSpan={8}
+                    colSpan={6}
                     className="text-center py-10 text-gray-400 italic"
                   >
-                    No products found.
+                    No partnerships found.
                   </td>
                 </tr>
               )}
@@ -331,7 +232,6 @@ export default function ProductsTable() {
           </table>
         </div>
 
-        {/* Pagination */}
         <div className="mt-6 flex justify-between items-center text-gray-700 text-sm">
           <button
             onClick={() => goToPage(currentPage - 1)}
@@ -368,36 +268,36 @@ export default function ProductsTable() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center z-50 bg-gradient-to-br from-black/30 via-black/25 to-black/30"
+            className="fixed inset-0 flex items-center justify-center z-50 bg-black/30"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="w-full max-w-sm p-6 rounded-2xl shadow-2xl bg-white/80 backdrop-blur-md border border-white/20 bg-gradient-to-br from-green-300 via-white to-green-100"
+              className="w-full max-w-sm p-6 rounded-2xl shadow-2xl bg-white"
             >
               <h2 className="text-lg font-semibold text-gray-800 mb-4">
                 Confirm Delete
               </h2>
               <p className="text-gray-600 mb-6">
-                Are you sure you want to delete this product?
+                Are you sure you want to delete this partnership?
               </p>
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => {
                     setShowDeleteModal(false);
-                    setSelectedProductId(null);
+                    setSelectedPartnershipId(null);
                   }}
                   className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
-                    if (selectedProductId !== null)
-                      handleDeleteConfirmed(selectedProductId);
-                  }}
+                  onClick={() =>
+                    selectedPartnershipId &&
+                    handleDeleteConfirmed(selectedPartnershipId)
+                  }
                   disabled={loading}
                   className={`px-4 py-2 rounded-lg font-semibold text-white transition cursor-pointer ${
                     loading

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import ProductTable from "../components/ProductTable";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -59,13 +58,4 @@ export default function AdminDashboardPage() {
 
     checkAuth();
   }, [router]);
-
-  if (loading) return <p className="p-8">Checking authentication...</p>;
-
-  return (
-    <section className="">
-      <h1 className="text-2xl font-bold mb-4">Products List</h1>
-      <ProductTable />
-    </section>
-  );
 }

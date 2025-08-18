@@ -11,9 +11,9 @@ export async function GET() {
       include: { categoryPartnership: true },
       orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json({ partnerships });
-  } catch (error) {
-    console.error("GET /api/partnership error:", error);
+    return NextResponse.json(partnerships);
+  } catch (err) {
+    console.error("GET /partnership/create error:", err);
     return NextResponse.json(
       { message: "Failed to fetch partnerships" },
       { status: 500 }
@@ -21,10 +21,13 @@ export async function GET() {
   }
 }
 
+// POST new partnership
 export async function POST(req: NextRequest) {
   try {
     const authHeader = req.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
+    console.log("Auth Header:", authHeader);
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
         { message: "Missing or invalid token" },
         { status: 401 }
@@ -32,16 +35,16 @@ export async function POST(req: NextRequest) {
     }
 
     const token = authHeader.split(" ")[1];
-    try {
-      jwt.verify(token, JWT_SECRET);
-    } catch {
-      return NextResponse.json(
-        { message: "Invalid or expired token" },
-        { status: 401 }
-      );
-    }
+    console.log("Token:", token);
 
-    const { name, image, categoryPartnershipId } = await req.json();
+    const decoded = jwt.verify(token, JWT_SECRET) as {
+      id: number;
+      email: string;
+    };
+    console.log("Decoded token:", decoded);
+
+    const body = await req.json();
+    const { name, image, categoryPartnershipId } = body;
 
     if (!name || !image || !categoryPartnershipId) {
       return NextResponse.json(
@@ -50,11 +53,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const categoryExists = await prisma.categoryPartnership.findUnique({
+    const category = await prisma.categoryPartnership.findUnique({
       where: { id: Number(categoryPartnershipId) },
     });
 
-    if (!categoryExists) {
+    if (!category) {
       return NextResponse.json(
         { message: "Category not found" },
         { status: 400 }
@@ -73,8 +76,14 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(newPartnership, { status: 201 });
-  } catch (error) {
-    console.error("POST /api/partnership error:", error);
+  } catch (err: any) {
+    console.error("POST /partnership/create error:", err);
+    if (err.name === "JsonWebTokenError" || err.name === "TokenExpiredError") {
+      return NextResponse.json(
+        { message: "Invalid or expired token" },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
       { message: "Failed to create partnership" },
       { status: 500 }

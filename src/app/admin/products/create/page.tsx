@@ -271,7 +271,6 @@ export default function CreateProduct() {
         </form>
       </div>
 
-      {/* ✅ Success Toast */}
       <AnimatePresence>
         {successToast && (
           <motion.div

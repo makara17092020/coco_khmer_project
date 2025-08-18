@@ -13,7 +13,7 @@ export default function LoginPage() {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) {
-      router.push("/admin");
+      router.push("/admin/products");
     }
   }, [router]);
 
@@ -41,7 +41,7 @@ export default function LoginPage() {
       localStorage.setItem("user_email", email);
 
       // Redirect to admin dashboard
-      router.push("/admin");
+      router.push("/admin/products");
     } catch (err) {
       console.error(err);
       setError("Something went wrong. Please try again.");

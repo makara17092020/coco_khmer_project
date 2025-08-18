@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import ScrollSection from "./components/scrollsection";
 import Link from "next/link";
@@ -19,17 +19,20 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await fetch("/api/product");
         if (!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);
-
         const data = await res.json();
 
         if (data.products && Array.isArray(data.products)) {
-          setProducts(data.products.slice(0, 3)); // Take first 3 products
+          setProducts(data.products);
           setError("");
         } else {
           throw new Error("Unexpected API response format");
@@ -44,6 +47,45 @@ export default function HomePage() {
 
     fetchProducts();
   }, []);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    isDragging.current = true;
+    startX.current = e.pageX - (scrollRef.current?.offsetLeft || 0);
+    scrollLeft.current = scrollRef.current?.scrollLeft || 0;
+  };
+
+  const onMouseLeave = () => {
+    isDragging.current = false;
+  };
+
+  const onMouseUp = () => {
+    isDragging.current = false;
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = x - startX.current;
+    scrollRef.current.scrollLeft = scrollLeft.current - walk;
+  };
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    isDragging.current = true;
+    startX.current = e.touches[0].pageX - (scrollRef.current?.offsetLeft || 0);
+    scrollLeft.current = scrollRef.current?.scrollLeft || 0;
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging.current || !scrollRef.current) return;
+    const x = e.touches[0].pageX - scrollRef.current.offsetLeft;
+    const walk = x - startX.current;
+    scrollRef.current.scrollLeft = scrollLeft.current - walk;
+  };
+
+  const onTouchEnd = () => {
+    isDragging.current = false;
+  };
 
   return (
     <main className="font-[Alegreya]">
@@ -97,7 +139,7 @@ export default function HomePage() {
       </section>
 
       {/* NEW PRODUCTS SECTION */}
-      <section className="py-16 px-6 md:px-20 bg-gray-50 text-center">
+      <section className="py-16 px-6 md:px-20 bg-gray-50 text-center relative">
         <h2 className="sm:text-4xl text-3xl font-extrabold text-emerald-900">
           Get to Know Our Products
         </h2>
@@ -107,11 +149,21 @@ export default function HomePage() {
         {error && <p className="mt-6 text-red-500">{error}</p>}
 
         {!loading && !error && (
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div
+            className="mt-12 overflow-x-auto flex gap-6 snap-x snap-mandatory scrollbar-hide scroll-smooth px-10 cursor-grab active:cursor-grabbing"
+            ref={scrollRef}
+            onMouseDown={onMouseDown}
+            onMouseLeave={onMouseLeave}
+            onMouseUp={onMouseUp}
+            onMouseMove={onMouseMove}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          >
             {products.map((product) => (
               <div
                 key={product.id}
-                className="bg-white rounded-2xl shadow-md overflow-hidden hover:scale-105 transition-transform duration-300"
+                className="snap-center shrink-0 w-72 bg-white rounded-2xl shadow-md overflow-hidden hover:scale-105 transition-transform duration-300"
               >
                 <div className="relative w-full h-64">
                   <Image
@@ -158,7 +210,7 @@ export default function HomePage() {
             <div className="relative w-full min-h-[500px]">
               <Image
                 src="/images/bodycare.avif"
-                alt="Face care"
+                alt="Body care"
                 fill
                 className="object-cover"
                 priority
@@ -175,11 +227,7 @@ export default function HomePage() {
                     At Coco Khmer, we believe that healthy, radiant skin begins
                     with nature. Our skincare line is thoughtfully crafted using
                     safe, effective, and natural ingredients that nourish,
-                    protect, and restore your skin — without the worry of harsh
-                    chemicals or toxins. Whether you’re caring for your face or
-                    body, our products are designed to support your skin’s
-                    natural beauty and leave you feeling confident in your own
-                    glow.
+                    protect, and restore your skin — without harsh chemicals.
                   </p>
                   <Link href="/">
                     <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">
@@ -190,7 +238,8 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 items-stretch mt-10">
             <div className="flex items-center">
               <div className="w-full h-full bg-[url('/images/orange.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
                 <div className="bg-orange-600 p-6 md:p-10 text-white shadow-md">
@@ -199,12 +248,8 @@ export default function HomePage() {
                   </h3>
                   <p className="text-lg py-3 leading-relaxed">
                     Bring harmony to your home and senses with our fragrance and
-                    room care collection. Infused with pure essential oils and
-                    plant-based ingredients, our sprays are designed to refresh
-                    the air, uplift your mood, and create a calm, welcoming
-                    atmosphere. Whether you need a relaxing moment or a burst of
-                    freshness, our products offer a safe, natural way to enhance
-                    any space.
+                    room care collection. Pure essential oils, natural sprays
+                    for refreshment and calm.
                   </p>
                   <Link href="/">
                     <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">
@@ -230,13 +275,13 @@ export default function HomePage() {
       {/* WHY COCO KHMER SECTION */}
       <section className="py-10 bg-emerald-900">
         <div className="w-full text-center mb-10">
-          <h2 className="sm:text-4xl text-3xl font-extrabold text-white text-center">
+          <h2 className="sm:text-4xl text-3xl font-extrabold text-white">
             Why Coco Khmer?
           </h2>
           <p className="text-lg py-5 leading-relaxed px-5 sm:px-70 text-white">
             At Coco Khmer, we do more than create natural products — we create
-            impact. Our mission is rooted in sustainability, community
-            empowerment, and care for both people and the planet.
+            impact. Sustainability, community empowerment, and care for people
+            and planet are our core mission.
           </p>
           <Link href="/product">
             <button className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300 cursor-pointer">

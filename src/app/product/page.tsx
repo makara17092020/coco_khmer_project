@@ -25,7 +25,7 @@ export default function ProductPage() {
         const res = await fetch("http://localhost:3000/api/product");
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
-        setProducts(data.products); // matches your API response { products: [...] }
+        setProducts(data.products);
       } catch (err) {
         console.error(err);
       } finally {
@@ -70,16 +70,10 @@ export default function ProductPage() {
 // Product Card Component
 function ProductCard({ product }: { product: Product }) {
   const imageUrl = product.images[0] || "/images/placeholder.jpg";
-  const sizeClass = "medium"; // you can adapt if size is available
-
-  const heightClass =
-    sizeClass === "small" ? "h-40" : sizeClass === "medium" ? "h-60" : "h-80";
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div
-        className={`relative w-full ${heightClass} rounded-md overflow-hidden`}
-      >
+      <div className="relative w-full h-60 rounded-md overflow-hidden">
         <Image
           src={imageUrl}
           alt={product.name}

@@ -74,12 +74,6 @@ export default function Footer() {
 
             <div>
               <h3 className="font-bold mb-2 text-[#0C5C4C]">PRODUCTS</h3>
-              <Link
-                href="/ingredients"
-                className="text-red-500 text-sm hover:underline"
-              >
-                INGREDIENTS
-              </Link>
             </div>
           </div>
 

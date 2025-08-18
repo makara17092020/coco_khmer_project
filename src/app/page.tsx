@@ -210,7 +210,7 @@ export default function HomePage() {
             <div className="relative w-full min-h-[500px]">
               <Image
                 src="/images/bodycare.avif"
-                alt="Body care"
+                alt="Face care"
                 fill
                 className="object-cover"
                 priority
@@ -227,7 +227,11 @@ export default function HomePage() {
                     At Coco Khmer, we believe that healthy, radiant skin begins
                     with nature. Our skincare line is thoughtfully crafted using
                     safe, effective, and natural ingredients that nourish,
-                    protect, and restore your skin — without harsh chemicals.
+                    protect, and restore your skin — without the worry of harsh
+                    chemicals or toxins. Whether you’re caring for your face or
+                    body, our products are designed to support your skin’s
+                    natural beauty and leave you feeling confident in your own
+                    glow.
                   </p>
                   <Link href="/">
                     <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">
@@ -238,8 +242,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 items-stretch mt-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
             <div className="flex items-center">
               <div className="w-full h-full bg-[url('/images/orange.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
                 <div className="bg-orange-600 p-6 md:p-10 text-white shadow-md">
@@ -248,8 +251,12 @@ export default function HomePage() {
                   </h3>
                   <p className="text-lg py-3 leading-relaxed">
                     Bring harmony to your home and senses with our fragrance and
-                    room care collection. Pure essential oils, natural sprays
-                    for refreshment and calm.
+                    room care collection. Infused with pure essential oils and
+                    plant-based ingredients, our sprays are designed to refresh
+                    the air, uplift your mood, and create a calm, welcoming
+                    atmosphere. Whether you need a relaxing moment or a burst of
+                    freshness, our products offer a safe, natural way to enhance
+                    any space.
                   </p>
                   <Link href="/">
                     <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">

@@ -48,11 +48,12 @@ export default function ProductPage() {
         {/* Background Image */}
         <div className="absolute inset-0 sm:w-230 w-190 sm:h-140 h-100">
           <Image
-            src="/images/home1.jpg"
+            src="/images/1.jpg"
             alt="Coco Khmer Hero"
             fill
-            className="object-cover object-left"
+            className="object-cover"
             priority
+            quality={100} // ensures max clarity
           />
         </div>
 

@@ -43,6 +43,37 @@ export default function ProductPage() {
 
   return (
     <main className="font-sans">
+      {/* Hero Section */}
+      <section className="relative w-full sm:h-[560px] h-[400px] flex items-center justify-between bg-slate-300 overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/home1.jpg"
+            alt="Coco Khmer Hero"
+            fill
+            className="object-cover object-left"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/40"></div>
+        </div>
+
+        <div className="relative z-10 ml-auto w-full max-w-xl p-8 md:p-20 text-white">
+          <p className="text-sm md:text-base font-medium mb-2 uppercase tracking-wide">
+            Welcome to CoCo Khmer Clean Skincare
+          </p>
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6">
+            Love Being <br /> in Your Skin
+          </h1>
+          <div className="flex gap-3">
+            <button className="bg-orange-600 hover:bg-orange-700 px-6 py-3 rounded-3xl font-semibold shadow-md transition duration-300">
+              Find Our Products
+            </button>
+            <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 px-6 py-3 rounded-3xl font-semibold shadow-md transition duration-300">
+              Learn More
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Category Filter */}
       <CategoryFilter
         activeCategory={activeCategory}
@@ -71,9 +102,17 @@ export default function ProductPage() {
 function ProductCard({ product }: { product: Product }) {
   const imageUrl = product.images[0] || "/images/placeholder.jpg";
 
+  // Fixed TypeScript type for sizeClass
+  const sizeClass: "small" | "medium" | "large" = "medium";
+
+  const heightClass =
+    sizeClass === "small" ? "h-40" : sizeClass === "medium" ? "h-60" : "h-80";
+
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div className="relative w-full h-60 rounded-md overflow-hidden">
+      <div
+        className={`relative w-full ${heightClass} rounded-md overflow-hidden`}
+      >
         <Image
           src={imageUrl}
           alt={product.name}
@@ -87,7 +126,7 @@ function ProductCard({ product }: { product: Product }) {
       <p className="text-xs text-gray-400 mt-1">
         Category: {product.category.name}
       </p>
-      <button className="mt-3 px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-800">
+      <button className="mt-3 px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-800 transition">
         Read More
       </button>
     </div>

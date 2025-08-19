@@ -233,7 +233,6 @@ export default function ProductsTable() {
             <thead className="bg-green-100 text-green-900 font-semibold">
               <tr>
                 <th className="px-4 py-3 text-left">Image</th>
-                <th className="px-6 py-3 text-left">ID</th>
                 <th className="px-6 py-3 text-left">Name</th>
                 <th className="px-6 py-3 text-left max-w-xs">Description</th>
                 <th className="px-6 py-3 text-left">Price</th>
@@ -261,7 +260,6 @@ export default function ProductsTable() {
                           alt={name || "No name"}
                         />
                       </td>
-                      <td className="px-6 py-4">{id}</td>
                       <td className="px-6 py-4 font-medium">{name || "—"}</td>
                       <td
                         className="px-6 py-4 max-w-xs cursor-help"

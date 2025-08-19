@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
+// GET all products
 export async function GET() {
   try {
     const products = await prisma.product.findMany({
@@ -21,9 +22,10 @@ export async function GET() {
   }
 }
 
+// POST create a new product
 export async function POST(req: NextRequest) {
   try {
-    // Check for Authorization header
+    // Check Authorization header
     const authHeader = req.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
@@ -34,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     const token = authHeader.split(" ")[1];
 
-    // Verify JWT token safely
+    // Verify JWT token
     try {
       jwt.verify(token, JWT_SECRET);
     } catch {
@@ -46,15 +48,14 @@ export async function POST(req: NextRequest) {
 
     // Parse request body
     const body = await req.json();
-    const { name, price, categoryId, desc, images } = body;
+    const { name, size, categoryId, desc, images, isTopSeller } = body;
 
     // Validate required fields
-    const priceNum = Number(price);
     const categoryIdNum = Number(categoryId);
 
     if (
       !name ||
-      isNaN(priceNum) ||
+      !size ||
       isNaN(categoryIdNum) ||
       !desc ||
       !images ||
@@ -94,11 +95,11 @@ export async function POST(req: NextRequest) {
     const newProduct = await prisma.product.create({
       data: {
         name,
-        price: priceNum,
+        size: Array.isArray(size) ? size : [size], // ensures it is always a string array
         categoryId: categoryIdNum,
         desc,
         images: validImages,
-        isTopSeller: body.isTopSeller ?? false,
+        isTopSeller: isTopSeller ?? false,
       },
     });
 

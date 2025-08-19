@@ -5,27 +5,11 @@ import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
-export async function GET() {
-  try {
-    const products = await prisma.product.findMany({
-      include: { category: true },
-      orderBy: { createdAt: "desc" },
-    });
-    return NextResponse.json(products);
-  } catch (err) {
-    console.error("GET /product/create error:", err);
-    return NextResponse.json(
-      { message: "Failed to fetch products" },
-      { status: 500 }
-    );
-  }
-}
-
+// ✅ POST create a new product
 export async function POST(req: NextRequest) {
   try {
+    // --- Check JWT Token ---
     const authHeader = req.headers.get("authorization");
-    console.log("Auth Header:", authHeader);
-
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
         { message: "Missing or invalid token" },
@@ -34,24 +18,37 @@ export async function POST(req: NextRequest) {
     }
 
     const token = authHeader.split(" ")[1];
-    console.log("Token:", token);
+    let decoded: { id: number; email: string };
+    try {
+      decoded = jwt.verify(token, JWT_SECRET) as { id: number; email: string };
+    } catch {
+      return NextResponse.json(
+        { message: "Invalid or expired token" },
+        { status: 401 }
+      );
+    }
 
-    const decoded = jwt.verify(token, JWT_SECRET) as {
-      id: number;
-      email: string;
-    };
-    console.log("Decoded token:", decoded);
-
+    // --- Parse Request Body ---
     const body = await req.json();
-    const { name, price, categoryId, desc, images, isTopSeller } = body;
+    const { name, size, categoryId, desc, images, isTopSeller } = body;
 
-    if (!name || !price || !categoryId || !desc || !images?.length) {
+    // --- Validate Required Fields ---
+    if (!size || !Array.isArray(size) || size.length === 0) {
+      return NextResponse.json(
+        { message: "Missing or invalid size field" },
+        { status: 400 }
+      );
+    }
+
+    // --- Validate Size ---
+    if (!name || !size.length || !categoryId || !desc || !images?.length) {
       return NextResponse.json(
         { message: "Missing required fields" },
         { status: 400 }
       );
     }
 
+    // --- Validate Category ---
     const category = await prisma.category.findUnique({
       where: { id: Number(categoryId) },
     });
@@ -63,28 +60,34 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // --- Validate Images ---
+    const validImages = images.filter(
+      (img: string) => typeof img === "string" && img.trim() !== ""
+    );
+    if (!validImages.length) {
+      return NextResponse.json(
+        { message: "Images array cannot be empty" },
+        { status: 400 }
+      );
+    }
+
+    // --- Create Product ---
     const newProduct = await prisma.product.create({
       data: {
         name,
-        price,
+        size, // ✅ now stores ["100g","200g"]
         categoryId: Number(categoryId),
         desc,
-        images,
+        images: validImages,
         isTopSeller: Boolean(isTopSeller) || false,
       },
     });
 
     return NextResponse.json(newProduct, { status: 201 });
-  } catch (err: any) {
+  } catch (err) {
     console.error("POST /product/create error:", err);
-    if (err.name === "JsonWebTokenError" || err.name === "TokenExpiredError") {
-      return NextResponse.json(
-        { message: "Invalid or expired token" },
-        { status: 401 }
-      );
-    }
     return NextResponse.json(
-      { message: "Failed to create product" },
+      { message: "Failed to create product", error: String(err) },
       { status: 500 }
     );
   }

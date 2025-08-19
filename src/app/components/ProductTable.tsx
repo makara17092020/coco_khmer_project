@@ -9,7 +9,7 @@ const ITEMS_PER_PAGE = 10;
 type Product = {
   id: number;
   name: string;
-  price: number;
+  size: string[]; // updated from number
   createdAt: string;
   images?: string[];
   desc?: string;
@@ -37,11 +37,9 @@ function ProductImageSlideshow({
       setIndex(0);
       return;
     }
-
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % images.length);
     }, 1000);
-
     return () => clearInterval(interval);
   }, [hovering, images]);
 
@@ -90,12 +88,10 @@ export default function ProductsTable() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/product/create"); // your fetch endpoint
+      const res = await fetch("/api/product");
       const data = await res.json();
 
-      if (Array.isArray(data)) {
-        setProducts(data);
-      } else if (Array.isArray(data.products)) {
+      if (Array.isArray(data.products)) {
         setProducts(data.products);
       } else {
         setProducts([]);
@@ -130,10 +126,8 @@ export default function ProductsTable() {
     const matchesName = (product.name || "")
       .toLowerCase()
       .includes(search.toLowerCase());
-
     const matchesCategory =
       selectedCategory === "" || product.categoryId === selectedCategory;
-
     return matchesName && matchesCategory;
   });
 
@@ -152,14 +146,9 @@ export default function ProductsTable() {
     setCurrentPage(page);
   };
 
-  const handleCreateProduct = () => {
-    router.push("/admin/products/create");
-  };
-
-  const handleEditProduct = (id: number) => {
+  const handleCreateProduct = () => router.push("/admin/products/create");
+  const handleEditProduct = (id: number) =>
     router.push(`/admin/products/edit/${id}`);
-  };
-
   const handleDeleteProduct = (id: number) => {
     setSelectedProductId(id);
     setShowDeleteModal(true);
@@ -168,9 +157,7 @@ export default function ProductsTable() {
   const handleDeleteConfirmed = async (id: number) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/product/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`/api/product/${id}`, { method: "DELETE" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to delete product");
 
@@ -188,7 +175,7 @@ export default function ProductsTable() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-xl p-8">
-        {/* Search and Category Filter */}
+        {/* Search & Filter */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <input
             type="text"
@@ -199,9 +186,7 @@ export default function ProductsTable() {
               setCurrentPage(1);
             }}
             className="w-full md:w-72 px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            aria-label="Search products"
           />
-
           <select
             value={selectedCategory}
             onChange={(e) => {
@@ -218,10 +203,9 @@ export default function ProductsTable() {
               </option>
             ))}
           </select>
-
           <button
             onClick={handleCreateProduct}
-            className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition transform hover:scale-105 cursor-pointer"
+            className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition transform hover:scale-105"
           >
             Create Product
           </button>
@@ -235,7 +219,7 @@ export default function ProductsTable() {
                 <th className="px-4 py-3 text-left">Image</th>
                 <th className="px-6 py-3 text-left">Name</th>
                 <th className="px-6 py-3 text-left max-w-xs">Description</th>
-                <th className="px-6 py-3 text-left">Price</th>
+                <th className="px-6 py-3 text-left">Size</th>
                 <th className="px-6 py-3 text-left">Created</th>
                 <th className="px-6 py-3 text-left">TopSeller</th>
                 <th className="px-6 py-3 text-left">Actions</th>
@@ -247,7 +231,7 @@ export default function ProductsTable() {
                   ({
                     id,
                     name,
-                    price,
+                    size,
                     createdAt,
                     images,
                     desc,
@@ -276,10 +260,11 @@ export default function ProductsTable() {
                           : desc || "—"}
                       </td>
                       <td className="px-6 py-4">
-                        {typeof price === "number"
-                          ? `$${price.toFixed(2)}`
+                        {Array.isArray(size) && size.length > 0
+                          ? size.join(", ")
                           : "—"}
                       </td>
+
                       <td className="px-6 py-4">
                         {createdAt
                           ? new Date(createdAt).toLocaleDateString()
@@ -287,7 +272,7 @@ export default function ProductsTable() {
                       </td>
                       <td className="px-6 py-4">
                         {isTopSeller ? (
-                          <span className="px-3 py-1 rounded-full text-green-700  font-semibold">
+                          <span className="px-3 py-1 rounded-full text-green-700 font-semibold">
                             Yes
                           </span>
                         ) : (
@@ -296,18 +281,17 @@ export default function ProductsTable() {
                           </span>
                         )}
                       </td>
-
                       <td className="px-6 py-10 flex gap-3">
                         <button
                           onClick={() => handleEditProduct(id)}
-                          className="px-3 py-1 rounded-full bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-900 font-semibold transition cursor-pointer"
+                          className="px-3 py-1 rounded-full bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-900 font-semibold transition"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteProduct(id)}
                           disabled={loading}
-                          className="px-3 py-1 rounded-full bg-red-100 text-red-700 hover:bg-red-200 hover:text-red-900 font-semibold transition cursor-pointer"
+                          className="px-3 py-1 rounded-full bg-red-100 text-red-700 hover:bg-red-200 hover:text-red-900 font-semibold transition"
                         >
                           Delete
                         </button>
@@ -366,14 +350,14 @@ export default function ProductsTable() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center z-50 bg-gradient-to-br from-black/30 via-black/25 to-black/30"
+            className="fixed inset-0 flex items-center justify-center z-50 bg-black/30"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="w-full max-w-sm p-6 rounded-2xl shadow-2xl bg-white/80 backdrop-blur-md border border-white/20 bg-gradient-to-br from-green-300 via-white to-green-100"
+              className="w-full max-w-sm p-6 rounded-2xl shadow-2xl bg-white backdrop-blur-md border border-gray-200"
             >
               <h2 className="text-lg font-semibold text-gray-800 mb-4">
                 Confirm Delete
@@ -387,17 +371,17 @@ export default function ProductsTable() {
                     setShowDeleteModal(false);
                     setSelectedProductId(null);
                   }}
-                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition cursor-pointer"
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
-                    if (selectedProductId !== null)
-                      handleDeleteConfirmed(selectedProductId);
-                  }}
+                  onClick={() =>
+                    selectedProductId &&
+                    handleDeleteConfirmed(selectedProductId)
+                  }
                   disabled={loading}
-                  className={`px-4 py-2 rounded-lg font-semibold text-white transition cursor-pointer ${
+                  className={`px-4 py-2 rounded-lg font-semibold text-white transition ${
                     loading
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-red-600 hover:bg-red-700"

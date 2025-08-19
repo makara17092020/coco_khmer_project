@@ -22,12 +22,12 @@ export default function EditProductPage() {
 
   // Form state
   const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
+  const [size, setSize] = useState(""); // user types sizes like "100g, 200g"
   const [desc, setDesc] = useState("");
   const [isTopSeller, setIsTopSeller] = useState(false);
   const [categoryId, setCategoryId] = useState("");
-  const [images, setImages] = useState<string[]>([]); // existing + preview base64
-  const [newFiles, setNewFiles] = useState<File[]>([]); // files to upload
+  const [images, setImages] = useState<string[]>([]);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
 
   // Categories
   const [categories, setCategories] = useState<Category[]>([]);
@@ -43,7 +43,7 @@ export default function EditProductPage() {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const res = await fetch(`${window.location.origin}/api/category`);
+        const res = await fetch("/api/category");
         if (!res.ok) throw new Error("Failed to fetch categories");
         const data = await res.json();
         setCategories(data);
@@ -61,38 +61,27 @@ export default function EditProductPage() {
     async function fetchProduct() {
       try {
         setLoading(true);
-        const res = await fetch(`${window.location.origin}/api/product/${id}`);
+        const res = await fetch(`/api/product/${id}`);
         if (!res.ok) throw new Error("Failed to fetch product");
         const data = await res.json();
 
-        setName(data.name);
-        setPrice(data.price.toString());
-        setDesc(data.desc);
+        setName(data.name || "");
+        setSize(
+          Array.isArray(data.size) ? data.size.join(", ") : data.size || ""
+        );
+        setDesc(data.desc || "");
         setIsTopSeller(data.isTopSeller ?? false);
-
-        // Set product categoryId or leave empty to default to All Products
         setCategoryId(data.categoryId?.toString() || "");
-
         setImages(data.images || []);
-        setLoading(false);
       } catch (err: any) {
         setError(err.message || "Failed to load product");
+      } finally {
         setLoading(false);
       }
     }
 
     fetchProduct();
   }, [id]);
-
-  // Default category to "All Products" if none selected
-  useEffect(() => {
-    if (categories.length > 0 && categoryId === "") {
-      const defaultCategory = categories.find(
-        (cat) => cat.name === "All Products"
-      );
-      if (defaultCategory) setCategoryId(defaultCategory.id.toString());
-    }
-  }, [categories, categoryId]);
 
   // Handle file selection + preview
   const handleFilesChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -113,21 +102,18 @@ export default function EditProductPage() {
       reader.readAsDataURL(file);
     });
 
-    e.target.value = ""; // reset input
+    e.target.value = "";
   };
 
-  // Remove image by index
   const handleRemoveImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-
     const existingCount = images.length - newFiles.length;
     if (index >= existingCount) {
       const newFileIndex = index - existingCount;
       setNewFiles((prev) => prev.filter((_, i) => i !== newFileIndex));
     }
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Upload new files to /api/upload and get URLs
   const uploadImages = async (): Promise<string[]> => {
     const uploadedUrls: string[] = [];
 
@@ -145,9 +131,7 @@ export default function EditProductPage() {
         body: formData,
       });
 
-      if (!res.ok) {
-        throw new Error("Image upload failed");
-      }
+      if (!res.ok) throw new Error("Image upload failed");
 
       const data = await res.json();
       uploadedUrls.push(data.url);
@@ -156,7 +140,6 @@ export default function EditProductPage() {
     return uploadedUrls;
   };
 
-  // Submit updated product
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
@@ -170,8 +153,8 @@ export default function EditProductPage() {
 
       if (
         !name.trim() ||
+        !size.trim() ||
         !desc.trim() ||
-        !price ||
         !categoryId ||
         finalImages.length === 0
       ) {
@@ -182,8 +165,11 @@ export default function EditProductPage() {
 
       const payload = {
         name: name.trim(),
+        size: size
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean), // safe array
         desc: desc.trim(),
-        price: parseFloat(price),
         categoryId: parseInt(categoryId),
         images: finalImages,
         isTopSeller,
@@ -203,7 +189,6 @@ export default function EditProductPage() {
       setSuccessToast(true);
       setNewFiles([]);
       setLoading(false);
-
       setTimeout(() => setSuccessToast(false), 3000);
     } catch (err: any) {
       setError(err.message || "Update failed");
@@ -220,7 +205,6 @@ export default function EditProductPage() {
       {loading && (
         <p className="mb-6 text-gray-600 font-semibold">Loading...</p>
       )}
-
       {error && (
         <div className="mb-6 p-5 bg-red-50 text-red-700 rounded-xl font-semibold border border-red-200">
           {error}
@@ -243,19 +227,17 @@ export default function EditProductPage() {
           />
         </div>
 
-        {/* Price */}
+        {/* Size */}
         <div>
           <label className="block mb-2 font-semibold text-gray-700">
-            Price
+            Size (e.g., 100g, 200g)
           </label>
           <input
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="Price"
+            type="text"
+            placeholder="Enter sizes separated by commas"
             className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            value={size}
+            onChange={(e) => setSize(e.target.value)}
             required
           />
         </div>

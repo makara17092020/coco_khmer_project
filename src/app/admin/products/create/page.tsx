@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Category = {
@@ -8,96 +8,156 @@ type Category = {
   name: string;
 };
 
+const AVAILABLE_SIZES = ["100g", "200g", "300g", "400g"];
+
 export default function CreateProduct() {
   const [name, setName] = useState("");
+  const [size, setSize] = useState<string[]>([]); // array of sizes
   const [desc, setDesc] = useState("");
-  const [price, setPrice] = useState("");
   const [categoryId, setCategoryId] = useState<number | "">("");
   const [isTopSeller, setIsTopSeller] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>("");
+  const [images, setImages] = useState<string[]>([]);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successToast, setSuccessToast] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
 
-  // Fetch categories on mount
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Fetch categories
   useEffect(() => {
-    const fetchCategories = async () => {
+    async function fetchCategories() {
       try {
-        const res = await fetch("http://localhost:3000/api/category");
+        const res = await fetch("/api/category");
+        if (!res.ok) throw new Error("Failed to fetch categories");
         const data = await res.json();
-        setCategories(data); // assuming API returns array of categories
-      } catch (err) {
-        console.error("Failed to fetch categories", err);
+        setCategories(data);
+      } catch (err: any) {
+        console.error(err);
       }
-    };
+    }
     fetchCategories();
   }, []);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImage(file);
-      setPreview(URL.createObjectURL(file));
+  // Handle file selection + preview
+  const handleFilesChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const fileArray = Array.from(files);
+    setNewFiles((prev) => [...prev, ...fileArray]);
+
+    fileArray.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setImages((prev) => [...prev, reader.result as string]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    e.target.value = "";
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    const existingCount = images.length - newFiles.length;
+    if (index >= existingCount) {
+      const newFileIndex = index - existingCount;
+      setNewFiles((prev) => prev.filter((_, i) => i !== newFileIndex));
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+  // Toggle size selection
+  const toggleSize = (selectedSize: string) => {
+    setSize((prev) =>
+      prev.includes(selectedSize)
+        ? prev.filter((s) => s !== selectedSize)
+        : [...prev, selectedSize]
+    );
+  };
 
-    try {
-      let imageUrl = "";
-
-      if (image) {
-        const formData = new FormData();
-        formData.append("file", image);
-
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-        const uploadData = await uploadRes.json();
-        imageUrl = uploadData?.url;
-
-        if (!imageUrl) throw new Error("Image upload failed");
+  const uploadImages = async (): Promise<string[]> => {
+    const uploadedUrls: string[] = [];
+    for (const file of newFiles) {
+      if (file.size > 20 * 1024 * 1024) {
+        alert(`${file.name} is too large (max 20MB)`);
+        continue;
       }
 
-      const productData = {
-        name,
-        desc,
-        price: parseFloat(price),
-        categoryId: categoryId,
-        images: imageUrl ? [imageUrl] : [],
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) throw new Error("Image upload failed");
+      const data = await res.json();
+      uploadedUrls.push(data.url);
+    }
+    return uploadedUrls;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const uploadedUrls = await uploadImages();
+      const finalImages = [
+        ...images.slice(0, images.length - newFiles.length),
+        ...uploadedUrls,
+      ];
+
+      if (
+        !name.trim() ||
+        !desc.trim() ||
+        size.length === 0 ||
+        !categoryId ||
+        finalImages.length === 0
+      ) {
+        setError(
+          "Please fill all fields, select sizes, and add at least one image."
+        );
+        setLoading(false);
+        return;
+      }
+
+      const payload = {
+        name: name.trim(),
+        size, // ✅ send array
+        desc: desc.trim(),
+        categoryId: Number(categoryId),
+        images: finalImages,
         isTopSeller,
       };
 
       const token = localStorage.getItem("access_token");
-
       const res = await fetch("/api/product/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: token ? `Bearer ${token}` : "",
         },
-        body: JSON.stringify(productData),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Product creation failed");
+        const data = await res.json();
+        throw new Error(data.message || "Failed to create product");
       }
 
       // Reset form
       setName("");
+      setSize([]);
       setDesc("");
-      setPrice("");
       setCategoryId("");
-      setImage(null);
-      setPreview("");
+      setImages([]);
+      setNewFiles([]);
       setIsTopSeller(false);
       setSuccessToast(true);
       setTimeout(() => setSuccessToast(false), 3000);
@@ -110,7 +170,7 @@ export default function CreateProduct() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-10">
-      <div className="max-w-xl mx-auto bg-white p-10 rounded-xl shadow-lg">
+      <div className="max-w-3xl mx-auto bg-white p-10 rounded-3xl shadow-xl border border-gray-200">
         <h1 className="text-3xl font-bold mb-8 text-gray-900">
           Create New Product
         </h1>
@@ -123,119 +183,119 @@ export default function CreateProduct() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Product Name */}
-          <div className="p-4 bg-white rounded-lg shadow border border-gray-200">
-            <label
-              htmlFor="name"
-              className="block text-sm font-semibold mb-2 text-gray-700"
-            >
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
               Product Name
             </label>
             <input
-              id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required
               disabled={loading}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+
+          {/* Available Sizes */}
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
+              Available Sizes (comma separated)
+            </label>
+            <input
+              type="text"
+              value={size.join(", ")}
+              onChange={(e) =>
+                setSize(
+                  e.target.value
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter((s) => s)
+                )
+              }
+              disabled={loading}
+              placeholder="e.g., 100g, 200g, 500g"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
 
           {/* Description */}
-          <div className="p-4 bg-white rounded-lg shadow border border-gray-200">
-            <label
-              htmlFor="desc"
-              className="block text-sm font-semibold mb-2 text-gray-700"
-            >
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
               Description
             </label>
             <textarea
-              id="desc"
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
-              required
               disabled={loading}
               rows={4}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
 
-          {/* Price & Category */}
-          <div className="grid grid-cols-2 gap-6">
-            <div className="p-4 bg-white rounded-lg shadow border border-gray-200">
-              <label
-                htmlFor="price"
-                className="block text-sm font-semibold mb-2 text-gray-700"
-              >
-                Price (USD)
-              </label>
-              <input
-                id="price"
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                required
-                step="0.01"
-                disabled={loading}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-
-            <div className="p-4 bg-white rounded-lg shadow border border-gray-200">
-              <label
-                htmlFor="category"
-                className="block text-sm font-semibold mb-2 text-gray-700"
-              >
-                Category
-              </label>
-              <select
-                id="category"
-                value={categoryId}
-                onChange={(e) => setCategoryId(Number(e.target.value))}
-                required
-                disabled={loading}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <option value="" disabled>
-                  Select a category
+          {/* Category */}
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
+              Category
+            </label>
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(Number(e.target.value))}
+              disabled={loading}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              <option value="" disabled>
+                Select a category
+              </option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
                 </option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+              ))}
+            </select>
           </div>
 
-          {/* Image Upload */}
-          <div className="p-4 bg-white rounded-lg shadow border border-gray-200">
-            <label className="block text-sm font-semibold mb-2 text-gray-700">
-              Product Image
+          {/* Images */}
+          <div>
+            <label className="block mb-3 text-gray-700 font-semibold">
+              Product Images
             </label>
-            <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-md p-6 cursor-pointer hover:border-green-500 transition">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                disabled={loading}
-                className="hidden"
-                id="fileInput"
-              />
-              <label
-                htmlFor="fileInput"
-                className="text-gray-500 cursor-pointer select-none"
-              >
-                Click to select or drag and drop image here
-              </label>
-              {preview && (
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="mt-4 max-h-48 rounded-md shadow-md object-contain"
-                />
-              )}
+            <div className="flex flex-wrap gap-4 mb-4">
+              {images.map((img, idx) => (
+                <div
+                  key={idx}
+                  className="relative w-24 h-24 rounded-xl overflow-hidden border shadow"
+                >
+                  <img
+                    src={img}
+                    alt={`Preview ${idx}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(idx)}
+                    className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full shadow"
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
             </div>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleFilesChange}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={loading}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-2xl"
+            >
+              + Add Images
+            </button>
           </div>
 
           {/* Top Seller */}
@@ -260,10 +320,10 @@ export default function CreateProduct() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg font-semibold text-white transition ${
+            className={`w-full py-4 rounded-2xl font-extrabold text-white transition ${
               loading
                 ? "bg-green-400 cursor-not-allowed"
-                : "bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300"
+                : "bg-green-600 hover:bg-green-700"
             }`}
           >
             {loading ? "Creating..." : "Create Product"}
@@ -280,20 +340,6 @@ export default function CreateProduct() {
             transition={{ duration: 0.3 }}
             className="fixed bottom-6 right-6 bg-green-700 text-white px-7 py-3 rounded-3xl shadow-lg flex items-center space-x-4"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
             <span>Product created successfully!</span>
           </motion.div>
         )}

@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import ScrollSection from "./components/scrollsection";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type Product = {
   id: number;
@@ -23,6 +24,7 @@ export default function HomePage() {
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -32,7 +34,11 @@ export default function HomePage() {
         const data = await res.json();
 
         if (data.products && Array.isArray(data.products)) {
-          setProducts(data.products);
+          const topSellers = data.products.filter(
+            (p: Product) => (p as any).isTopSeller === true
+          );
+
+          setProducts(topSellers);
           setError("");
         } else {
           throw new Error("Unexpected API response format");
@@ -89,7 +95,6 @@ export default function HomePage() {
 
   return (
     <main className="font-[Alegreya]">
-      {/* HERO SECTION */}
       <section className="relative w-full sm:h-140 h-100 flex items-center justify-between bg-slate-300 overflow-hidden">
         <div className="absolute inset-0 sm:w-230 w-190 sm:h-140 h-100">
           <Image
@@ -122,7 +127,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* AVAILABLE AT */}
       <section className="py-10 text-center">
         <h2 className="sm:text-4xl text-3xl font-extrabold text-emerald-900">
           Available At
@@ -131,14 +135,13 @@ export default function HomePage() {
           Find Coco Khmer at these trusted retailers across Cambodia.
         </p>
         <ScrollSection />
-        <Link href="/where-to-find">
+        <Link href="/whereToFind">
           <button className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300 mt-6 cursor-pointer">
             Find Us At
           </button>
         </Link>
       </section>
 
-      {/* NEW PRODUCTS SECTION */}
       <section className="py-16 px-6 md:px-20 bg-gray-50 text-center relative">
         <h2 className="sm:text-4xl text-3xl font-extrabold text-emerald-900">
           Get to Know Our Products
@@ -199,7 +202,6 @@ export default function HomePage() {
         </Link>
       </section>
 
-      {/* DISCOVER SECTION */}
       <section className="px-6 md:px-40 bg-slate-300 py-10">
         <h2 className="sm:text-4xl text-3xl font-extrabold text-emerald-900 text-center">
           Discover the Perfect Touch — for You and Your Space
@@ -233,10 +235,15 @@ export default function HomePage() {
                     natural beauty and leave you feeling confident in your own
                     glow.
                   </p>
-                  <Link href="/">
-                    <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">
-                      Learn More
-                    </button>
+                  <Link
+                    href={{
+                      pathname: "/product",
+                      query: { category: "Skin Care" },
+                      hash: "products",
+                    }}
+                    className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300"
+                  >
+                    Learn More
                   </Link>
                 </div>
               </div>
@@ -258,10 +265,15 @@ export default function HomePage() {
                     freshness, our products offer a safe, natural way to enhance
                     any space.
                   </p>
-                  <Link href="/">
-                    <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300">
-                      Learn More
-                    </button>
+                  <Link
+                    href={{
+                      pathname: "/product",
+                      query: { category: "Fragrances" },
+                      hash: "products",
+                    }}
+                    className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300"
+                  >
+                    Learn More
                   </Link>
                 </div>
               </div>
@@ -279,7 +291,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WHY COCO KHMER SECTION */}
       <section className="py-10 bg-emerald-900">
         <div className="w-full text-center mb-10">
           <h2 className="sm:text-4xl text-3xl font-extrabold text-white">

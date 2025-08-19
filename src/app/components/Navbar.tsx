@@ -11,7 +11,6 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  // ✅ Hide navbar on all /admin routes
   if (pathname.startsWith("/admin")) {
     return null;
   }
@@ -20,8 +19,8 @@ export default function Navbar() {
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
     { href: "/product", label: "Product" },
-    { href: "/contact", label: "Contact" },
     { href: "/whereToFind", label: "Where To Find" },
+    { href: "/contact", label: "Contact" },
   ];
 
   const isActive = (href: string) => pathname === href;

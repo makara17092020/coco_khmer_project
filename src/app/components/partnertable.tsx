@@ -121,7 +121,6 @@ export default function PartnershipsTable() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-xl p-8">
-        {/* Search + Filter + Add */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <input
             type="text"
@@ -157,13 +156,11 @@ export default function PartnershipsTable() {
           </button>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-md">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-green-100 text-green-900 font-semibold">
               <tr>
                 <th className="px-4 py-3 text-left">Image</th>
-                <th className="px-4 py-3 text-left">ID</th>
                 <th className="px-6 py-3 text-left">Name</th>
                 <th className="px-6 py-3 text-left">Category Partnership</th>
                 <th className="px-6 py-3 text-left">Created</th>
@@ -194,7 +191,6 @@ export default function PartnershipsTable() {
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4">{id}</td>
                       <td className="px-6 py-4 font-medium">{name || "—"}</td>
                       <td className="px-6 py-4">
                         {categoriesPartnership.find(

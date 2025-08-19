@@ -7,7 +7,7 @@ export async function GET() {
       orderBy: { id: "asc" },
     });
     if (categories.length === 0) {
-      const defaultCategories = ["Mart", "Phamarcy"];
+      const defaultCategories = ["Mart", "Pharmacy"];
       const createdCategories = await Promise.all(
         defaultCategories.map((name) =>
           prisma.categoryPartnership.create({ data: { name } })

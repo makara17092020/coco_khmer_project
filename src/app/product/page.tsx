@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import CategoryFilter from "../components/CategoryFilter"; // adjust path
 
 interface Product {
@@ -15,9 +16,18 @@ interface Product {
 }
 
 export default function ProductPage() {
+  const searchParams = useSearchParams();
+  const categoryFromQuery = searchParams.get("category");
+
   const [activeCategory, setActiveCategory] = useState("All Products");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (categoryFromQuery) {
+      setActiveCategory(categoryFromQuery);
+    }
+  }, [categoryFromQuery]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -43,7 +53,6 @@ export default function ProductPage() {
 
   return (
     <main className="font-sans">
-      {/* Hero Section */}
       <section className="relative w-full sm:h-[560px] h-[400px] flex items-center justify-between bg-slate-300 overflow-hidden">
         <div className="absolute inset-0">
           <Image
@@ -75,14 +84,12 @@ export default function ProductPage() {
         </div>
       </section>
 
-      {/* Category Filter */}
-      <CategoryFilter
-        activeCategory={activeCategory}
-        setActiveCategory={setActiveCategory}
-      />
+      <section id="products" className="pb-8 px-4 bg-white">
+        <CategoryFilter
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+        />
 
-      {/* Product Grid */}
-      <section className="py-8 px-4 bg-white">
         {loading ? (
           <p className="text-center text-gray-500">Loading products...</p>
         ) : filteredProducts.length === 0 ? (
@@ -99,15 +106,16 @@ export default function ProductPage() {
   );
 }
 
-// Product Card Component
 function ProductCard({ product }: { product: Product }) {
   const imageUrl = product.images[0] || "/images/placeholder.jpg";
+  const heightMap: Record<"small" | "medium" | "large", string> = {
+    small: "h-40",
+    medium: "h-60",
+    large: "h-80",
+  };
 
-  // Fixed TypeScript type for sizeClass
   const sizeClass: "small" | "medium" | "large" = "medium";
-
-  const heightClass =
-    sizeClass === "small" ? "h-40" : sizeClass === "medium" ? "h-60" : "h-80";
+  const heightClass = heightMap[sizeClass];
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300">

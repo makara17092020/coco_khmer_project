@@ -23,6 +23,9 @@ export default function ProductPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Modal State
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
   useEffect(() => {
     if (categoryFromQuery) {
       setActiveCategory(categoryFromQuery);
@@ -53,6 +56,7 @@ export default function ProductPage() {
 
   return (
     <main className="font-sans">
+      {/* Hero Section */}
       <section className="relative w-full sm:h-[560px] h-[400px] flex items-center justify-between bg-slate-300 overflow-hidden">
         <div className="absolute inset-0">
           <Image
@@ -61,7 +65,7 @@ export default function ProductPage() {
             fill
             className="object-cover"
             priority
-            quality={100} // ensures max clarity
+            quality={100}
           />
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
@@ -84,6 +88,7 @@ export default function ProductPage() {
         </div>
       </section>
 
+      {/* Products */}
       <section id="products" className="pb-8 px-4 bg-white">
         <CategoryFilter
           activeCategory={activeCategory}
@@ -97,16 +102,96 @@ export default function ProductPage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 max-w-6xl mx-auto">
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                onReadMore={() => setSelectedProduct(product)}
+              />
             ))}
           </div>
         )}
       </section>
+
+      {/* Modal for Product Details */}
+      {selectedProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-white rounded-xl shadow-lg max-w-5xl w-full p-6 relative">
+            {/* Close Button */}
+            <button
+              className="absolute top-4 right-4 text-gray-600 hover:text-black"
+              onClick={() => setSelectedProduct(null)}
+            >
+              ✕
+            </button>
+
+            <div className="grid md:grid-cols-2 gap-10">
+              {/* Left: Main Product Image */}
+              <div>
+                <div className="w-full max-w-sm mx-auto h-80 rounded-xl overflow-hidden shadow-lg bg-white flex items-center justify-center">
+                  <Image
+                    src={selectedProduct.images[0] || "/images/placeholder.jpg"}
+                    alt={selectedProduct.name}
+                    width={280}
+                    height={280}
+                    className="object-contain"
+                  />
+                </div>
+
+                <div className="flex gap-4 mt-4 ml-5">
+                  {selectedProduct.images.slice(1, 4).map((img, idx) => (
+                    <div
+                      key={idx}
+                      className="relative w-16 h-16 rounded overflow-hidden shadow"
+                    >
+                      <Image
+                        src={img}
+                        alt={`Thumb ${idx}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right: Product Description */}
+              <div className="text-gray-800">
+                <h2 className="text-2xl font-bold text-green-800 mb-4">
+                  {selectedProduct.name}
+                </h2>
+                <p className="mb-4">{selectedProduct.desc}</p>
+
+                <h3 className="text-green-800 font-semibold mb-2">Category:</h3>
+                <p className="mb-4">{selectedProduct.category.name}</p>
+
+                <h3 className="text-green-800 font-semibold mb-2">Price:</h3>
+                <p className="mb-4">${selectedProduct.price}</p>
+
+                <h3 className="text-green-800 font-semibold mb-2">
+                  Highlights:
+                </h3>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Cold-Pressed</li>
+                  <li>Multipurpose Use</li>
+                  <li>Handcrafted in Cambodia</li>
+                  <li>Petroleum-Free / Paraben-Free</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
 
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({
+  product,
+  onReadMore,
+}: {
+  product: Product;
+  onReadMore: () => void;
+}) {
   const imageUrl = product.images[0] || "/images/placeholder.jpg";
   const heightMap: Record<"small" | "medium" | "large", string> = {
     small: "h-40",
@@ -135,7 +220,10 @@ function ProductCard({ product }: { product: Product }) {
       <p className="text-xs text-gray-400 mt-1">
         Category: {product.category.name}
       </p>
-      <button className="mt-3 px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-800 transition">
+      <button
+        onClick={onReadMore}
+        className="mt-3 px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-800 transition"
+      >
         Read More
       </button>
     </div>

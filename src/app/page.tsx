@@ -150,7 +150,7 @@ export default function HomePage() {
 
         {!loading && !error && (
           <div
-            className="mt-12 overflow-x-auto flex gap-6 snap-x snap-mandatory scrollbar-hide scroll-smooth px-10 cursor-grab active:cursor-grabbing"
+            className="p-10 mt-12 overflow-x-auto overflow-y-hidden flex gap-6 snap-x snap-mandatory scrollbar-hide scroll-smooth px-10 cursor-grab active:cursor-grabbing"
             ref={scrollRef}
             onMouseDown={onMouseDown}
             onMouseLeave={onMouseLeave}

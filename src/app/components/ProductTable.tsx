@@ -9,7 +9,7 @@ const ITEMS_PER_PAGE = 10;
 type Product = {
   id: number;
   name: string;
-  size: string[]; // updated from number
+  size: string[]; // updated from number TODO: change size to weight
   createdAt: string;
   images?: string[];
   desc?: string;
@@ -219,7 +219,7 @@ export default function ProductsTable() {
                 <th className="px-4 py-3 text-left">Image</th>
                 <th className="px-6 py-3 text-left">Name</th>
                 <th className="px-6 py-3 text-left max-w-xs">Description</th>
-                <th className="px-6 py-3 text-left">Size</th>
+                <th className="px-6 py-3 text-left">Weight</th>
                 <th className="px-6 py-3 text-left">Created</th>
                 <th className="px-6 py-3 text-left">TopSeller</th>
                 <th className="px-6 py-3 text-left">Actions</th>

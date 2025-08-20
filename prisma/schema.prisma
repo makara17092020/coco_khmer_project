@@ -60,3 +60,11 @@ model CategoryPartnership {
   name          String
   partnerships  Partnership[] 
 }
+model contact {
+  id            Int            @id @default(autoincrement()) 
+  fullName String
+  email String
+  message String
+  createdAt DateTime @default(now())
+  isRead    Boolean  @default(false)
+}

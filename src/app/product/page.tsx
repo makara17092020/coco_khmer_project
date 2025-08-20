@@ -9,7 +9,7 @@ interface Product {
   id: number;
   name: string;
   desc: string;
-  price: number;
+  weight: number | string | string[]; // maps from API `size`
   category: { id: number; name: string };
   images: string[];
   isTopSeller: boolean;
@@ -38,7 +38,14 @@ export default function ProductPage() {
         const res = await fetch("http://localhost:3000/api/product");
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
-        setProducts(data.products);
+
+        // Map size -> weight
+        const productsWithWeight = data.products.map((p: any) => ({
+          ...p,
+          weight: p.size,
+        }));
+
+        setProducts(productsWithWeight);
       } catch (err) {
         console.error(err);
       } finally {
@@ -164,8 +171,8 @@ export default function ProductPage() {
                 <h3 className="text-green-800 font-semibold mb-2">Category:</h3>
                 <p className="mb-4">{selectedProduct.category.name}</p>
 
-                <h3 className="text-green-800 font-semibold mb-2">Price:</h3>
-                <p className="mb-4">${selectedProduct.price}</p>
+                <h3 className="text-green-800 font-semibold mb-2">Weight:</h3>
+                <p className="mb-4">{selectedProduct.weight}</p>
 
                 <h3 className="text-green-800 font-semibold mb-2">
                   Highlights:
@@ -216,7 +223,7 @@ function ProductCard({
       </div>
       <h3 className="mt-4 font-semibold text-gray-800">{product.name}</h3>
       <p className="text-sm text-gray-500 mt-1">{product.desc}</p>
-      <p className="text-xs text-gray-400 mt-1">Price: ${product.price}</p>
+      <p className="text-xs text-gray-400 mt-1">Weight: {product.weight}</p>
       <p className="text-xs text-gray-400 mt-1">
         Category: {product.category.name}
       </p>

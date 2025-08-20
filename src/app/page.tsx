@@ -6,15 +6,18 @@ import ScrollSection from "./components/scrollsection";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-type Product = {
+interface Product {
   id: number;
   name: string;
-  price: number;
-  categoryId: number;
   desc: string;
   images: string[];
-  createdAt: string;
-};
+  isTopSeller: boolean;
+  weight: string | string[] | number; // maps to your API size
+  category: {
+    id: number;
+    name: string;
+  };
+}
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -25,6 +28,7 @@ export default function HomePage() {
   const startX = useRef(0);
   const scrollLeft = useRef(0);
   const router = useRouter();
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -34,11 +38,18 @@ export default function HomePage() {
         const data = await res.json();
 
         if (data.products && Array.isArray(data.products)) {
-          const topSellers = data.products.filter(
+          // Map API size -> weight on each product
+          const productsWithWeight = data.products.map((p: any) => ({
+            ...p,
+            weight: p.size, // just add weight
+          }));
+
+          // Keep your top seller logic unchanged
+          const topSellers = productsWithWeight.filter(
             (p: Product) => (p as any).isTopSeller === true
           );
 
-          setProducts(topSellers);
+          setProducts(topSellers); // your original code only shows top sellers
           setError("");
         } else {
           throw new Error("Unexpected API response format");
@@ -153,7 +164,7 @@ export default function HomePage() {
 
         {!loading && !error && (
           <div
-            className="p-10 mt-12 overflow-x-auto overflow-y-hidden flex gap-6 snap-x snap-mandatory scrollbar-hide scroll-smooth px-10 cursor-grab active:cursor-grabbing"
+            className="p-10 overflow-x-auto overflow-y-hidden flex gap-6 snap-x snap-mandatory scrollbar-hide scroll-smooth px-10 cursor-grab active:cursor-grabbing"
             ref={scrollRef}
             onMouseDown={onMouseDown}
             onMouseLeave={onMouseLeave}
@@ -164,32 +175,11 @@ export default function HomePage() {
             onTouchEnd={onTouchEnd}
           >
             {products.map((product) => (
-              <div
-                key={product.id}
-                className="snap-center shrink-0 w-72 bg-white rounded-2xl shadow-md overflow-hidden hover:scale-105 transition-transform duration-300"
-              >
-                <div className="relative w-full h-64">
-                  <Image
-                    src={
-                      product.images && product.images.length > 0
-                        ? product.images[0]
-                        : "/images/default.jpg"
-                    }
-                    alt={product.name || "Product"}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-6 text-left">
-                  <h3 className="text-xl font-bold text-emerald-900">
-                    {product.name}
-                  </h3>
-                  <p className="text-gray-600 mt-2">
-                    {product.desc
-                      ? product.desc.slice(0, 100)
-                      : "No description available."}
-                  </p>
-                </div>
+              <div key={product.id} className="snap-center shrink-0 text-start">
+                <ProductCard
+                  product={product}
+                  onReadMore={() => setSelectedProduct(product)}
+                />
               </div>
             ))}
           </div>
@@ -200,6 +190,79 @@ export default function HomePage() {
             Learn More
           </button>
         </Link>
+
+        {/* Modal for Product Details */}
+        {selectedProduct && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+            <div className="bg-white rounded-xl shadow-lg max-w-5xl w-full p-6 relative">
+              <button
+                className="absolute top-4 right-4 text-gray-600 hover:text-black"
+                onClick={() => setSelectedProduct(null)}
+              >
+                ✕
+              </button>
+
+              <div className="grid md:grid-cols-2 gap-10">
+                {/* Left: Main Product Image */}
+                <div>
+                  <div className="w-full max-w-sm mx-auto h-80 rounded-xl overflow-hidden shadow-lg bg-white flex items-center justify-center">
+                    <Image
+                      src={
+                        selectedProduct.images[0] || "/images/placeholder.jpg"
+                      }
+                      alt={selectedProduct.name}
+                      width={280}
+                      height={280}
+                      className="object-contain"
+                    />
+                  </div>
+
+                  <div className="flex gap-4 mt-4 ml-5">
+                    {selectedProduct.images.slice(1, 4).map((img, idx) => (
+                      <div
+                        key={idx}
+                        className="relative w-16 h-16 rounded overflow-hidden shadow"
+                      >
+                        <Image
+                          src={img}
+                          alt={`Thumb ${idx}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right: Product Description */}
+                <div className=" text-start text-gray-800">
+                  <h2 className="text-2xl font-bold text-green-800 mb-4">
+                    {selectedProduct.name}
+                  </h2>
+                  <p className="mb-4">{selectedProduct.desc}</p>
+
+                  <h3 className="text-green-800 font-semibold mb-2">
+                    Category:
+                  </h3>
+                  <p className="mb-4">{selectedProduct.category.name}</p>
+
+                  <h3 className="text-green-800 font-semibold mb-2">Weight:</h3>
+                  <p className="mb-4">{selectedProduct.weight}</p>
+
+                  <h3 className="text-green-800 font-semibold mb-2">
+                    Highlights:
+                  </h3>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>Cold-Pressed</li>
+                    <li>Multipurpose Use</li>
+                    <li>Handcrafted in Cambodia</li>
+                    <li>Petroleum-Free / Paraben-Free</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="px-6 md:px-40 bg-slate-300 py-10">
@@ -329,5 +392,50 @@ export default function HomePage() {
         </div>
       </section>
     </main>
+  );
+}
+
+function ProductCard({
+  product,
+  onReadMore,
+}: {
+  product: Product;
+  onReadMore: () => void;
+}) {
+  const imageUrl = product.images[0] || "/images/placeholder.jpg";
+  const heightMap: Record<"small" | "medium" | "large", string> = {
+    small: "h-40",
+    medium: "h-60",
+    large: "h-80",
+  };
+
+  const sizeClass: "small" | "medium" | "large" = "medium";
+  const heightClass = heightMap[sizeClass];
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300 w-85">
+      <div
+        className={`relative w-full ${heightClass} rounded-md overflow-hidden`}
+      >
+        <Image
+          src={imageUrl}
+          alt={product.name}
+          fill
+          className="object-cover"
+        />
+      </div>
+      <h3 className="mt-4 font-semibold text-gray-800">{product.name}</h3>
+      <p className="text-sm text-gray-500 mt-1">{product.desc}</p>
+      <p className="text-xs text-gray-400 mt-1">Weight: {product.weight}</p>
+      <p className="text-xs text-gray-400 mt-1">
+        Category: {product.category.name}
+      </p>
+      <button
+        onClick={onReadMore}
+        className="mt-3 px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-800 transition"
+      >
+        Read More
+      </button>
+    </div>
   );
 }

@@ -6,10 +6,11 @@ const prisma = new PrismaClient();
 // GET product by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const productId = parseInt(params.id);
+    const { id } = context.params;
+    const productId = parseInt(id);
     const product = await prisma.product.findUnique({
       where: { id: productId },
       include: { category: true },

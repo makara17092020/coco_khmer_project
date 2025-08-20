@@ -180,7 +180,7 @@ export default function ContactsTable() {
                     <tr
                       key={id}
                       className={`hover:bg-green-50 transition ${
-                        isRead === false ? "bg-yellow-50" : ""
+                        isRead === false ? "bg-white" : ""
                       }`}
                     >
                       <td className="ps-4 py-4 font-medium">{fullName}</td>

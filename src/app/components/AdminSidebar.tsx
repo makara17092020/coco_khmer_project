@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Package, Handshake } from "lucide-react";
+import { Package, Handshake,MessageSquare } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
@@ -36,6 +36,13 @@ export default function Sidebar() {
           >
             <Handshake className="w-5 h-5" />
             <span className="text-sm font-medium">Partnerships</span>
+          </Link>
+          <Link
+            href="/admin/contact"
+            className={linkClasses("/admin/contact")}
+          >
+            <MessageSquare className="w-5 h-5" />
+            <span className="text-sm font-medium">Contact</span>
           </Link>
         </nav>
       </div>

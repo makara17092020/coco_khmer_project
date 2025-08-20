@@ -1,12 +1,38 @@
-// coco_khmer/app/api/contact/route.ts
 import { NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
-export async function POST(request: Request) {
-  const body = await request.json();
-  const { name, email, message } = body;
+const prisma = new PrismaClient();
 
-  // You could save to DB or send an email here
-  console.log("📩 Contact form submitted:", { name, email, message });
+export async function GET() {
+  try {
+    const contacts = await prisma.contact.findMany({
+      orderBy: { createdAt: "desc" }, // newest first
+    });
+    return NextResponse.json(contacts);
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Failed to fetch contacts", error },
+      { status: 500 }
+    );
+  }
+}
 
-  return NextResponse.json({ success: true, message: "Message received!" });
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const contact = await prisma.contact.create({
+      data: {
+        fullName: body.fullName,
+        email: body.email,
+        message: body.message,
+         isRead: false,
+      },
+    });
+    return NextResponse.json(contact, { status: 201 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Failed to create contact", error },
+      { status: 500 }
+    );
+  }
 }

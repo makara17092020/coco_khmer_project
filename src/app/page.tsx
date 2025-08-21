@@ -109,14 +109,15 @@ export default function HomePage() {
     <main className="font-[Alegreya]">
       {/* Hero Section */}
       <section className="relative w-full sm:h-140 h-100 flex items-center justify-between bg-slate-300 overflow-hidden">
-        <div className="absolute inset-0 sm:w-230 w-190 sm:h-140 h-100">
-          <Image
-            src="/images/home1.jpg"
-            alt="Coco Khmer Hero"
-            fill
-            className="object-cover object-left"
-            priority
-          />
+        <div className="absolute sm:w-180 w-190 sm:h-170 h-150">
+        <video
+        className="absolute top-0 left-0 w-full h-full object-cover"
+        src="/images/videoh herosetion.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+      />
         </div>
         <div className="relative z-20 ml-auto w-full max-w-xl p-20">
           <p className="text-sm md:text-base sm:text-emerald-900 text-white font-medium mb-2 uppercase tracking-wide">

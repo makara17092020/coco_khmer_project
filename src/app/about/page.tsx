@@ -83,16 +83,16 @@ export default function NagaBalmPromo() {
         {/* Hero Section */}
         <section className="relative w-full sm:h-[45rem] h-[20rem] flex items-center overflow-hidden">
           <div className="absolute inset-0 -z-10">
-            <Image src="/images/image.JPG" alt="Coco Khmer Hero" fill className="object-cover" priority />
+            <Image src="/images/hero.jpg" alt="Coco Khmer Hero" fill className="object-cover" priority />
           </div>
           <div className="absolute inset-0 bg-black/40 -z-0"></div>
           <div className="relative z-10 w-full max-w-2xl p-10 md:p-20 text-left">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6">CAMBODIA'S TOPICAL PAIN RELIEF.</h1>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6">From Coconut to Care — Empowering Lives, Naturally.</h1>
             <p className="text-sm md:text-base text-white font-medium mb-4 leading-relaxed">
-              Lovingly handcrafted at scale in Cambodia, Naga Balm is a line of all natural, effective, and safe pain relievers expertly formulated with International manufacturing standards to deliver a smooth, non-greasy, non-irritating sensation to you and your loved ones.
+              Founded as a social enterprise, CoCo Khmer empowers communities through ethical employment and creates clean, handcrafted coconut-based skincare rooted in tradition and care.
             </p>
             <button className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-10 py-4 rounded-xl shadow-md transition duration-300">
-              Continue Our Story
+              Continue with Our Story
             </button>
           </div>
         </section>
@@ -103,12 +103,11 @@ export default function NagaBalmPromo() {
             <div className="max-w-2xl">
               <h1 className="text-4xl font-extrabold text-emerald-900 mb-6">OUR STORY</h1>
               <p className="text-lg mb-4">
-                Founded as a social enterprise, CoCo Khmer empowers communities through ethical employment and creates clean, handcrafted coconut-based skincare rooted in tradition and care.
-              </p>
+               CoCo Khmer began in 2013, inspired by the realization that while coconut oil has long been valued in Cambodian tradition, there was no locally produced, high-quality option available. People deserved a choice—one that honored heritage while introducing modern, ethical, and sustainable practices.              </p>
             </div>
           </div>
           <div className="relative h-64 md:h-[500px]">
-            <Image src="/images/DSCF1026.JPG" alt="Pouring candle" fill className="object-cover" quality={100} priority />
+            <Image src="/images/00.jpg" alt="Pouring candle" fill className="object-cover" quality={100} priority />
             <div className="absolute inset-0 bg-black/40 md:bg-transparent"></div>
           </div>
         </div>

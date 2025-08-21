@@ -282,7 +282,7 @@ export default function HomePage() {
             <div className="relative w-full min-h-[500px] order-2 md:order-1">
               {" "}
               <Image
-                src="/images/bodycare.avif"
+                src="/images/facecare.avif"
                 alt="Face care"
                 fill
                 className="object-cover"
@@ -328,9 +328,13 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
             {" "}
             <div className="flex items-center ">
+<<<<<<< HEAD
               {" "}
               <div className="w-full h-full bg-[url('/images/orange.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
                 {" "}
+=======
+              <div className="w-full h-full bg-[url('/images/assestss.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
+>>>>>>> home
                 <div className="bg-orange-600 p-6 md:p-10 text-white shadow-md">
                   {" "}
                   <h3 className="sm:text-3xl font-extrabold text-2xl">
@@ -364,7 +368,7 @@ export default function HomePage() {
             <div className="relative w-full min-h-[500px] ">
               {" "}
               <Image
-                src="/images/facecare.avif"
+                src="/images/REED-Diffuser-1.jpg"
                 alt="Face care"
                 fill
                 className="object-cover"

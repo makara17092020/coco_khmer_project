@@ -7,64 +7,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-enum Role {
-USER
-ADMIN
-MODERATOR // optional, add/remove as needed
-}
-
 model User {
-id Int @id @default(autoincrement())
-name String
-email String @unique
-password String
-avatar String
-role Role @default(USER) // 👈 Add this line
-createdAt DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  avatar    String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
 }
 
 model Category {
   id        Int       @id @default(autoincrement())
   name      String
-  products  Product[]
   createdAt DateTime  @default(now())
+  products  Product[]
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
-  size        String[]  @default([])       // array of sizes
   categoryId  Int
   desc        String
-  isTopSeller Boolean   @default(false)
-  images      String[]  @default([])       // array of image URLs
+  createdAt   DateTime @default(now())
+  images      String[] @default([])
+  isTopSeller Boolean  @default(false)
+  size        String[] @default([])
+  updatedAt   DateTime @updatedAt
   category    Category @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt          // automatically update on save
 }
 
-
-
 model Partnership {
-  id                       Int                     @id @default(autoincrement())
-  name                     String
-  image                    String
-  categoryPartnershipId    Int
-  categoryPartnership      CategoryPartnership     @relation(fields: [categoryPartnershipId], references: [id])
-  createdAt DateTime @default(now())
+  id                    Int                 @id @default(autoincrement())
+  name                  String
+  image                 String
+  categoryPartnershipId Int
+  createdAt             DateTime            @default(now())
+  categoryPartnership   CategoryPartnership @relation(fields: [categoryPartnershipId], references: [id])
 }
 
 model CategoryPartnership {
-  id            Int            @id @default(autoincrement())
-  name          String
-  partnerships  Partnership[] 
+  id           Int           @id @default(autoincrement())
+  name         String
+  partnerships Partnership[]
 }
+
 model contact {
-  id            Int            @id @default(autoincrement()) 
-  fullName String
-  email String
-  message String
+  id        Int      @id @default(autoincrement())
+  fullName  String
+  email     String
+  message   String
   createdAt DateTime @default(now())
   isRead    Boolean  @default(false)
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
 }

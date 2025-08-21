@@ -12,7 +12,7 @@ interface Product {
   desc: string;
   images: string[];
   isTopSeller: boolean;
-  weight: string | string[] | number; // maps to your API size
+  weight: string | string[] | number;
   category: {
     id: number;
     name: string;
@@ -27,9 +27,12 @@ export default function HomePage() {
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
-  const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [mainImage, setMainImage] = useState<string>("/images/placeholder.jpg");
 
+  const router = useRouter();
+
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -38,18 +41,20 @@ export default function HomePage() {
         const data = await res.json();
 
         if (data.products && Array.isArray(data.products)) {
-          // Map API size -> weight on each product
           const productsWithWeight = data.products.map((p: any) => ({
             ...p,
-            weight: p.size, // just add weight
+            weight: p.size || "N/A",
+            images:
+              p.images && p.images.length
+                ? p.images
+                : ["/images/placeholder.jpg"],
           }));
 
-          // Keep your top seller logic unchanged
           const topSellers = productsWithWeight.filter(
             (p: Product) => (p as any).isTopSeller === true
           );
 
-          setProducts(topSellers); // your original code only shows top sellers
+          setProducts(topSellers);
           setError("");
         } else {
           throw new Error("Unexpected API response format");
@@ -65,6 +70,14 @@ export default function HomePage() {
     fetchProducts();
   }, []);
 
+  // Update main image when modal opens
+  useEffect(() => {
+    if (selectedProduct) {
+      setMainImage(selectedProduct.images?.[0] || "/images/placeholder.jpg");
+    }
+  }, [selectedProduct]);
+
+  // Horizontal scroll handlers
   const onMouseDown = (e: React.MouseEvent) => {
     isDragging.current = true;
     startX.current = e.pageX - (scrollRef.current?.offsetLeft || 0);
@@ -106,6 +119,7 @@ export default function HomePage() {
 
   return (
     <main className="font-[Alegreya]">
+      {/* Hero Section */}
       <section className="relative w-full sm:h-140 h-100 flex items-center justify-between bg-slate-300 overflow-hidden">
         <div className="absolute inset-0 sm:w-230 w-190 sm:h-140 h-100">
           <Image
@@ -138,6 +152,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Available At Section */}
       <section className="py-10 text-center">
         <h2 className="sm:text-4xl text-3xl font-extrabold text-emerald-900">
           Available At
@@ -153,6 +168,7 @@ export default function HomePage() {
         </Link>
       </section>
 
+      {/* Best Seller Section */}
       <section className="py-16 px-6 md:px-20 bg-gray-50 text-center relative">
         <h2 className="sm:text-4xl text-3xl font-extrabold text-emerald-900">
           Get to Know Our Products
@@ -191,7 +207,7 @@ export default function HomePage() {
           </button>
         </Link>
 
-        {/* Modal for Product Details */}
+        {/* Modal */}
         {selectedProduct && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
             <div className="bg-white rounded-xl shadow-lg max-w-5xl w-full p-6 relative">
@@ -203,28 +219,28 @@ export default function HomePage() {
               </button>
 
               <div className="grid md:grid-cols-2 gap-10">
-                {/* Left: Main Product Image */}
+                {/* Left Image */}
                 <div>
-                  <div className="w-full max-w-sm mx-auto h-80 rounded-xl overflow-hidden shadow-lg bg-white flex items-center justify-center">
+                  <div className="w-full max-w-sm mx-auto h-80 relative rounded-xl overflow-hidden shadow-lg bg-white flex items-center justify-center">
                     <Image
-                      src={
-                        selectedProduct.images[0] || "/images/placeholder.jpg"
-                      }
-                      alt={selectedProduct.name}
-                      width={280}
-                      height={280}
+                      src={mainImage}
+                      alt={selectedProduct.name || "Product Image"}
+                      fill
                       className="object-contain"
                     />
                   </div>
 
                   <div className="flex gap-4 mt-4 ml-5">
-                    {selectedProduct.images.slice(1, 4).map((img, idx) => (
+                    {selectedProduct.images?.map((img, idx) => (
                       <div
                         key={idx}
-                        className="relative w-16 h-16 rounded overflow-hidden shadow"
+                        className="relative w-16 h-16 rounded overflow-hidden shadow cursor-pointer flex-shrink-0"
+                        onClick={() =>
+                          setMainImage(img || "/images/placeholder.jpg")
+                        }
                       >
                         <Image
-                          src={img}
+                          src={img || "/images/placeholder.jpg"}
                           alt={`Thumb ${idx}`}
                           fill
                           className="object-cover"
@@ -234,21 +250,22 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Right: Product Description */}
-                <div className=" text-start text-gray-800">
+                {/* Right Description */}
+                <div className="text-start text-gray-800">
                   <h2 className="text-2xl font-bold text-green-800 mb-4">
-                    {selectedProduct.name}
+                    {selectedProduct.name || "Product Name"}
                   </h2>
-                  <p className="mb-4">{selectedProduct.desc}</p>
-
+                  <p className="mb-4 line-clamp-2">
+                    {selectedProduct.desc || "No description"}
+                  </p>
                   <h3 className="text-green-800 font-semibold mb-2">
                     Category:
                   </h3>
-                  <p className="mb-4">{selectedProduct.category.name}</p>
-
+                  <p className="mb-4">
+                    {selectedProduct.category?.name || "N/A"}
+                  </p>
                   <h3 className="text-green-800 font-semibold mb-2">Weight:</h3>
-                  <p className="mb-4">{selectedProduct.weight}</p>
-
+                  <p className="mb-4">{selectedProduct.weight || "N/A"}</p>
                   <h3 className="text-green-800 font-semibold mb-2">
                     Highlights:
                   </h3>
@@ -265,6 +282,7 @@ export default function HomePage() {
         )}
       </section>
 
+      {/* Skincare & Room Care Sections */}
       <section className="px-6 md:px-40 bg-slate-300 py-10">
         <h2 className="sm:text-4xl text-3xl font-extrabold text-emerald-900 text-center">
           Discover the Perfect Touch — for You and Your Space
@@ -312,6 +330,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
             <div className="flex items-center">
               <div className="w-full h-full bg-[url('/images/orange.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
@@ -354,6 +373,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Why Coco Khmer Section */}
       <section className="py-10 bg-emerald-900">
         <div className="w-full text-center mb-10">
           <h2 className="sm:text-4xl text-3xl font-extrabold text-white">
@@ -395,6 +415,7 @@ export default function HomePage() {
   );
 }
 
+// ProductCard with clickable image
 function ProductCard({
   product,
   onReadMore,
@@ -402,33 +423,39 @@ function ProductCard({
   product: Product;
   onReadMore: () => void;
 }) {
-  const imageUrl = product.images[0] || "/images/placeholder.jpg";
+  const imageUrl = product.images?.[0] || "/images/placeholder.jpg";
   const heightMap: Record<"small" | "medium" | "large", string> = {
     small: "h-40",
     medium: "h-60",
     large: "h-80",
   };
-
   const sizeClass: "small" | "medium" | "large" = "medium";
   const heightClass = heightMap[sizeClass];
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300 w-85">
       <div
-        className={`relative w-full ${heightClass} rounded-md overflow-hidden`}
+        className={`relative w-full ${heightClass} rounded-md overflow-hidden cursor-pointer`}
+        onClick={onReadMore} // click image opens modal
       >
         <Image
           src={imageUrl}
-          alt={product.name}
+          alt={product.name || "Product"}
           fill
           className="object-cover"
         />
       </div>
-      <h3 className="mt-4 font-semibold text-gray-800">{product.name}</h3>
-      <p className="text-sm text-gray-500 mt-1">{product.desc}</p>
-      <p className="text-xs text-gray-400 mt-1">Weight: {product.weight}</p>
+      <h3 className="mt-4 font-semibold text-gray-800">
+        {product.name || "Product"}
+      </h3>
+      <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+        {product.desc || "No description"}
+      </p>
       <p className="text-xs text-gray-400 mt-1">
-        Category: {product.category.name}
+        Weight: {product.weight || "N/A"}
+      </p>
+      <p className="text-xs text-gray-400 mt-1">
+        Category: {product.category?.name || "N/A"}
       </p>
       <button
         onClick={onReadMore}

@@ -55,7 +55,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Middle Column */}
           <div className="flex-1 flex  sm:flex-row gap-10">
             <div>
               <h3 className="font-bold mb-2 text-[#0C5C4C]">COMPANY</h3>

@@ -271,8 +271,8 @@ export default function HomePage() {
         </h2>
 
         <div className="py-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
-            <div className="relative w-full min-h-[500px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 items-stretch ">
+            <div className="relative w-full min-h-[500px] order-2 md:order-1">
               <Image
                 src="/images/bodycare.avif"
                 alt="Face care"
@@ -282,7 +282,7 @@ export default function HomePage() {
               />
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center order-1 md:order-2">
               <div className="bg-[url('/images/green.png')] bg-left-top bg-[length:600px_600px] p-6 md:p-11">
                 <div className="bg-white p-6 md:p-10 text-emerald-900 shadow-md">
                   <h3 className="text-2xl sm:text-3xl font-extrabold">
@@ -313,7 +313,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
-            <div className="flex items-center">
+            <div className="flex items-center ">
               <div className="w-full h-full bg-[url('/images/orange.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
                 <div className="bg-orange-600 p-6 md:p-10 text-white shadow-md">
                   <h3 className="sm:text-3xl font-extrabold text-2xl">
@@ -341,7 +341,7 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="relative w-full min-h-[500px]">
+            <div className="relative w-full min-h-[500px] ">
               <Image
                 src="/images/facecare.avif"
                 alt="Face care"

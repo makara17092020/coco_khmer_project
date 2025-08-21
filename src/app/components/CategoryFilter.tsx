@@ -49,8 +49,8 @@ export default function CategoryFilter({
             className={`px-4 py-2 rounded-full text-sm font-semibold transition
               ${
                 activeCategory === category
-                  ? "bg-red-500 text-white shadow-md"
-                  : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-100"
+                  ? "bg-[#0C5C4C] text-white shadow-md"
+                  : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-200"
               }`}
           >
             {category.toUpperCase()}

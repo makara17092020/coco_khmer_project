@@ -46,8 +46,9 @@ export default function Footer() {
               className="mb-4"
             />
             <p className="text-sm leading-relaxed text-[#0C5C4C]">
-              Coco Khmer - we blend tradition with modern innovation, delivering
-              clean pain relief solutions to soothe, relieve, and heal.
+              Coco Khmer - we blend tradition with modern innovation, <br />{" "}
+              delivering clean pain relief solutions to soothe, relieve, and
+              heal.
             </p>
             <p className="mt-3 font-bold text-sm text-[#0C5C4C]">
               MADE IN CAMBODIA
@@ -55,7 +56,7 @@ export default function Footer() {
           </div>
 
           {/* Middle Column */}
-          <div className="flex-1 flex flex-col sm:flex-row gap-10">
+          <div className="flex-1 flex  sm:flex-row gap-10">
             <div>
               <h3 className="font-bold mb-2 text-[#0C5C4C]">COMPANY</h3>
               <ul className="space-y-1 text-sm">
@@ -73,40 +74,35 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="font-bold mb-2 text-[#0C5C4C]">PRODUCTS</h3>
+              <h3 className="font-bold mb-2 text-[#0C5C4C]">CONTACT US</h3>
+              <p className="text-sm hover:text-green-700 cursor-pointer">
+                info@cocokhmer.com
+              </p>
+              <p className="text-sm hover:text-green-700 cursor-pointer">
+                +855 12 269 359
+              </p>
+              <h3 className="font-bold mt-4 mb-2 text-[#0C5C4C]">FOLLOW US</h3>
+              <div className="flex space-x-4 text-lg">
+                <a href="#" className="hover:text-blue-600">
+                  <FaFacebookF />
+                </a>
+                <a href="#" className="hover:text-pink-600">
+                  <FaInstagram />
+                </a>
+                <a href="#" className="hover:text-green-600">
+                  <FaTelegramPlane />
+                </a>
+              </div>
             </div>
-          </div>
-
-          {/* Right Column */}
-          <div className="flex-1">
-            <h3 className="font-bold mb-2 text-[#0C5C4C]">CONTACT US</h3>
-            <p className="text-sm hover:text-green-700 cursor-pointer">
-              info@cocokhmer.com
-            </p>
-            <p className="text-sm hover:text-green-700 cursor-pointer">
-              +855 12 269 359
-            </p>
-
-            <h3 className="font-bold mt-4 mb-2 text-[#0C5C4C]">FOLLOW US</h3>
-            <div className="flex space-x-4 text-lg">
-              <a href="#" className="hover:text-blue-600">
-                <FaFacebookF />
-              </a>
-              <a href="#" className="hover:text-pink-600">
-                <FaInstagram />
-              </a>
-              <a href="#" className="hover:text-green-600">
-                <FaTelegramPlane />
-              </a>
+            <div>
+              <h3 className="font-bold mb-2 text-[#0C5C4C]">VISIT US</h3>
+              <p className="text-sm leading-snug text-[#0C5C4C]">
+                Coco Khmer Co., Ltd. <br />
+                #1529, NR. 2, Chakangre Krom <br />
+                Khan Mean Chey, Phnom Penh <br />
+                Cambodia
+              </p>
             </div>
-
-            <h3 className="font-bold mt-4 mb-2 text-[#0C5C4C]">VISIT US</h3>
-            <p className="text-sm leading-snug text-[#0C5C4C]">
-              Coco Khmer Co., Ltd. <br />
-              #1529, NR. 2, Chakangre Krom <br />
-              Khan Mean Chey, Phnom Penh <br />
-              Cambodia
-            </p>
           </div>
         </div>
       </footer>

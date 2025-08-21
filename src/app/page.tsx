@@ -425,14 +425,18 @@ function ProductCard({
         />
       </div>
       <h3 className="mt-4 font-semibold text-gray-800">{product.name}</h3>
-      <p className="text-sm text-gray-500 mt-1">{product.desc}</p>
+      <p className="text-sm text-gray-500 mt-1">
+        {product.desc.length > 90
+          ? product.desc.substring(0, 90) + "..."
+          : product.desc}
+      </p>
       <p className="text-xs text-gray-400 mt-1">Weight: {product.weight}</p>
       <p className="text-xs text-gray-400 mt-1">
         Category: {product.category.name}
       </p>
       <button
         onClick={onReadMore}
-        className="mt-3 px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-800 transition"
+        className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-4 py-2 rounded-3xl shadow-md transition duration-300 mt-3"
       >
         Read More
       </button>

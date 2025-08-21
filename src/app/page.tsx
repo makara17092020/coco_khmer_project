@@ -289,8 +289,8 @@ export default function HomePage() {
         </h2>
 
         <div className="py-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
-            <div className="relative w-full min-h-[500px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 items-stretch ">
+            <div className="relative w-full min-h-[500px] order-2 md:order-1">
               <Image
                 src="/images/bodycare.avif"
                 alt="Face care"
@@ -300,7 +300,7 @@ export default function HomePage() {
               />
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center order-1 md:order-2">
               <div className="bg-[url('/images/green.png')] bg-left-top bg-[length:600px_600px] p-6 md:p-11">
                 <div className="bg-white p-6 md:p-10 text-emerald-900 shadow-md">
                   <h3 className="text-2xl sm:text-3xl font-extrabold">
@@ -332,7 +332,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
-            <div className="flex items-center">
+            <div className="flex items-center ">
               <div className="w-full h-full bg-[url('/images/orange.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
                 <div className="bg-orange-600 p-6 md:p-10 text-white shadow-md">
                   <h3 className="sm:text-3xl font-extrabold text-2xl">
@@ -360,7 +360,7 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="relative w-full min-h-[500px]">
+            <div className="relative w-full min-h-[500px] ">
               <Image
                 src="/images/facecare.avif"
                 alt="Face care"
@@ -445,12 +445,13 @@ function ProductCard({
           className="object-cover"
         />
       </div>
-      <h3 className="mt-4 font-semibold text-gray-800">
-        {product.name || "Product"}
-      </h3>
-      <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-        {product.desc || "No description"}
+      <h3 className="mt-4 font-semibold text-gray-800">{product.name}</h3>
+      <p className="text-sm text-gray-500 mt-1">
+        {product.desc.length > 90
+          ? product.desc.substring(0, 90) + "..."
+          : product.desc}
       </p>
+      <p className="text-xs text-gray-400 mt-1">Weight: {product.weight}</p>
       <p className="text-xs text-gray-400 mt-1">
         Weight: {product.weight || "N/A"}
       </p>
@@ -459,7 +460,7 @@ function ProductCard({
       </p>
       <button
         onClick={onReadMore}
-        className="mt-3 px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-800 transition"
+        className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-4 py-2 rounded-3xl shadow-md transition duration-300 mt-3"
       >
         Read More
       </button>

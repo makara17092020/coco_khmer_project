@@ -224,7 +224,7 @@ function ProductCard({
       </p>
       <button
         onClick={onReadMore}
-        className="mt-3 px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-800 transition"
+        className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-4 py-2 rounded-3xl shadow-md transition duration-300 mt-3"
       >
         Read More
       </button>

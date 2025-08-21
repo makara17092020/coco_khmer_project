@@ -67,7 +67,7 @@ export default function ProductPage() {
       <section className="relative w-full sm:h-[560px] h-[400px] flex items-center justify-between bg-slate-300 overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="/images/1.jpg"
+            src="/images/hero-prodact.jpg"
             alt="Coco Khmer Hero"
             fill
             className="object-cover"
@@ -77,21 +77,15 @@ export default function ProductPage() {
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
 
-        <div className="relative z-10 ml-auto w-full max-w-xl p-8 md:p-20 text-white">
-          <p className="text-sm md:text-base font-medium mb-2 uppercase tracking-wide">
-            Welcome to CoCo Khmer Clean Skincare
-          </p>
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6">
-            Love Being <br /> in Your Skin
+        <div className="relative w-full max-w-2xl p-8 md:p-20 text-white">
+           <h1 className="text-4xl md:text-5xl font-extrabold mb-6 ">
+             DISCOVER <br />THE ESSENCE OF COCONUT WELLNESS
           </h1>
-          <div className="flex gap-3">
-            <button className="bg-orange-600 hover:bg-orange-700 px-6 py-3 rounded-3xl font-semibold shadow-md transition duration-300">
-              Find Our Products
-            </button>
-            <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 px-6 py-3 rounded-3xl font-semibold shadow-md transition duration-300">
-              Learn More
-            </button>
-          </div>
+          <p className="text-sm md:text-base font-medium mb-2 uppercase tracking-wide">
+            Explore our thoughtfully crafted products, bringing natural care and sustainable living into your everyday life.
+          </p>
+         
+          
         </div>
       </section>
 

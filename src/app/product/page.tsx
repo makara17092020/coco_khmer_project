@@ -77,19 +77,23 @@ export default function ProductPage() {
   return (
     <main className="font-sans">
       {/* Hero Section */}
-      <section className="relative w-full sm:h-140 h-100 flex items-center justify-between bg-slate-300 overflow-hidden">
-        <div className="absolute inset-0 sm:w-230 w-190 sm:h-140 h-100">
+      <section className="relative w-full h-screen flex items-center justify-start overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
           <Image
             src="/images/hero-prodact.jpg"
             alt="Coco Khmer Hero"
             fill
-            className="object-cover object-left"
+            className="object-cover object-center"
             priority
           />
+          {/* Optional overlay for readability */}
+          <div className="absolute inset-0 bg-black/30"></div>
         </div>
 
-        <div className="relative w-full max-w-2xl p-8 md:p-20 text-white">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-6 ">
+        {/* Hero Content */}
+        <div className="relative z-20 max-w-2xl p-8 md:p-20 text-white">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-6">
             DISCOVER <br />
             THE ESSENCE OF COCONUT WELLNESS
           </h1>

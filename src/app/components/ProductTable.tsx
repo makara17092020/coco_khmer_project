@@ -305,7 +305,7 @@ export default function ProductsTable() {
                     colSpan={8}
                     className="text-center py-10 text-gray-400 italic"
                   >
-                    No products found.
+                    Loading ...
                   </td>
                 </tr>
               )}

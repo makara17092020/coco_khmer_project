@@ -110,14 +110,14 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative w-full sm:h-140 h-100 flex items-center justify-between bg-slate-300 overflow-hidden">
         <div className="absolute sm:w-180 w-190 sm:h-170 h-150">
-        <video
-        className="absolute top-0 left-0 w-full h-full object-cover"
-        src="/images/videoh herosetion.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-      />
+          <video
+            className="absolute top-0 left-0 w-full h-full object-cover"
+            src="/images/videoh herosetion.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
         </div>
         <div className="relative z-20 ml-auto w-full max-w-xl p-20">
           <p className="text-sm md:text-base sm:text-emerald-900 text-white font-medium mb-2 uppercase tracking-wide">
@@ -268,39 +268,29 @@ export default function HomePage() {
           </div>
         )}
       </section>
-      {/* Skincare & Room Care Sections */}{" "}
+      {/* Skincare & Room Care Sections */}
       <section className="px-6 md:px-40 bg-slate-300 py-10">
-        {" "}
         <h2 className="sm:text-4xl text-3xl font-extrabold text-emerald-900 text-center">
-          {" "}
-          Discover the Perfect Touch — for You and Your Space{" "}
-        </h2>{" "}
+          Discover the Perfect Touch — for You and Your Space
+        </h2>
         <div className="py-10">
-          {" "}
           <div className="grid grid-cols-1 md:grid-cols-2 items-stretch ">
-            {" "}
             <div className="relative w-full min-h-[500px] order-2 md:order-1">
-              {" "}
               <Image
                 src="/images/facecare.avif"
                 alt="Face care"
                 fill
                 className="object-cover"
                 priority
-              />{" "}
-            </div>{" "}
+              />
+            </div>
             <div className="flex items-center order-1 md:order-2">
-              {" "}
               <div className="bg-[url('/images/green.png')] bg-left-top bg-[length:600px_600px] p-6 md:p-11">
-                {" "}
                 <div className="bg-white p-6 md:p-10 text-emerald-900 shadow-md">
-                  {" "}
                   <h3 className="text-2xl sm:text-3xl font-extrabold">
-                    {" "}
-                    Skincare{" "}
-                  </h3>{" "}
+                    Skincare
+                  </h3>
                   <p className="text-lg py-3 leading-relaxed">
-                    {" "}
                     At Coco Khmer, we believe that healthy, radiant skin begins
                     with nature. Our skincare line is thoughtfully crafted using
                     safe, effective, and natural ingredients that nourish,
@@ -308,8 +298,8 @@ export default function HomePage() {
                     chemicals or toxins. Whether you’re caring for your face or
                     body, our products are designed to support your skin’s
                     natural beauty and leave you feeling confident in your own
-                    glow.{" "}
-                  </p>{" "}
+                    glow.
+                  </p>
                   <Link
                     href={{
                       pathname: "/product",
@@ -318,39 +308,28 @@ export default function HomePage() {
                     }}
                     className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300"
                   >
-                    {" "}
-                    Learn More{" "}
-                  </Link>{" "}
-                </div>{" "}
-              </div>{" "}
-            </div>{" "}
-          </div>{" "}
+                    Learn More
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
-            {" "}
             <div className="flex items-center ">
-<<<<<<< HEAD
-              {" "}
-              <div className="w-full h-full bg-[url('/images/orange.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
-                {" "}
-=======
               <div className="w-full h-full bg-[url('/images/assestss.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
->>>>>>> home
                 <div className="bg-orange-600 p-6 md:p-10 text-white shadow-md">
-                  {" "}
                   <h3 className="sm:text-3xl font-extrabold text-2xl">
-                    {" "}
-                    Fragrance & Room Care{" "}
-                  </h3>{" "}
+                    Fragrance & Room Care
+                  </h3>
                   <p className="text-lg py-3 leading-relaxed">
-                    {" "}
                     Bring harmony to your home and senses with our fragrance and
                     room care collection. Infused with pure essential oils and
                     plant-based ingredients, our sprays are designed to refresh
                     the air, uplift your mood, and create a calm, welcoming
                     atmosphere. Whether you need a relaxing moment or a burst of
                     freshness, our products offer a safe, natural way to enhance
-                    any space.{" "}
-                  </p>{" "}
+                    any space.
+                  </p>
                   <Link
                     href={{
                       pathname: "/product",
@@ -359,72 +338,60 @@ export default function HomePage() {
                     }}
                     className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300"
                   >
-                    {" "}
-                    Learn More{" "}
-                  </Link>{" "}
-                </div>{" "}
-              </div>{" "}
-            </div>{" "}
+                    Learn More
+                  </Link>
+                </div>
+              </div>
+            </div>
             <div className="relative w-full min-h-[500px] ">
-              {" "}
               <Image
                 src="/images/REED-Diffuser-1.jpg"
                 alt="Face care"
                 fill
                 className="object-cover"
                 priority
-              />{" "}
-            </div>{" "}
-          </div>{" "}
-        </div>{" "}
-      </section>{" "}
-      {/* Why Coco Khmer Section */}{" "}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* Why Coco Khmer Section */}
       <section className="py-10 bg-emerald-900">
-        {" "}
         <div className="w-full text-center mb-10">
-          {" "}
           <h2 className="sm:text-4xl text-3xl font-extrabold text-white">
-            {" "}
-            Why Coco Khmer?{" "}
-          </h2>{" "}
+            Why Coco Khmer?
+          </h2>
           <p className="text-lg py-5 leading-relaxed px-5 sm:px-70 text-white">
-            {" "}
             At Coco Khmer, we do more than create natural products — we create
             impact. Sustainability, community empowerment, and care for people
-            and planet are our core mission.{" "}
-          </p>{" "}
+            and planet are our core mission.
+          </p>
           <Link href="/product">
-            {" "}
             <button className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300 cursor-pointer">
-              {" "}
-              Learn more about our story{" "}
-            </button>{" "}
-          </Link>{" "}
-        </div>{" "}
+              Learn more about our story
+            </button>
+          </Link>
+        </div>
         <div className="flex justify-center items-center relative py-20">
-          {" "}
           <div className="relative w-200 min-h-[400px]">
-            {" "}
             <Image
               src="/images/end2.avif"
               alt="Side Left"
               fill
               className="object-cover w-full h-full"
-            />{" "}
-          </div>{" "}
+            />
+          </div>
           <div className="absolute">
-            {" "}
             <div className="relative w-100 min-h-[500px]">
-              {" "}
               <Image
                 src="/images/end.avif"
                 alt="Side Left"
                 fill
                 className="object-cover w-full h-full"
-              />{" "}
-            </div>{" "}
-          </div>{" "}
-        </div>{" "}
+              />
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   );

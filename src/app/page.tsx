@@ -143,7 +143,7 @@ export default function HomePage() {
                 Find Our Products
               </button>
             </Link>
-            <Link href="/">
+            <Link href="/about">
               <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-5 py-3 rounded-3xl shadow-md transition duration-300 cursor-pointer">
                 Learn More
               </button>
@@ -203,7 +203,7 @@ export default function HomePage() {
 
         <Link href="/product">
           <button className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-6 py-3 rounded-3xl shadow-md transition duration-300 mt-8 cursor-pointer">
-            Learn More
+            Find Our Products
           </button>
         </Link>
 
@@ -334,7 +334,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
             <div className="flex items-center ">
               <div className="w-full h-full bg-[url('/images/assestss.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
-                <div className="bg-orange-600 p-6 md:p-10 text-white shadow-md">
+                <div className="bg-gray-300 p-6 md:p-10 text-emerald-900 shadow-md">
                   <h3 className="sm:text-3xl font-extrabold text-2xl">
                     Fragrance & Room Care
                   </h3>

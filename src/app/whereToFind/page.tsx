@@ -31,29 +31,22 @@ interface Partner {
 }
 
 export default function WhereToFind() {
-  const [marts, setMarts] = useState<Partner[]>([]);
-  const [pharmacies, setPharmacies] = useState<Partner[]>([]);
-  const [loading, setLoading] = useState(true); // loading state
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPartners = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/partnership/create");
+        const response = await fetch(
+          "http://localhost:3000/api/partnership/create"
+        );
         const data: Partner[] = await response.json();
 
-        const martList = data.filter(
-          (item) => item.categoryPartnership?.name.toLowerCase() === "mart"
-        );
-        const pharmacyList = data.filter(
-          (item) => item.categoryPartnership?.name.toLowerCase() === "phamarcy"
-        );
-
-        setMarts(martList);
-        setPharmacies(pharmacyList);
+        setPartners(data); // ✅ set all directly
       } catch (error) {
         console.error("Error fetching partners:", error);
       } finally {
-        setLoading(false); // stop loading after fetch
+        setLoading(false);
       }
     };
 
@@ -62,12 +55,11 @@ export default function WhereToFind() {
 
   return (
     <div className="w-full">
-      {/* Hero Section */}
       <section
         className="relative bg-cover bg-center py-24 px-6 text-center"
-        style={{ backgroundImage: "url('/images/bgwheretofind.png')" }}
+        style={{ backgroundImage: "url('/images/green.png')" }}
       >
-        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="absolute inset-0 bg-black/80"></div>
         <div className="relative z-10">
           <motion.h1
             className="text-4xl md:text-6xl font-extrabold mb-4 text-white drop-shadow-lg"
@@ -88,7 +80,6 @@ export default function WhereToFind() {
         </div>
       </section>
 
-      {/* Logos Section */}
       <section className="py-20 px-6 md:px-40 bg-gray-50">
         {loading ? (
           <div className="text-center text-xl font-semibold text-gray-700 py-20">
@@ -96,56 +87,37 @@ export default function WhereToFind() {
           </div>
         ) : (
           <>
-            {/* Marts */}
-            {marts.length > 0 && (
+            {partners.length > 0 && (
               <>
-                <h2 className="text-2xl font-bold text-orange-600 mb-6">MARTS</h2>
-                <motion.div
-                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-6 mb-12"
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  {marts.map((item) => (
-                    <motion.div
-                      key={item.id}
-                      className="flex flex-col items-center"
-                      variants={itemVariants}
-                    >
-                      <div className="border border-orange-500 rounded-lg p-4 flex items-center justify-center w-full
-                                      transition-transform transform hover:scale-105 hover:-rotate-1 hover:shadow-xl
-                                      hover:ring-2 hover:ring-orange-400 hover:ring-opacity-50 duration-300 ease-in-out bg-white">
-                        <img src={item.image} alt={item.name} className="h-16 object-contain" />
-                      </div>
-                      <span className="mt-2 text-sm font-semibold text-gray-700 text-center">{item.name}</span>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </>
-            )}
-
-            {/* Pharmacies */}
-            {pharmacies.length > 0 && (
-              <>
-                <h2 className="text-2xl font-bold text-orange-600 mb-6">PHARMACY</h2>
+                <h2 className="text-3xl font-bold text-emerald-900 mb-6">
+                  OUR PARTNERS
+                </h2>
                 <motion.div
                   className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-6"
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
                 >
-                  {pharmacies.map((item) => (
+                  {partners.map((item) => (
                     <motion.div
                       key={item.id}
                       className="flex flex-col items-center"
                       variants={itemVariants}
                     >
-                      <div className="border border-orange-500 rounded-lg p-4 flex items-center justify-center w-full
-                                      transition-transform transform hover:scale-105 hover:-rotate-1 hover:shadow-xl
-                                      hover:ring-2 hover:ring-orange-400 hover:ring-opacity-50 duration-300 ease-in-out bg-white">
-                        <img src={item.image} alt={item.name} className="h-16 object-contain" />
+                      <div
+                        className="border border-emerald-900 rounded-lg p-4 flex items-center justify-center w-full
+                          transition-transform transform hover:scale-105 hover:-rotate-1 hover:shadow-xl
+                          hover:ring-2 hover:ring-emerald-800 hover:ring-opacity-50 duration-300 ease-in-out bg-white"
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="h-16 object-contain"
+                        />
                       </div>
-                      <span className="mt-2 text-sm font-semibold text-gray-700 text-center">{item.name}</span>
+                      <span className="mt-2 text-sm font-semibold text-gray-700 text-center">
+                        {item.name}
+                      </span>
                     </motion.div>
                   ))}
                 </motion.div>

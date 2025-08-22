@@ -98,7 +98,7 @@ export default function ContactUs() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+              className="w-full bg-orange-600 text-white font-semibold py-3 rounded-lg hover:bg-orange-500 transition disabled:opacity-50"
             >
               {loading ? "Sending..." : "Send Message"}
             </button>

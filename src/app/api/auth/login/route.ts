@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
     // Generate short-lived access token
     const accessToken = jwt.sign({ email, role: "ADMIN" }, JWT_SECRET, {
-      expiresIn: "15m",
+      expiresIn: "1d",
     });
 
     // Generate long-lived refresh token

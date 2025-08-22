@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  // Redirect to /admin if already logged in
+  // Redirect to /admin/products if already logged in
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) {
@@ -22,7 +22,6 @@ export default function LoginPage() {
     setError("");
 
     try {
-      // Call login API
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -36,11 +35,11 @@ export default function LoginPage() {
         return;
       }
 
-      // Store token & email in localStorage
-      localStorage.setItem("access_token", data.token);
+      // Store tokens and email
+      localStorage.setItem("access_token", data.accessToken);
+      localStorage.setItem("refresh_token", data.refreshToken);
       localStorage.setItem("user_email", email);
 
-      // Redirect to admin dashboard
       router.push("/admin/products");
     } catch (err) {
       console.error(err);
@@ -82,7 +81,7 @@ export default function LoginPage() {
                 value={email}
                 required
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="admin@gmail.com"
                 className="w-full px-4 py-3 rounded-md border border-gray-300 bg-white/70 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>

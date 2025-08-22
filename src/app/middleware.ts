@@ -1,41 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server'
-import jwt from 'jsonwebtoken'
+// /middleware.ts
+import { NextRequest, NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
-const SECRET = process.env.JWT_SECRET || 'super-secret'
+const JWT_SECRET = process.env.JWT_SECRET || "super-secret";
 
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl
+  const { pathname } = req.nextUrl;
 
-  const isApiRoute = pathname.startsWith('/api/')
-  const isProtected = isApiRoute && (
-    pathname.startsWith('/api/product') ||
-    pathname.startsWith('/api/category') ||
-    pathname.startsWith('/api/user')
-  )
+  // Only protect product API
+  if (!pathname.startsWith("/api/product")) return NextResponse.next();
 
-  if (!isProtected) return NextResponse.next()
-
-  const authHeader = req.headers.get('authorization')
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return new NextResponse(JSON.stringify({ message: 'Missing token' }), {
+  const authHeader = req.headers.get("authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return new NextResponse(JSON.stringify({ message: "Missing token" }), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    })
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  const token = authHeader.split(' ')[1]
-
+  const token = authHeader.split(" ")[1];
   try {
-    jwt.verify(token, SECRET)
-    return NextResponse.next()
+    const payload = jwt.verify(token, JWT_SECRET);
+    return NextResponse.next();
   } catch {
-    return new NextResponse(JSON.stringify({ message: 'Invalid or expired token' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return new NextResponse(
+      JSON.stringify({ message: "Invalid or expired token" }),
+      {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
 
 export const config = {
-  matcher: ['/api/:path*'], // apply only to API routes
-}
+  matcher: ["/api/product/:path*"],
+};

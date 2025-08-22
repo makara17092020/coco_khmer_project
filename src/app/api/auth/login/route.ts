@@ -1,11 +1,10 @@
 // /app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+const JWT_SECRET = process.env.JWT_SECRET || "super-secret";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,53 +17,32 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
-
-    if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
-    }
-
-    const isValid = await bcrypt.compare(password, user.password);
-
-    if (!isValid) {
+    // Check credentials against env
+    if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
       return NextResponse.json(
         { message: "Invalid credentials" },
         { status: 401 }
       );
     }
 
-    // Generate access token (short-lived)
-    const accessToken = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
-      JWT_SECRET,
-      { expiresIn: "15m" } // short-lived token
-    );
+    // Generate short-lived access token
+    const accessToken = jwt.sign({ email, role: "ADMIN" }, JWT_SECRET, {
+      expiresIn: "15m",
+    });
 
-    // Generate refresh token (long-lived)
-    const refreshToken = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
-      JWT_SECRET,
-      { expiresIn: "7d" } // refresh token lasts longer
-    );
-
-    const { password: _, ...userWithoutPassword } = user;
+    // Generate long-lived refresh token
+    const refreshToken = jwt.sign({ email, role: "ADMIN" }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     return NextResponse.json({
       message: "Login successful",
-      token: accessToken,
-      refreshToken, // new added
-      user: userWithoutPassword,
+      accessToken,
+      refreshToken,
+      user: { email, role: "ADMIN" },
     });
   } catch (error) {
-    console.error("Login error:", error);
+    console.error(error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }

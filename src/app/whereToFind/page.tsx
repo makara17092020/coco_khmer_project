@@ -59,7 +59,7 @@ export default function WhereToFind() {
         className="relative bg-cover bg-center py-24 px-6 text-center"
         style={{ backgroundImage: "url('/images/green.png')" }}
       >
-        <div className="absolute inset-0 bg-black/80"></div>
+        <div className="absolute inset-0 bg-black/70"></div>
         <div className="relative z-10">
           <motion.h1
             className="text-4xl md:text-6xl font-extrabold mb-4 text-white drop-shadow-lg"

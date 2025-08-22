@@ -40,7 +40,7 @@ export default function CategoryFilter({
     return <p className="text-center text-gray-500">Loading categories...</p>;
 
   return (
-    <section className="px-4 py-6">
+    <section className="px-4 py-2">
       <div className="mt-6 flex flex-wrap justify-center gap-3 bg-white px-4 py-2 rounded-full shadow-md max-w-fit mx-auto">
         {categories.map((category) => (
           <button

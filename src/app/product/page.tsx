@@ -77,28 +77,35 @@ export default function ProductPage() {
   return (
     <main className="font-sans">
       {/* Hero Section */}
-      <section className="relative w-full sm:h-140 h-100 flex items-center justify-between bg-slate-300 overflow-hidden">
-        <div className="absolute inset-0 sm:w-230 w-190 sm:h-140 h-100">
+      <section className="relative w-full sm:h-[35rem] flex items-center justify-start overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
           <Image
-            src="/images/home1.jpg"
-            alt="Hero Image"
+            src="/images/heropro.jpg"
+            alt="Coco Khmer Hero"
             fill
-            className="object-cover object-left"
+            className="object-cover object-center"
             priority
           />
+          {/* Optional overlay for readability */}
+          <div className="absolute inset-0 bg-black/30"></div>
         </div>
-        <div className="relative z-20 ml-auto w-full max-w-xl p-8">
-          <p className="text-sm md:text-base text-white font-medium mb-2 uppercase tracking-wide">
-            Welcome to CoCo Khmer Clean Skincare
-          </p>
-          <h1 className="text-4xl md:text-7xl font-extrabold text-white mb-6">
-            Love Being <br /> in Your Skin
+
+        {/* Hero Content */}
+        <div className="relative z-20 max-w-2xl p-8 md:p-20 text-white">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-6">
+            DISCOVER <br />
+            THE ESSENCE OF COCONUT WELLNESS
           </h1>
+          <p className="text-sm md:text-base font-medium mb-2 uppercase tracking-wide">
+            Explore our thoughtfully crafted products, bringing natural care and
+            sustainable living into your everyday life.
+          </p>
         </div>
       </section>
 
       {/* Products Section */}
-      <section id="products" className="pb-8 px-4 bg-white mt-10">
+      <section id="products" className="pb-8 px-4 bg-white">
         <CategoryFilter
           activeCategory={activeCategory}
           setActiveCategory={setActiveCategory}

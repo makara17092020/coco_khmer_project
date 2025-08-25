@@ -29,6 +29,8 @@ model Product {
   name        String
   categoryId  Int
   desc        String
+  highLight String[] @default([])
+  ingredient String[] @default([])
   createdAt   DateTime @default(now())
   images      String[] @default([])
   isTopSeller Boolean  @default(false)

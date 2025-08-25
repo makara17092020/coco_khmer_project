@@ -10,6 +10,8 @@ interface Product {
   id: number;
   name: string;
   desc: string;
+  highLight: string[];
+  ingredient: string[];
   weight: number | string | string[];
   category: { id: number; name: string };
   images: string[];
@@ -176,20 +178,25 @@ export default function ProductPage() {
                 </h2>
                 <p className="mb-4">{selectedProduct.desc}</p>
 
-                <h3 className="text-green-800 font-semibold mb-2">Category:</h3>
-                <p className="mb-4">{selectedProduct.category.name}</p>
-
                 <h3 className="text-green-800 font-semibold mb-2">Weight:</h3>
                 <p className="mb-4">{selectedProduct.weight}</p>
 
                 <h3 className="text-green-800 font-semibold mb-2">
+                  Ingredients:
+                </h3>
+                <ul className="list-disc pl-5 mb-4">
+                  {selectedProduct.ingredient?.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+
+                <h3 className="text-green-800 font-semibold mb-2">
                   Highlights:
                 </h3>
-                <ul className="list-disc list-inside space-y-1">
-                  <li>Cold-Pressed</li>
-                  <li>Multipurpose Use</li>
-                  <li>Handcrafted in Cambodia</li>
-                  <li>Petroleum-Free / Paraben-Free</li>
+                <ul className="list-disc pl-5">
+                  {selectedProduct.highLight?.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
                 </ul>
               </div>
             </div>

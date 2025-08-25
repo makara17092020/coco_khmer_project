@@ -10,6 +10,8 @@ interface Product {
   id: number;
   name: string;
   desc: string;
+  highLight: string[];
+  ingredient: string[];
   images: string[];
   isTopSeller: boolean;
   weight: string | string[] | number;
@@ -244,22 +246,24 @@ export default function HomePage() {
                   <p className="mb-4 line-clamp-2">
                     {selectedProduct.desc || "No description"}
                   </p>
-                  <h3 className="text-green-800 font-semibold mb-2">
-                    Category:
-                  </h3>
-                  <p className="mb-4">
-                    {selectedProduct.category?.name || "N/A"}
-                  </p>
                   <h3 className="text-green-800 font-semibold mb-2">Weight:</h3>
                   <p className="mb-4">{selectedProduct.weight || "N/A"}</p>
                   <h3 className="text-green-800 font-semibold mb-2">
+                    Ingredients:
+                  </h3>
+                  <ul className="list-disc pl-5 mb-4">
+                    {selectedProduct.ingredient?.map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
+                  </ul>
+
+                  <h3 className="text-green-800 font-semibold mb-2">
                     Highlights:
                   </h3>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>Cold-Pressed</li>
-                    <li>Multipurpose Use</li>
-                    <li>Handcrafted in Cambodia</li>
-                    <li>Petroleum-Free / Paraben-Free</li>
+                  <ul className="list-disc pl-5">
+                    {selectedProduct.highLight?.map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
                   </ul>
                 </div>
               </div>

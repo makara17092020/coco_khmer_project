@@ -12,7 +12,7 @@ const AVAILABLE_SIZES = ["100g", "200g", "300g", "400g"];
 
 export default function CreateProduct() {
   const [name, setName] = useState("");
-  const [size, setSize] = useState<string[]>([]); // array of sizes
+  const [size, setSize] = useState<string[]>([]);
   const [desc, setDesc] = useState("");
   const [categoryId, setCategoryId] = useState<number | "">("");
   const [isTopSeller, setIsTopSeller] = useState(false);
@@ -22,8 +22,30 @@ export default function CreateProduct() {
   const [error, setError] = useState("");
   const [successToast, setSuccessToast] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [highlight, setHighlight] = useState<string[]>([""]);
+  const [ingredient, setIngredient] = useState<string[]>([""]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleHighlightChange = (index: number, value: string) => {
+    const newHighlights = [...highlight];
+    newHighlights[index] = value;
+    setHighlight(newHighlights);
+  };
+
+  const addHighlight = () => setHighlight([...highlight, ""]);
+  const removeHighlight = (index: number) =>
+    setHighlight(highlight.filter((_, i) => i !== index));
+
+  const handleIngredientChange = (index: number, value: string) => {
+    const newIngredients = [...ingredient];
+    newIngredients[index] = value;
+    setIngredient(newIngredients);
+  };
+
+  const addIngredient = () => setIngredient([...ingredient, ""]);
+  const removeIngredient = (index: number) =>
+    setIngredient(ingredient.filter((_, i) => i !== index));
 
   // Fetch categories
   useEffect(() => {
@@ -40,7 +62,6 @@ export default function CreateProduct() {
     fetchCategories();
   }, []);
 
-  // Handle file selection + preview
   const handleFilesChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
@@ -69,7 +90,6 @@ export default function CreateProduct() {
     }
   };
 
-  // Toggle size selection
   const toggleSize = (selectedSize: string) => {
     setSize((prev) =>
       prev.includes(selectedSize)
@@ -100,7 +120,6 @@ export default function CreateProduct() {
     return uploadedUrls;
   };
 
-  // Handle form submission
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
@@ -113,9 +132,18 @@ export default function CreateProduct() {
         ...uploadedUrls,
       ];
 
+      const validHighlights = highlight
+        .map((h) => h.trim())
+        .filter((h) => h.length > 0);
+      const validIngredients = ingredient
+        .map((i) => i.trim())
+        .filter((i) => i.length > 0);
+
       if (
         !name.trim() ||
         !desc.trim() ||
+        validHighlights.length === 0 ||
+        validIngredients.length === 0 ||
         size.length === 0 ||
         !categoryId ||
         finalImages.length === 0
@@ -129,8 +157,10 @@ export default function CreateProduct() {
 
       const payload = {
         name: name.trim(),
-        size, // ✅ send array
         desc: desc.trim(),
+        size,
+        highLight: validHighlights,
+        ingredient: validIngredients,
         categoryId: Number(categoryId),
         images: finalImages,
         isTopSeller,
@@ -151,10 +181,11 @@ export default function CreateProduct() {
         throw new Error(data.message || "Failed to create product");
       }
 
-      // Reset form
       setName("");
       setSize([]);
       setDesc("");
+      setHighlight([""]);
+      setIngredient([""]);
       setCategoryId("");
       setImages([]);
       setNewFiles([]);
@@ -230,6 +261,78 @@ export default function CreateProduct() {
               rows={4}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
             />
+          </div>
+
+          {/* Highlights */}
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
+              Highlights
+            </label>
+            {highlight.map((h, idx) => (
+              <div key={idx} className="flex items-center mb-2 space-x-2">
+                <input
+                  type="text"
+                  value={h}
+                  onChange={(e) => handleHighlightChange(idx, e.target.value)}
+                  disabled={loading}
+                  placeholder="e.g., Rich in Vitamin C"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+                {highlight.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeHighlight(idx)}
+                    className="bg-red-600 text-white px-3 py-1 rounded-lg"
+                  >
+                    X
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addHighlight}
+              disabled={loading}
+              className="mt-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+            >
+              + Add Highlight
+            </button>
+          </div>
+
+          {/* Ingredients */}
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
+              Ingredients
+            </label>
+            {ingredient.map((ing, idx) => (
+              <div key={idx} className="flex items-center mb-2 space-x-2">
+                <input
+                  type="text"
+                  value={ing}
+                  onChange={(e) => handleIngredientChange(idx, e.target.value)}
+                  disabled={loading}
+                  placeholder="e.g., 100% Coconut Water"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+                {ingredient.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeIngredient(idx)}
+                    className="bg-red-600 text-white px-3 py-1 rounded-lg"
+                  >
+                    X
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addIngredient}
+              disabled={loading}
+              className="mt-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+            >
+              + Add Ingredient
+            </button>
           </div>
 
           {/* Category */}

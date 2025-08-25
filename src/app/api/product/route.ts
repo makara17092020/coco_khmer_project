@@ -48,7 +48,16 @@ export async function POST(req: NextRequest) {
 
     // Parse request body
     const body = await req.json();
-    const { name, size, categoryId, desc, images, isTopSeller } = body;
+    const {
+      name,
+      size,
+      categoryId,
+      desc,
+      images,
+      isTopSeller,
+      ingredient,
+      highLight,
+    } = body;
 
     // Validate required fields
     const categoryIdNum = Number(categoryId);
@@ -58,6 +67,8 @@ export async function POST(req: NextRequest) {
       !size ||
       isNaN(categoryIdNum) ||
       !desc ||
+      !highLight ||
+      !ingredient ||
       !images ||
       !Array.isArray(images)
     ) {
@@ -98,6 +109,8 @@ export async function POST(req: NextRequest) {
         size: Array.isArray(size) ? size : [size], // ensures it is always a string array
         categoryId: categoryIdNum,
         desc,
+        highLight: Array.isArray(highLight) ? highLight : highLight,
+        ingredient: Array.isArray(ingredient) ? ingredient : ingredient,
         images: validImages,
         isTopSeller: isTopSeller ?? false,
       },

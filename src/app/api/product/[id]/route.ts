@@ -41,7 +41,16 @@ export async function PUT(
   try {
     const productId = parseInt(params.id);
     const body = await req.json();
-    const { name, size, desc, categoryId, images, isTopSeller } = body;
+    const {
+      name,
+      size,
+      desc,
+      categoryId,
+      images,
+      isTopSeller,
+      highLight,
+      ingredient,
+    } = body;
 
     // Validate fields
     if (
@@ -54,7 +63,15 @@ export async function PUT(
       !size ||
       !Array.isArray(size) ||
       size.length === 0 ||
-      !size.every((s: any) => typeof s === "string" && s.trim() !== "")
+      !size.every((s: any) => typeof s === "string" && s.trim() !== "") ||
+      !highLight ||
+      !Array.isArray(highLight) ||
+      highLight.length === 0 ||
+      !highLight.every((h: any) => typeof h === "string" && h.trim() !== "") ||
+      !ingredient ||
+      !Array.isArray(ingredient) ||
+      ingredient.length === 0 ||
+      !ingredient.every((i: any) => typeof i === "string" && i.trim() !== "")
     ) {
       return NextResponse.json(
         { message: "Missing or invalid fields" },
@@ -82,6 +99,8 @@ export async function PUT(
         categoryId: Number(categoryId),
         images,
         isTopSeller: isTopSeller ?? false,
+        highLight: highLight.map((h: string) => h.trim()),
+        ingredient: ingredient.map((i: string) => i.trim()),
       },
     });
 

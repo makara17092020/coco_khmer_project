@@ -30,7 +30,16 @@ export async function POST(req: NextRequest) {
 
     // --- Parse Request Body ---
     const body = await req.json();
-    const { name, size, categoryId, desc, images, isTopSeller } = body;
+    const {
+      name,
+      size,
+      categoryId,
+      desc,
+      images,
+      isTopSeller,
+      highLight,
+      ingredient,
+    } = body;
 
     // --- Validate Required Fields ---
     if (!size || !Array.isArray(size) || size.length === 0) {
@@ -71,13 +80,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // --- Create Product ---
     const newProduct = await prisma.product.create({
       data: {
         name,
-        size, // ✅ now stores ["100g","200g"]
+        size,
         categoryId: Number(categoryId),
         desc,
+        highLight,
+        ingredient,
         images: validImages,
         isTopSeller: Boolean(isTopSeller) || false,
       },

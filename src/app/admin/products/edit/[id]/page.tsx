@@ -20,26 +20,43 @@ export default function EditProductPage() {
   const router = useRouter();
   const { id } = useParams();
 
-  // Form state
   const [name, setName] = useState("");
-  const [size, setSize] = useState(""); // user types sizes like "100g, 200g"
+  const [size, setSize] = useState("");
   const [desc, setDesc] = useState("");
+  const [highLight, setHighLight] = useState<string[]>([""]);
+  const [ingredient, setIngredient] = useState<string[]>([""]);
   const [isTopSeller, setIsTopSeller] = useState(false);
   const [categoryId, setCategoryId] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [newFiles, setNewFiles] = useState<File[]>([]);
-
-  // Categories
   const [categories, setCategories] = useState<Category[]>([]);
 
-  // UI state
+  const handleHighlightChange = (index: number, value: string) => {
+    const newHighlights = [...highLight];
+    newHighlights[index] = value;
+    setHighLight(newHighlights);
+  };
+
+  const addHighlight = () => setHighLight([...highLight, ""]);
+  const removeHighlight = (index: number) =>
+    setHighLight(highLight.filter((_, i) => i !== index));
+
+  const handleIngredientChange = (index: number, value: string) => {
+    const newIngredients = [...ingredient];
+    newIngredients[index] = value;
+    setIngredient(newIngredients);
+  };
+
+  const addIngredient = () => setIngredient([...ingredient, ""]);
+  const removeIngredient = (index: number) =>
+    setIngredient(ingredient.filter((_, i) => i !== index));
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successToast, setSuccessToast] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch categories
   useEffect(() => {
     async function fetchCategories() {
       try {
@@ -70,6 +87,8 @@ export default function EditProductPage() {
           Array.isArray(data.size) ? data.size.join(", ") : data.size || ""
         );
         setDesc(data.desc || "");
+        setHighLight(data.highLight || "");
+        setIngredient(data.ingredient || "");
         setIsTopSeller(data.isTopSeller ?? false);
         setCategoryId(data.categoryId?.toString() || "");
         setImages(data.images || []);
@@ -150,11 +169,15 @@ export default function EditProductPage() {
       const existingImagesCount = images.length - newFiles.length;
       const existingImages = images.slice(0, existingImagesCount);
       const finalImages = [...existingImages, ...uploadedUrls];
+      const validHighlights = highLight.filter((h) => h.trim() !== "");
+      const validIngredients = ingredient.filter((i) => i.trim() !== "");
 
       if (
         !name.trim() ||
         !size.trim() ||
         !desc.trim() ||
+        validHighlights.length === 0 ||
+        validIngredients.length === 0 ||
         !categoryId ||
         finalImages.length === 0
       ) {
@@ -168,8 +191,10 @@ export default function EditProductPage() {
         size: size
           .split(",")
           .map((s) => s.trim())
-          .filter(Boolean), // safe array
+          .filter(Boolean),
         desc: desc.trim(),
+        highLight: validHighlights,
+        ingredient: validIngredients,
         categoryId: parseInt(categoryId),
         images: finalImages,
         isTopSeller,
@@ -255,6 +280,69 @@ export default function EditProductPage() {
             onChange={(e) => setDesc(e.target.value)}
             required
           />
+        </div>
+        {/* Highlight */}
+        <div>
+          <label className="block mb-2 font-semibold text-gray-700">
+            Highlights
+          </label>
+          {highLight.map((h, idx) => (
+            <div key={idx} className="flex items-center gap-2 mb-2">
+              <input
+                type="text"
+                value={h}
+                onChange={(e) => handleHighlightChange(idx, e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                placeholder="e.g., Rich in Vitamin C"
+              />
+              <button
+                type="button"
+                onClick={() => removeHighlight(idx)}
+                className="text-red-600 font-bold"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addHighlight}
+            className="mt-2 text-green-600 font-semibold"
+          >
+            + Add Highlight
+          </button>
+        </div>
+
+        {/* Ingredient */}
+        <div>
+          <label className="block mb-2 font-semibold text-gray-700">
+            Ingredients
+          </label>
+          {ingredient.map((ing, idx) => (
+            <div key={idx} className="flex items-center gap-2 mb-2">
+              <input
+                type="text"
+                value={ing}
+                onChange={(e) => handleIngredientChange(idx, e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                placeholder="e.g., 100% Coconut Water"
+              />
+              <button
+                type="button"
+                onClick={() => removeIngredient(idx)}
+                className="text-red-600 font-bold"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addIngredient}
+            className="mt-2 text-green-600 font-semibold"
+          >
+            + Add Ingredient
+          </button>
         </div>
 
         {/* Category */}

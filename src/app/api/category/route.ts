@@ -10,7 +10,7 @@ export async function GET() {
 
     // If no categories, create defaults
     if (categories.length === 0) {
-      const defaultCategories = ["All Products", "Skin Care", "Fragrances"];
+      const defaultCategories = ["Skin Care", "Fragrances"];
       const createdCategories = await Promise.all(
         defaultCategories.map((name) =>
           prisma.category.create({ data: { name } })

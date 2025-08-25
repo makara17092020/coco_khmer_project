@@ -3,11 +3,10 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// GET all contacts
 export async function GET() {
   try {
     const contacts = await prisma.contact.findMany({
-      orderBy: { createdAt: "desc" }, // newest first
+      orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json(contacts, { status: 200 });
@@ -20,7 +19,6 @@ export async function GET() {
   }
 }
 
-// POST new contact
 export async function POST(req: Request) {
   try {
     const body = await req.json();

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function NagaBalmPromo() {
   const ourTeamMembers = [
@@ -92,21 +92,22 @@ export default function NagaBalmPromo() {
       image: "/images/5Strong.jpg",
     },
   ];
+  const [communityImages, setCommunityImages] = useState<string[]>([]);
+  useEffect(() => {
+    const fetchCommunity = async () => {
+      try {
+        const res = await fetch("/api/community", { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed to fetch community images");
 
-  const communityImages = [
-    "/images/com1.jpg",
-    "/images/com2.jpg",
-    "/images/com3.jpg",
-    "/images/com4.jpg",
-    "/images/com5.jpg",
-    "/images/com6.jpg",
-    "/images/com7.jpg",
-    "/images/com8.jpg",
-    "/images/com9.jpg",
-    "/images/com10.jpg",
-    "/images/com11.jpg",
-    "/images/com12.jpg",
-  ];
+        const data = await res.json();
+        setCommunityImages(data.community.map((c: any) => c.image));
+      } catch (error) {
+        console.error("Error fetching community images:", error);
+      }
+    };
+
+    fetchCommunity();
+  }, []);
 
   return (
     <>

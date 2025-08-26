@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -180,7 +181,9 @@ export default function PartnershipsTable() {
                     <tr key={id} className="hover:bg-green-50 transition">
                       <td className="px-4 py-4">
                         {image ? (
-                          <img
+                          <Image
+                            width={100}
+                            height={100}
                             src={image}
                             alt={name || "No name"}
                             className="w-16 h-16 object-cover rounded-lg border border-gray-200"

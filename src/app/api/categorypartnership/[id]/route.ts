@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
 
@@ -5,8 +6,11 @@ interface Params {
   params: { id: string };
 }
 
-export async function GET(req: NextRequest, { params }: Params) {
-  const categoryId = Number(params.id);
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const categoryId = Number(params);
   if (isNaN(categoryId))
     return NextResponse.json(
       { error: "Invalid category partnership ID" },
@@ -30,8 +34,11 @@ export async function GET(req: NextRequest, { params }: Params) {
     );
   }
 }
-export async function PUT(req: NextRequest, { params }: Params) {
-  const categoryId = Number(params.id);
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const categoryId = Number(params);
   if (isNaN(categoryId))
     return NextResponse.json(
       { error: "Invalid category partnership ID" },
@@ -39,7 +46,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     );
 
   try {
-    const body = await req.json();
+    const body = await request.json();
     const { name } = body;
 
     if (!name || typeof name !== "string")
@@ -62,8 +69,11 @@ export async function PUT(req: NextRequest, { params }: Params) {
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: Params) {
-  const categoryId = Number(params.id);
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const categoryId = Number(params);
   if (isNaN(categoryId))
     return NextResponse.json(
       { error: "Invalid category partnership ID" },

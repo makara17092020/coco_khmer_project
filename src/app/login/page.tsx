@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -52,7 +53,7 @@ export default function LoginPage() {
       <div className="flex w-full max-w-5xl rounded-xl overflow-hidden shadow-xl bg-white/30 backdrop-blur-md ring-1 ring-white/40">
         {/* Left side image */}
         <div className="w-1/2 hidden md:flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-700">
-          <img
+          <Image
             src="/images/loginn.jpg"
             alt="Login Illustration"
             className="w-full h-full object-cover drop-shadow-xl"

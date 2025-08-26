@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
 
 export async function GET(
-  req: NextRequest,
-  context: { params: { id?: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const params = await context.params;
-  const id = params.id;
+  const { id } = await params;
+  // const id = params.id;
   const numericId = parseInt(id || "");
 
   if (isNaN(numericId)) {
@@ -37,11 +37,11 @@ export async function GET(
 }
 
 export async function DELETE(
-  req: NextRequest,
-  context: { params: { id?: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const params = await context.params;
-  const id = params.id;
+  const { id } = await params;
+  // const id = params.id;
   const numericId = parseInt(id || "");
 
   if (isNaN(numericId)) {

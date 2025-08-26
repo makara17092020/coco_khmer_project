@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState, useEffect, ChangeEvent, FormEvent, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 type Category = {
   id: number;
@@ -368,7 +371,7 @@ export default function CreateProduct() {
                   key={idx}
                   className="relative w-24 h-24 rounded-xl overflow-hidden border shadow"
                 >
-                  <img
+                  <Image
                     src={img}
                     alt={`Preview ${idx}`}
                     className="w-full h-full object-cover"

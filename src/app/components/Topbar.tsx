@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Topbar() {
   const avatarUrl = "/images/profile.png";
@@ -82,7 +83,9 @@ export default function Topbar() {
           </svg>
         </div>
 
-        <img
+        <Image
+          width={100}
+          height={100}
           src={avatarUrl}
           alt="User Avatar"
           className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-500"

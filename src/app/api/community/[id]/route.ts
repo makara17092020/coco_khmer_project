@@ -1,16 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
-type Params = { params: { id: string } };
+// type Params = { params: { id: string } };
 
 const prisma = new PrismaClient();
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const communityId = parseInt(params.id);
+    const communityId = parseInt(id);
 
     await prisma.community.delete({
       where: { id: communityId },

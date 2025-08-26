@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 type CategoryPartnership = { id: number; name: string };
 
@@ -183,7 +185,9 @@ export default function CreatePartnership() {
             </label>
 
             {preview && (
-              <img
+              <Image
+                width={100}
+                height={100}
                 src={preview}
                 alt="Preview"
                 className="mt-4 max-h-48 rounded-md shadow-md object-contain"

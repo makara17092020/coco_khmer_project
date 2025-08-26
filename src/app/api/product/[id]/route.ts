@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
@@ -5,11 +6,11 @@ const prisma = new PrismaClient();
 
 // GET product by ID
 export async function GET(
-  req: NextRequest,
-  context: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = context.params;
+    const { id } = await params;
     const productId = parseInt(id);
     const product = await prisma.product.findUnique({
       where: { id: productId },
@@ -35,12 +36,13 @@ export async function GET(
 
 // PUT update product by ID
 export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const productId = parseInt(params.id);
-    const body = await req.json();
+    const { id } = await params;
+    const productId = parseInt(id);
+    const body = await request.json();
     const {
       name,
       size,
@@ -116,11 +118,12 @@ export async function PUT(
 
 // DELETE product by ID
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const productId = parseInt(params.id);
+    const productId = parseInt(id);
     const deletedProduct = await prisma.product.delete({
       where: { id: productId },
     });

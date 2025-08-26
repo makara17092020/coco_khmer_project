@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 // Motion variants
 const containerVariants = {
@@ -109,7 +110,9 @@ export default function WhereToFind() {
                           transition-transform transform hover:scale-105 hover:-rotate-1 hover:shadow-xl
                           hover:ring-2 hover:ring-emerald-800 hover:ring-opacity-50 duration-300 ease-in-out bg-white"
                       >
-                        <img
+                        <Image
+                          width={100}
+                          height={100}
                           src={item.image}
                           alt={item.name}
                           className="h-16 object-contain"

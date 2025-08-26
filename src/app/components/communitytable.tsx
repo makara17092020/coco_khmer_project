@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -26,7 +27,9 @@ function CommunityImage({ image, alt }: { image: string; alt: string }) {
         aria-label={`${alt} image`}
         tabIndex={0}
       >
-        <img
+        <Image
+          width={100}
+          height={100}
           src={image || "https://via.placeholder.com/60"}
           alt={alt}
           className="w-full h-full object-cover"

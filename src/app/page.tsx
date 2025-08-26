@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState, useRef } from "react";
@@ -379,7 +381,7 @@ export default function HomePage() {
           <div className="relative w-200 min-h-[400px]">
             <Image
               src="/images/end2.avif"
-              alt="Side Left"
+              alt="Side Left1"
               fill
               className="object-cover w-full h-full"
             />
@@ -387,8 +389,8 @@ export default function HomePage() {
           <div className="absolute">
             <div className="relative w-100 min-h-[500px]">
               <Image
-                src="/images/end.avif"
-                alt="Side Left"
+                src="/images/end.jpg"
+                alt="Side Left2"
                 fill
                 className="object-cover w-full h-full"
               />

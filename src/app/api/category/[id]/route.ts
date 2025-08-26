@@ -1,13 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextResponse } from "next/server";
 import prisma from "../../../lib/prisma"; // adjust path if needed
 
-interface Params {
-  params: { id: string };
-}
+// interface Params {
+//   params: { id: string };
+// }
 
 // GET /api/category/[id] - fetch category
-export async function GET(req: NextRequest, { params }: Params) {
-  const categoryId = Number(params.id);
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const categoryId = Number(id);
   if (isNaN(categoryId))
     return NextResponse.json({ error: "Invalid category ID" }, { status: 400 });
 
@@ -30,13 +35,17 @@ export async function GET(req: NextRequest, { params }: Params) {
 }
 
 // PUT /api/category/[id] - update category name
-export async function PUT(req: NextRequest, { params }: Params) {
-  const categoryId = Number(params.id);
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const categoryId = Number(id);
   if (isNaN(categoryId))
     return NextResponse.json({ error: "Invalid category ID" }, { status: 400 });
 
   try {
-    const body = await req.json();
+    const body = await request.json();
     const { name } = body;
 
     if (!name || typeof name !== "string")
@@ -60,8 +69,12 @@ export async function PUT(req: NextRequest, { params }: Params) {
 }
 
 // DELETE /api/category/[id] - reassign products and delete category
-export async function DELETE(req: NextRequest, { params }: Params) {
-  const categoryId = Number(params.id);
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const categoryId = Number(id);
   if (isNaN(categoryId))
     return NextResponse.json({ error: "Invalid category ID" }, { status: 400 });
 

@@ -6,7 +6,7 @@ const SECRET_KEY = process.env.JWT_SECRET || "your-secret-key"; // use .env in r
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, avatar } = body;
+    const { email } = body;
 
     // Generate real JWT token
     const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: "1h" });

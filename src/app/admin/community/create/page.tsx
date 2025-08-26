@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 export default function CreateImage() {
   const [image, setImage] = useState<File | null>(null);
@@ -111,7 +113,7 @@ export default function CreateImage() {
             </label>
 
             {preview && (
-              <img
+              <Image
                 src={preview}
                 alt="Preview"
                 className="mt-4 max-h-48 rounded-md shadow-md object-contain"

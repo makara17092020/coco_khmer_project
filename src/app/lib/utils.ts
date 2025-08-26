@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // lib/utils.ts
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";

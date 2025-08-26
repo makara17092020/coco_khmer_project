@@ -51,9 +51,12 @@ export default function CreateImage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
-        body: JSON.stringify({ image }),
+        body: JSON.stringify({
+          name: "New Community",
+          image: "uploaded_file_url.jpg",
+        }),
       });
 
       if (!res.ok) {

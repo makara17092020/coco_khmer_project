@@ -65,7 +65,7 @@ const AvailableAtSection = () => {
             ref={containerRef}
             className="flex gap-4 sm:gap-6 lg:gap-8 overflow-x-hidden"
           >
-            {[...partnerships, ...partnerships].map((partner, index) => (
+            {partnerships.map((partner, index) => (
               <div
                 key={`${partner.name}-${index}`}
                 className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 relative group"

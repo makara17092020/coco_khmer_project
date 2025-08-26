@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -55,7 +56,7 @@ export default function CreateImage() {
         },
         body: JSON.stringify({
           name: "New Community",
-          image: "uploaded_file_url.jpg",
+          image: imageData.image,
         }),
       });
 

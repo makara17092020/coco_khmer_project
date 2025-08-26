@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Image from "next/image";
@@ -186,7 +187,7 @@ export default function NagaBalmPromo() {
               OUR JOURNEY
             </h1>
             <p>
-              Coco Khmer was founded in Phnom Penh as Cambodia's first
+              Coco Khmer was founded in Phnom Penh as Cambodia&apos;s first
               commercial producer of virgin coconut oil. A triple bottom line
               social enterprise from the start, our mission was clear: create
               ethical employment, protect the planet, and build a future through

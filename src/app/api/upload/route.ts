@@ -76,6 +76,9 @@ import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import streamifier from "streamifier";
 
+// ✅ Force Node.js runtime (not Edge)
+export const runtime = "nodejs";
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
   api_key: process.env.CLOUDINARY_API_KEY!,
@@ -94,7 +97,6 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Wrap Cloudinary upload in a promise
     const uploadResult = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         { resource_type: "image", folder: "products" },
@@ -103,8 +105,6 @@ export async function POST(req: NextRequest) {
           else resolve(result);
         }
       );
-
-      // Use streamifier for serverless compatibility
       streamifier.createReadStream(buffer).pipe(uploadStream);
     });
 

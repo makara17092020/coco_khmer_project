@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["res.cloudinary.com"],
   },
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
   async redirects() {
     return [
       {

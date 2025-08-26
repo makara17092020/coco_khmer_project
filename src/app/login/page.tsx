@@ -54,6 +54,8 @@ export default function LoginPage() {
         {/* Left side image */}
         <div className="w-1/2 hidden md:flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-700">
           <Image
+            width={100}
+            height={100}
             src="/images/loginn.jpg"
             alt="Login Illustration"
             className="w-full h-full object-cover drop-shadow-xl"

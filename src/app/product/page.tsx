@@ -3,13 +3,13 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import CategoryFilter from "../components/CategoryFilter"; // adjust path
+import CategoryFilter from "../components/CategoryFilter";
 
 interface Product {
   id: number;
   name: string;
   desc: string;
-  price: number;
+  weight: number | string | string[];
   category: { id: number; name: string };
   images: string[];
   isTopSeller: boolean;
@@ -17,28 +17,40 @@ interface Product {
 
 export default function ProductPage() {
   const searchParams = useSearchParams();
-  const categoryFromQuery = searchParams.get("category");
+  const categoryFromQuery = searchParams?.get("category") ?? "";
 
   const [activeCategory, setActiveCategory] = useState("All Products");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Modal State
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [mainImage, setMainImage] = useState<string>("");
 
+  // Update active category from query
   useEffect(() => {
     if (categoryFromQuery) {
       setActiveCategory(categoryFromQuery);
     }
   }, [categoryFromQuery]);
 
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/product");
+        const res = await fetch("/api/product");
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
-        setProducts(data.products);
+
+        const productsWithWeight = data.products.map((p: any) => ({
+          ...p,
+          weight: p.size ?? "N/A",
+          images:
+            p.images && p.images.length
+              ? p.images
+              : ["/images/placeholder.jpg"],
+        }));
+
+        setProducts(productsWithWeight);
       } catch (err) {
         console.error(err);
       } finally {
@@ -49,6 +61,13 @@ export default function ProductPage() {
     fetchProducts();
   }, []);
 
+  // Update main image when modal opens
+  useEffect(() => {
+    if (selectedProduct) {
+      setMainImage(selectedProduct.images[0] ?? "/images/placeholder.jpg");
+    }
+  }, [selectedProduct]);
+
   const filteredProducts =
     activeCategory === "All Products"
       ? products
@@ -57,39 +76,32 @@ export default function ProductPage() {
   return (
     <main className="font-sans">
       {/* Hero Section */}
-      <section className="relative w-full sm:h-[560px] h-[400px] flex items-center justify-between bg-slate-300 overflow-hidden">
+      <section className="relative w-full h-screen flex items-center justify-start overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="/images/1.jpg"
+            src="/images/hero-prodact.jpg"
             alt="Coco Khmer Hero"
             fill
-            className="object-cover"
+            className="object-cover object-center"
             priority
-            quality={100}
           />
-          <div className="absolute inset-0 bg-black/40"></div>
+          <div className="absolute inset-0 bg-black/30"></div>
         </div>
 
-        <div className="relative z-10 ml-auto w-full max-w-xl p-8 md:p-20 text-white">
-          <p className="text-sm md:text-base font-medium mb-2 uppercase tracking-wide">
-            Welcome to CoCo Khmer Clean Skincare
-          </p>
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6">
-            Love Being <br /> in Your Skin
+        <div className="relative z-20 max-w-2xl p-8 md:p-20 text-white">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-6">
+            DISCOVER <br />
+            THE ESSENCE OF COCONUT WELLNESS
           </h1>
-          <div className="flex gap-3">
-            <button className="bg-orange-600 hover:bg-orange-700 px-6 py-3 rounded-3xl font-semibold shadow-md transition duration-300">
-              Find Our Products
-            </button>
-            <button className="bg-orange-200 hover:bg-orange-300 text-orange-600 px-6 py-3 rounded-3xl font-semibold shadow-md transition duration-300">
-              Learn More
-            </button>
-          </div>
+          <p className="text-sm md:text-base font-medium mb-2 uppercase tracking-wide">
+            Explore our thoughtfully crafted products, bringing natural care and
+            sustainable living into your everyday life.
+          </p>
         </div>
       </section>
 
-      {/* Products */}
-      <section id="products" className="pb-8 px-4 bg-white">
+      {/* Products Section */}
+      <section id="products" className="pb-8 px-4 bg-white mt-10">
         <CategoryFilter
           activeCategory={activeCategory}
           setActiveCategory={setActiveCategory}
@@ -100,7 +112,7 @@ export default function ProductPage() {
         ) : filteredProducts.length === 0 ? (
           <p className="text-center text-gray-500">No products found.</p>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 max-w-6xl mx-auto">
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 max-w-6xl mx-auto mt-6">
             {filteredProducts.map((product) => (
               <ProductCard
                 key={product.id}
@@ -112,11 +124,10 @@ export default function ProductPage() {
         )}
       </section>
 
-      {/* Modal for Product Details */}
-      {selectedProduct && (
+      {/* Modal */}
+      {selectedProduct && mainImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-white rounded-xl shadow-lg max-w-5xl w-full p-6 relative">
-            {/* Close Button */}
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6 relative mx-4 sm:mx-6 md:mx-8">
             <button
               className="absolute top-4 right-4 text-gray-600 hover:text-black"
               onClick={() => setSelectedProduct(null)}
@@ -125,23 +136,27 @@ export default function ProductPage() {
             </button>
 
             <div className="grid md:grid-cols-2 gap-10">
-              {/* Left: Main Product Image */}
+              {/* Left */}
               <div>
-                <div className="w-full max-w-sm mx-auto h-80 rounded-xl overflow-hidden shadow-lg bg-white flex items-center justify-center">
+                <div className="w-full h-72 md:h-80 rounded-xl overflow-hidden shadow-lg bg-white relative">
                   <Image
-                    src={selectedProduct.images[0] || "/images/placeholder.jpg"}
+                    src={mainImage}
                     alt={selectedProduct.name}
-                    width={280}
-                    height={280}
+                    fill
                     className="object-contain"
                   />
                 </div>
 
-                <div className="flex gap-4 mt-4 ml-5">
-                  {selectedProduct.images.slice(1, 4).map((img, idx) => (
+                <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
+                  {selectedProduct.images.map((img, idx) => (
                     <div
                       key={idx}
-                      className="relative w-16 h-16 rounded overflow-hidden shadow"
+                      className={`relative w-16 h-16 rounded overflow-hidden shadow cursor-pointer flex-shrink-0 border ${
+                        mainImage === img
+                          ? "border-green-600"
+                          : "border-transparent"
+                      }`}
+                      onClick={() => setMainImage(img)}
                     >
                       <Image
                         src={img}
@@ -154,7 +169,7 @@ export default function ProductPage() {
                 </div>
               </div>
 
-              {/* Right: Product Description */}
+              {/* Right */}
               <div className="text-gray-800">
                 <h2 className="text-2xl font-bold text-green-800 mb-4">
                   {selectedProduct.name}
@@ -164,13 +179,13 @@ export default function ProductPage() {
                 <h3 className="text-green-800 font-semibold mb-2">Category:</h3>
                 <p className="mb-4">{selectedProduct.category.name}</p>
 
-                <h3 className="text-green-800 font-semibold mb-2">Price:</h3>
-                <p className="mb-4">${selectedProduct.price}</p>
+                <h3 className="text-green-800 font-semibold mb-2">Weight:</h3>
+                <p className="mb-4">{selectedProduct.weight}</p>
 
                 <h3 className="text-green-800 font-semibold mb-2">
                   Highlights:
                 </h3>
-                <ul className="list-disc list-inside space-y-1">
+                <ul className="list-disc list-inside space-y-1 mb-4">
                   <li>Cold-Pressed</li>
                   <li>Multipurpose Use</li>
                   <li>Handcrafted in Cambodia</li>
@@ -185,6 +200,7 @@ export default function ProductPage() {
   );
 }
 
+// ProductCard Component
 function ProductCard({
   product,
   onReadMore,
@@ -192,20 +208,13 @@ function ProductCard({
   product: Product;
   onReadMore: () => void;
 }) {
-  const imageUrl = product.images[0] || "/images/placeholder.jpg";
-  const heightMap: Record<"small" | "medium" | "large", string> = {
-    small: "h-40",
-    medium: "h-60",
-    large: "h-80",
-  };
-
-  const sizeClass: "small" | "medium" | "large" = "medium";
-  const heightClass = heightMap[sizeClass];
+  const imageUrl = product.images[0] ?? "/images/placeholder.jpg";
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300">
       <div
-        className={`relative w-full ${heightClass} rounded-md overflow-hidden`}
+        className="relative w-full h-60 rounded-md overflow-hidden cursor-pointer"
+        onClick={onReadMore}
       >
         <Image
           src={imageUrl}
@@ -215,14 +224,14 @@ function ProductCard({
         />
       </div>
       <h3 className="mt-4 font-semibold text-gray-800">{product.name}</h3>
-      <p className="text-sm text-gray-500 mt-1">{product.desc}</p>
-      <p className="text-xs text-gray-400 mt-1">Price: ${product.price}</p>
+      <p className="text-sm text-gray-500 mt-1 line-clamp-2">{product.desc}</p>
+      <p className="text-xs text-gray-400 mt-1">Weight: {product.weight}</p>
       <p className="text-xs text-gray-400 mt-1">
         Category: {product.category.name}
       </p>
       <button
         onClick={onReadMore}
-        className="mt-3 px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-800 transition"
+        className="bg-orange-200 hover:bg-orange-300 text-orange-600 text-sm font-semibold px-4 py-2 rounded-3xl shadow-md transition duration-300 mt-3"
       >
         Read More
       </button>

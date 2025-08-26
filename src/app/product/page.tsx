@@ -40,7 +40,7 @@ export default function ProductPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("/api/product"); // relative URL works in Next.js
+        const res = await fetch("/api/product");
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
 
@@ -79,21 +79,18 @@ export default function ProductPage() {
   return (
     <main className="font-sans">
       {/* Hero Section */}
-      <section className="relative w-full sm:h-[35rem] flex items-center justify-start overflow-hidden">
-        {/* Background Image */}
+      <section className="relative w-full h-screen flex items-center justify-start overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="/images/heropro.jpg"
+            src="/images/hero-prodact.jpg"
             alt="Coco Khmer Hero"
             fill
             className="object-cover object-center"
             priority
           />
-          {/* Optional overlay for readability */}
           <div className="absolute inset-0 bg-black/30"></div>
         </div>
 
-        {/* Hero Content */}
         <div className="relative z-20 max-w-2xl p-8 md:p-20 text-white">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-6">
             DISCOVER <br />
@@ -107,7 +104,7 @@ export default function ProductPage() {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="pb-8 px-4 bg-white">
+      <section id="products" className="pb-8 px-4 bg-white mt-10">
         <CategoryFilter
           activeCategory={activeCategory}
           setActiveCategory={setActiveCategory}
@@ -133,7 +130,7 @@ export default function ProductPage() {
       {/* Modal */}
       {selectedProduct && mainImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-white rounded-xl shadow-lg max-w-5xl w-full p-6 relative">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6 relative mx-4 sm:mx-6 md:mx-8">
             <button
               className="absolute top-4 right-4 text-gray-600 hover:text-black"
               onClick={() => setSelectedProduct(null)}
@@ -144,7 +141,7 @@ export default function ProductPage() {
             <div className="grid md:grid-cols-2 gap-10">
               {/* Left */}
               <div>
-                <div className="w-full max-w-sm mx-auto h-80 rounded-xl overflow-hidden shadow-lg bg-white relative">
+                <div className="w-full h-72 md:h-80 rounded-xl overflow-hidden shadow-lg bg-white relative">
                   <Image
                     src={mainImage}
                     alt={selectedProduct.name}
@@ -153,11 +150,15 @@ export default function ProductPage() {
                   />
                 </div>
 
-                <div className="flex gap-4 mt-4 ml-5 overflow-x-auto">
+                <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
                   {selectedProduct.images.map((img, idx) => (
                     <div
                       key={idx}
-                      className="relative w-16 h-16 rounded overflow-hidden shadow cursor-pointer flex-shrink-0"
+                      className={`relative w-16 h-16 rounded overflow-hidden shadow cursor-pointer flex-shrink-0 border ${
+                        mainImage === img
+                          ? "border-green-600"
+                          : "border-transparent"
+                      }`}
                       onClick={() => setMainImage(img)}
                     >
                       <Image
@@ -182,21 +183,13 @@ export default function ProductPage() {
                 <p className="mb-4">{selectedProduct.weight}</p>
 
                 <h3 className="text-green-800 font-semibold mb-2">
-                  Ingredients:
-                </h3>
-                <ul className="list-disc pl-5 mb-4">
-                  {selectedProduct.ingredient?.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-
-                <h3 className="text-green-800 font-semibold mb-2">
                   Highlights:
                 </h3>
-                <ul className="list-disc pl-5">
-                  {selectedProduct.highLight?.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
+                <ul className="list-disc list-inside space-y-1 mb-4">
+                  <li>Cold-Pressed</li>
+                  <li>Multipurpose Use</li>
+                  <li>Handcrafted in Cambodia</li>
+                  <li>Petroleum-Free / Paraben-Free</li>
                 </ul>
               </div>
             </div>

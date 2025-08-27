@@ -48,7 +48,67 @@ export default function ContactUs() {
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-12">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-lg rounded-xl overflow-hidden items-stretch">
-        {/* Left Column - Contact Form */}
+        {/* Left Column - Contact Info */}
+        <div className="bg-green-50 p-6 md:p-10 flex flex-col justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Get in Touch
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <p className="font-semibold text-gray-700">📍 Location</p>
+                <p className="text-gray-600">
+                  Coco Khmer Co., Ltd. #1529, NR. 2, Chakangre Krom Khan Mean
+                  Chey, Phnom Penh Cambodia
+                </p>
+              </div>
+
+              <div>
+                <p className="font-semibold text-gray-700">📞 Phone</p>
+                <p className="text-gray-600">+855 12 269 359</p>
+                <p className="text-gray-600">info@thenagabalm.com</p>
+              </div>
+
+              <div>
+                <p className="font-semibold text-gray-700">🕒 Business Hours</p>
+                <p className="text-gray-600">
+                  Monday - Friday: 8:00 AM - 5:00 PM
+                </p>
+                <p className="text-gray-600">Saturday - Sunday: Closed</p>
+
+                {/* Social Icons */}
+                <div className="mt-2 flex space-x-3">
+                  <a
+                    href="https://facebook.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-[#1877F2] transition-colors duration-300 text-[12px]"
+                  >
+                    <Facebook className="w-6 h-6" />
+                  </a>
+                  <a
+                    href="https://instagram.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-[#E4405F] transition-colors duration-300 text-[12px]"
+                  >
+                    <Instagram className="w-6 h-6" />
+                  </a>
+                  <a
+                    href="https://t.me/yourtelegram"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-[#0088CC] transition-colors duration-300 text-[12px]"
+                  >
+                    <FaTelegramPlane className="w-6 h-6" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Contact Us Form */}
         <div className="p-6 md:p-10 flex flex-col justify-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Contact Us</h2>
 
@@ -116,63 +176,6 @@ export default function ContactUs() {
               {success}
             </p>
           )}
-        </div>
-
-        {/* Right Column - Contact Info */}
-        <div className="bg-green-50 p-6 md:p-10 flex flex-col justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">
-              Get in Touch
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <p className="font-semibold text-gray-700">📍 Location</p>
-                <p className="text-gray-600">
-                  123 Main Street, Phnom Penh, Cambodia
-                </p>
-              </div>
-
-              <div>
-                <p className="font-semibold text-gray-700">📞 Phone</p>
-                <p className="text-gray-600">+855 12 345 678</p>
-              </div>
-
-              <div>
-                <p className="font-semibold text-gray-700">🕒 Business Hours</p>
-                <p className="text-gray-600">Mon - Fri: 9:00 AM - 6:00 PM</p>
-                <p className="text-gray-600">Sat: 9:00 AM - 1:00 PM</p>
-                <p className="text-gray-600">Sun: Closed</p>
-
-                {/* Social Icons directly under Sun: Closed */}
-                <div className="mt-2 flex space-x-3">
-                  <a
-                    href="https://facebook.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-600 hover:text-[#1877F2] transition-colors duration-300 text-[12px]"
-                  >
-                    <Facebook className="w-6 h-6" />
-                  </a>
-                  <a
-                    href="https://instagram.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-600 hover:text-[#E4405F] transition-colors duration-300 text-[12px]"
-                  >
-                    <Instagram className="w-6 h-6" />
-                  </a>
-                  <a
-                    href="https://t.me/yourtelegram"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-600 hover:text-[#0088CC] transition-colors duration-300 text-[12px]"
-                  >
-                    <FaTelegramPlane className="w-6 h-6" />
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </main>

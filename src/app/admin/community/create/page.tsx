@@ -42,12 +42,18 @@ export default function CreateImage() {
         if (!uploadRes.ok) throw new Error("Image upload failed");
 
         const uploadData = await uploadRes.json();
-        imageUrl = uploadData?.url;
+        // imageUrl = uploadData?.url;
+        imageUrl = uploadData.data.urls[0];
+        console.log(
+          "Community image created successfully",
+          uploadData.data.urls[0]
+        );
 
         if (!imageUrl) throw new Error("Image upload failed");
       }
 
       const imageData = { image: imageUrl };
+
       const token = localStorage.getItem("access_token");
 
       const res = await fetch("/api/community/create", {

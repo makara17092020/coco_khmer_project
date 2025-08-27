@@ -16,6 +16,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET!,
   secure: true,
 });
+export default cloudinary;
 
 export const uploadImage = async (
   image: string,

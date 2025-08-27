@@ -156,7 +156,7 @@ export default function EditProductPage() {
       if (!res.ok) throw new Error("Image upload failed");
 
       const data = await res.json();
-      uploadedUrls.push(data.url);
+      uploadedUrls.push(data.data.urls[0]);
     }
 
     return uploadedUrls;
@@ -374,27 +374,41 @@ export default function EditProductPage() {
             Product Images
           </label>
           <div className="flex flex-wrap gap-4 mb-4">
-            {images.map((img, idx) => (
-              <div
-                key={idx}
-                className="relative w-24 h-24 rounded-xl overflow-hidden border shadow"
-              >
-                <Image
-                  src={img}
-                  alt={`Preview ${idx}`}
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(idx)}
-                  className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full shadow"
-                  aria-label="Remove image"
+            {images.map((img, idx) => {
+              const isBase64 = img.startsWith("data:");
+              return (
+                <div
+                  key={idx}
+                  className="relative w-24 h-24 rounded-xl overflow-hidden border shadow"
                 >
-                  <X size={16} />
-                </button>
-              </div>
-            ))}
+                  {isBase64 ? (
+                    <img
+                      src={img}
+                      alt={`Preview ${idx}`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Image
+                      src={img}
+                      alt={`Preview ${idx}`}
+                      fill
+                      unoptimized={false} // allow Next.js optimization
+                      className="object-cover"
+                    />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(idx)}
+                    className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full shadow"
+                    aria-label="Remove image"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              );
+            })}
           </div>
+
           <input
             type="file"
             multiple

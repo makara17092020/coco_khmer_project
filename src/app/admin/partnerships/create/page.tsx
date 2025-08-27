@@ -66,7 +66,7 @@ export default function CreatePartnership() {
         });
 
         const uploadData = await uploadRes.json();
-        imageUrl = uploadData?.url;
+        imageUrl = uploadData.data.urls[0];
 
         if (!imageUrl) throw new Error("Image upload failed");
       }

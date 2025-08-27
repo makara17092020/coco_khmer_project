@@ -299,19 +299,20 @@ export default function NagaBalmPromo() {
             </h2>
             <p className="text-center text-gray-600 mb-8">
               Capturing moments of impact, connection, and celebration within{" "}
-              <br /> the Coco Khmer community.
+              <br />
+              the Coco Khmer community.
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {communityImages.map((src, index) => (
                 <div
                   key={index}
-                  className="relative w-full h-48 rounded overflow-hidden shadow-md"
+                  className="relative w-full h-48 rounded overflow-hidden shadow-md bg-gray-100 flex items-center justify-center"
                 >
                   <Image
                     src={src}
                     alt={`Community image ${index + 1}`}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                   />
                 </div>
               ))}

@@ -72,13 +72,15 @@
 // }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import streamifier from "streamifier";
 
-// ✅ Force Node.js runtime (not Edge)
+// ✅ Force Node.js runtime (NOT edge)
 export const runtime = "nodejs";
 
+// ✅ Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
   api_key: process.env.CLOUDINARY_API_KEY!,
@@ -87,30 +89,38 @@ cloudinary.config({
 
 export async function POST(req: NextRequest) {
   try {
+    // ✅ Parse form data
     const formData = await req.formData();
-    const file = formData.get("file") as File;
+    const file = formData.get("file") as File | null;
 
     if (!file) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
+    // ✅ Convert file to buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const uploadResult = await new Promise((resolve, reject) => {
+    // ✅ Upload to Cloudinary via stream
+    const uploadResult: any = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
-        { resource_type: "image", folder: "products" },
+        {
+          resource_type: "image",
+          folder: "products", // 👈 change folder if needed
+        },
         (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
+          if (error) return reject(error);
+          resolve(result);
         }
       );
+
       streamifier.createReadStream(buffer).pipe(uploadStream);
     });
 
     return NextResponse.json({
-      message: "Upload success",
-      url: (uploadResult as any).secure_url,
+      message: "Upload success ✅",
+      url: uploadResult.secure_url,
+      public_id: uploadResult.public_id,
     });
   } catch (err: any) {
     console.error("Upload error:", err);

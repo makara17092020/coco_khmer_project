@@ -114,6 +114,8 @@ export default function CreateImage() {
 
             {preview && (
               <Image
+                width={200}
+                height={200}
                 src={preview}
                 alt="Preview"
                 className="mt-4 max-h-48 rounded-md shadow-md object-contain"

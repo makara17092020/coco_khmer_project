@@ -15,6 +15,7 @@ interface Product {
   ingredient: string[];
   images: string[];
   isTopSeller: boolean;
+  size?: string;
   weight: string | string[] | number;
   category: {
     id: number;
@@ -42,7 +43,7 @@ export default function HomePage() {
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
 
-        const productsWithWeight = data.products.map((p: any) => ({
+        const productsWithWeight = data.products.map((p: Product) => ({
           ...p,
           weight: p.size ?? "N/A",
           images: p.images?.length ? p.images : ["/images/placeholder.jpg"],

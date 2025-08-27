@@ -246,6 +246,7 @@ import Image from "next/image";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import CategoryFilter from "../components/CategoryFilter";
+import { X } from "lucide-react";
 
 interface Product {
   id: number;
@@ -259,7 +260,6 @@ interface Product {
   isTopSeller: boolean;
 }
 
-// Create a component that uses useSearchParams
 function ProductContent() {
   const searchParams = useSearchParams();
   const categoryFromQuery = searchParams?.get("category") ?? "";
@@ -269,14 +269,12 @@ function ProductContent() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [mainImage, setMainImage] = useState<string>("");
 
-  // Update active category from query
   useEffect(() => {
     if (categoryFromQuery) {
       setActiveCategory(categoryFromQuery);
     }
   }, [categoryFromQuery]);
 
-  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -301,7 +299,6 @@ function ProductContent() {
     fetchProducts();
   }, []);
 
-  // Update main image when modal opens
   useEffect(() => {
     if (selectedProduct) {
       setMainImage(selectedProduct.images[0] ?? "/images/placeholder.jpg");
@@ -340,7 +337,7 @@ function ProductContent() {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="pb-8 px-4 bg-white mt-10">
+      <section id="products" className="pb-8 px-4 bg-white mt-5">
         <CategoryFilter
           activeCategory={activeCategory}
           setActiveCategory={setActiveCategory}
@@ -368,16 +365,16 @@ function ProductContent() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div className="bg-white rounded-xl shadow-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6 relative mx-4 sm:mx-6 md:mx-8">
             <button
-              className="absolute top-4 right-4 text-gray-600 hover:text-black"
+              className="absolute top-4 right-4 px-3 py-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200"
               onClick={() => setSelectedProduct(null)}
             >
-              ✕
+              <X size={14} />
             </button>
 
-            <div className="grid md:grid-cols-2 gap-10">
+            <div className="grid md:grid-cols-2 gap-10 sm:mt-0 mt-5">
               {/* Left */}
               <div>
-                <div className="w-full h-72 md:h-80 rounded-xl overflow-hidden shadow-lg bg-white relative">
+                <div className="w-100 sm:w-full h-72 md:h-80 rounded-xl overflow-hidden shadow-lg bg-white relative">
                   <Image
                     src={mainImage}
                     alt={selectedProduct.name}
@@ -385,7 +382,7 @@ function ProductContent() {
                     className="object-contain"
                   />
                 </div>
-                <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
+                <div className="grid grid-cols-5 gap-3 mt-4 overflow-x-auto pb-2">
                   {selectedProduct.images.map((img, idx) => (
                     <div
                       key={idx}
@@ -416,15 +413,22 @@ function ProductContent() {
 
                 <h3 className="text-green-800 font-semibold mb-2">Weight:</h3>
                 <p className="mb-4">{selectedProduct.weight}</p>
+                <h3 className="text-green-800 font-semibold mb-2">
+                  Ingredients:
+                </h3>
+                <ul className="list-disc pl-5 mb-4">
+                  {selectedProduct.ingredient?.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
 
                 <h3 className="text-green-800 font-semibold mb-2">
                   Highlights:
                 </h3>
-                <ul className="list-disc list-inside space-y-1 mb-4">
-                  <li>Cold-Pressed</li>
-                  <li>Multipurpose Use</li>
-                  <li>Handcrafted in Cambodia</li>
-                  <li>Petroleum-Free / Paraben-Free</li>
+                <ul className="list-disc pl-5">
+                  {selectedProduct.highLight?.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -474,7 +478,6 @@ function ProductCard({
   );
 }
 
-// Main export with Suspense boundary
 export default function ProductPage() {
   return (
     <Suspense

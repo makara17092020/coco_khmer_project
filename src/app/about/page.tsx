@@ -2,6 +2,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 export default function NagaBalmPromo() {
@@ -78,7 +79,7 @@ export default function NagaBalmPromo() {
       year: "2020",
       title: "The Pandemic Pause",
       text: "When COVID-19 hit, the global slowdown and Cambodia's lockdowns forced Coco Khmer into survival mode. Production halted. The team dispersed. For a time, it was the founder, a few faithful orders, and the enduring idea that this work still mattered.",
-      image: "/images/COVID.JPG",
+      image: "/images/COVID.jpg",
     },
     {
       year: "2023",
@@ -144,9 +145,11 @@ export default function NagaBalmPromo() {
               through ethical employment and creates clean, handcrafted
               coconut-based skincare rooted in tradition and care.
             </p>
-            <button className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-10 py-4 rounded-xl shadow-md transition duration-300">
-              Continue with Our Story
-            </button>
+            <Link href="#journy">
+              <button className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-10 py-4 rounded-xl shadow-md transition duration-300">
+                Continue with Our Story
+              </button>
+            </Link>
           </div>
         </section>
 
@@ -181,7 +184,7 @@ export default function NagaBalmPromo() {
         </div>
 
         {/* Our Journey Section */}
-        <div className="bg-yellow-100 p-3 md:p-16">
+        <div className="bg-yellow-100 p-3 md:p-16" id="journy">
           <div className="max-w-2xl mx-auto text-center">
             <h1 className="text-4xl font-extrabold text-emerald-900 mb-4">
               OUR JOURNEY
@@ -197,28 +200,29 @@ export default function NagaBalmPromo() {
           <div className="py-8 overflow-x-auto hide-scrollbar">
             <div className="flex gap-6 px-6 md:px-6">
               {events.map((event, index) => (
-                <div key={index} className="flex-shrink-0 ">
-                  <div className="h-auto overflow-hidden bg-white rounded-xl shadow-lg w-[210px] p-4">
-                    <div className="inline-block bg-emerald-900 text-white px-4 py-1 rounded-full text-sm font-bold mb-4">
-                      {event.year}
-                    </div>
-                    {event.image && (
-                      <div className="relative w-full h-25 mb-4 rounded-lg overflow-hidden">
-                        <Image
-                          src={event.image}
-                          alt={event.title}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    )}
-                    <h3 className="text-sm font-bold text-emerald-900 mb-2">
-                      {event.title}
-                    </h3>
-                    <p className="text-gray-700 text-sm leading-relaxed">
-                      {event.text}
-                    </p>
+                <div
+                  key={index}
+                  className="flex-shrink-0 h-auto overflow-hidden bg-white rounded-xl shadow-lg w-[210px] p-4 "
+                >
+                  <div className="inline-block bg-emerald-900 text-white px-4 py-1 rounded-full text-sm font-bold mb-4">
+                    {event.year}
                   </div>
+                  {event.image && (
+                    <div className="relative w-full h-25 mb-4 rounded-lg overflow-hidden">
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                  <h3 className="text-sm font-bold text-emerald-900 mb-2">
+                    {event.title}
+                  </h3>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    {event.text}
+                  </p>
                 </div>
               ))}
             </div>
@@ -251,10 +255,10 @@ export default function NagaBalmPromo() {
         </div>
 
         {/* Values Section */}
-        <div className="py-8 bg-white flex justify-center items-center">
+        <div className="pt-12 bg-white flex justify-center items-center">
           <div className="flex flex-col md:flex-row justify-center items-center gap-6 px-4">
-            <div className="bg-yellow-400 rounded-lg shadow-md p-4 text-center text-white flex flex-col justify-center items-center min-h-[280px] w-[280px]">
-              <div className="mb-3 flex justify-center">
+            <div className="bg-orange-500 rounded-lg shadow-md p-4 text-center text-white flex flex-col min-h-[240px] w-[280px]">
+              <div className="mb-3 flex justify-center pt-10">
                 <Image
                   src="/images/logo.png"
                   alt="Icon"
@@ -264,11 +268,11 @@ export default function NagaBalmPromo() {
               </div>
               <h2 className="text-lg font-bold mb-3">VISION</h2>
               <p className="text-sm leading-relaxed">
-                Vision: Cambodia’s leading ethical wellness brand.
+                Cambodia’s leading ethical wellness brand.
               </p>
             </div>
-            <div className="bg-red-500 rounded-lg shadow-md p-4 text-center text-white flex flex-col justify-center items-center min-h-[280px] w-[280px]">
-              <div className="mb-3 flex justify-center">
+            <div className="bg-sky-400 rounded-lg shadow-md p-4 text-center text-white flex flex-col  min-h-[240px] w-[280px]">
+              <div className="mb-3 flex justify-center pt-10">
                 <Image
                   src="/images/logo.png"
                   alt="Icon"
@@ -278,8 +282,8 @@ export default function NagaBalmPromo() {
               </div>
               <h2 className="text-lg font-bold mb-3">MISSION</h2>
               <p className="text-sm leading-relaxed">
-                Mission: We create clean, effective coconut-based products that
-                empower communities and promote ethical, sustainable beauty.
+                We create clean, effective coconut-based products that empower
+                communities and promote ethical, sustainable beauty.
               </p>
             </div>
           </div>

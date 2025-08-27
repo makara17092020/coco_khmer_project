@@ -18,15 +18,17 @@ export default function CategoryFilter({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/category");
+        const res = await fetch("/api/category");
         if (!res.ok) throw new Error("Failed to fetch categories");
+
         const data = await res.json();
 
-        // Ensure categories are strings
+        // Extract names (in case API returns objects)
         const categoryNames = data.map((c: any) =>
           typeof c === "string" ? c : c.name || "Unknown"
         );
 
+        // Add "All Products" at the beginning
         setCategories(["All Products", ...categoryNames]);
       } catch (err) {
         console.error(err);
@@ -36,13 +38,12 @@ export default function CategoryFilter({
     };
     fetchCategories();
   }, []);
-
   if (loading)
     return <p className="text-center text-gray-500">Loading categories...</p>;
 
   return (
-    <section className="px-4 py-2">
-      <div className="mt-6 flex flex-wrap justify-center gap-3 bg-white px-4 py-2 rounded-full shadow-md max-w-fit mx-auto">
+    <section className="px-4">
+      <div className=" flex flex-wrap justify-center gap-3 bg-white px-4 py-2 rounded-full shadow-md max-w-fit mx-auto">
         {categories.map((category) => (
           <button
             key={category}

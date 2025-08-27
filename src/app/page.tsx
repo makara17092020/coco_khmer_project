@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState, useRef } from "react";
@@ -7,6 +5,7 @@ import Image from "next/image";
 import ScrollSection from "./components/scrollsection";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
 
 interface Product {
   id: number;
@@ -36,7 +35,6 @@ export default function HomePage() {
 
   const router = useRouter();
 
-  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -62,14 +60,12 @@ export default function HomePage() {
     fetchProducts();
   }, []);
 
-  // Update main image when modal opens
   useEffect(() => {
     if (selectedProduct) {
       setMainImage(selectedProduct.images?.[0] || "/images/placeholder.jpg");
     }
   }, [selectedProduct]);
 
-  // Horizontal scroll handlers
   const onMouseDown = (e: React.MouseEvent) => {
     isDragging.current = true;
     startX.current = e.pageX - (scrollRef.current?.offsetLeft || 0);
@@ -198,39 +194,40 @@ export default function HomePage() {
         </Link>
 
         {/* Modal */}
-        {selectedProduct && (
+        {selectedProduct && mainImage && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-            <div className="bg-white rounded-xl shadow-lg max-w-5xl w-full p-6 relative">
+            <div className="bg-white rounded-xl shadow-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6 relative mx-4 sm:mx-6 md:mx-8">
               <button
-                className="absolute top-4 right-4 text-gray-600 hover:text-black"
+                className="absolute top-4 right-4 px-3 py-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200"
                 onClick={() => setSelectedProduct(null)}
               >
-                ✕
+                <X size={14} />
               </button>
 
-              <div className="grid md:grid-cols-2 gap-10">
-                {/* Left Image */}
+              <div className="grid md:grid-cols-2 gap-10 sm:mt-0 mt-5 text-start">
+                {/* Left */}
                 <div>
-                  <div className="w-full max-w-sm mx-auto h-80 relative rounded-xl overflow-hidden shadow-lg bg-white flex items-center justify-center">
+                  <div className="w-100 sm:w-full h-72 md:h-80 rounded-xl overflow-hidden shadow-lg bg-white relative">
                     <Image
                       src={mainImage}
-                      alt={selectedProduct.name || "Product Image"}
+                      alt={selectedProduct.name}
                       fill
                       className="object-contain"
                     />
                   </div>
-
-                  <div className="flex gap-4 mt-4 ml-5">
-                    {selectedProduct.images?.map((img, idx) => (
+                  <div className="grid grid-cols-5 gap-3 mt-4 overflow-x-auto pb-2">
+                    {selectedProduct.images.map((img, idx) => (
                       <div
                         key={idx}
-                        className="relative w-16 h-16 rounded overflow-hidden shadow cursor-pointer flex-shrink-0"
-                        onClick={() =>
-                          setMainImage(img || "/images/placeholder.jpg")
-                        }
+                        className={`relative w-16 h-16 rounded overflow-hidden shadow cursor-pointer flex-shrink-0 border ${
+                          mainImage === img
+                            ? "border-green-600"
+                            : "border-transparent"
+                        }`}
+                        onClick={() => setMainImage(img)}
                       >
                         <Image
-                          src={img || "/images/placeholder.jpg"}
+                          src={img}
                           alt={`Thumb ${idx}`}
                           fill
                           className="object-cover"
@@ -240,16 +237,15 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Right Description */}
-                <div className="text-start text-gray-800">
+                {/* Right */}
+                <div className="text-gray-800">
                   <h2 className="text-2xl font-bold text-green-800 mb-4">
-                    {selectedProduct.name || "Product Name"}
+                    {selectedProduct.name}
                   </h2>
-                  <p className="mb-4 line-clamp-2">
-                    {selectedProduct.desc || "No description"}
-                  </p>
+                  <p className="mb-4">{selectedProduct.desc}</p>
+
                   <h3 className="text-green-800 font-semibold mb-2">Weight:</h3>
-                  <p className="mb-4">{selectedProduct.weight || "N/A"}</p>
+                  <p className="mb-4">{selectedProduct.weight}</p>
                   <h3 className="text-green-800 font-semibold mb-2">
                     Ingredients:
                   </h3>
@@ -402,7 +398,6 @@ export default function HomePage() {
   );
 }
 
-// ✅ Fixed ProductCard (removed duplicate weight line)
 function ProductCard({
   product,
   onReadMore,

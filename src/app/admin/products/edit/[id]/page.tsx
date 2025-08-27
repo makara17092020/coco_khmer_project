@@ -156,7 +156,7 @@ export default function EditProductPage() {
       if (!res.ok) throw new Error("Image upload failed");
 
       const data = await res.json();
-      uploadedUrls.push(data.url);
+      uploadedUrls.push(data.data.urls[0]);
     }
 
     return uploadedUrls;

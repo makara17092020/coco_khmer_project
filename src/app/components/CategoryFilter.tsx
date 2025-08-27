@@ -18,7 +18,7 @@ export default function CategoryFilter({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/category");
+        const res = await fetch("/api/category");
         if (!res.ok) throw new Error("Failed to fetch categories");
         const data = await res.json();
 

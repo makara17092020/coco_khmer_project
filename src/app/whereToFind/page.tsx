@@ -38,9 +38,7 @@ export default function WhereToFind() {
   useEffect(() => {
     const fetchPartners = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/partnership/create"
-        );
+        const response = await fetch("/api/partnership/create");
         const data: Partner[] = await response.json();
 
         setPartners(data); // ✅ set all directly

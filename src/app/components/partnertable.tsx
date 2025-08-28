@@ -118,6 +118,9 @@ export default function PartnershipsTable() {
       setLoading(false);
     }
   };
+  const Spinner = () => (
+    <div className="h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -171,8 +174,10 @@ export default function PartnershipsTable() {
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-10 text-gray-500">
-                    Loading partnerships...
+                  <td colSpan={5}>
+                    <div className="flex items-center justify-center py-12 w-full">
+                      <Spinner />
+                    </div>
                   </td>
                 </tr>
               ) : paginatedPartnerships.length > 0 ? (

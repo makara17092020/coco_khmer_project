@@ -223,6 +223,9 @@ export default function EditProductPage() {
       setLoading(false);
     }
   };
+  const Spinner = () => (
+    <div className="h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+  );
 
   return (
     <section className="max-w-3xl mx-auto mt-20 p-10 bg-white rounded-3xl shadow-xl border border-gray-200">
@@ -230,230 +233,232 @@ export default function EditProductPage() {
         Edit Product
       </h1>
 
-      {loading && (
-        <p className="mb-6 text-gray-600 font-semibold">Loading...</p>
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Spinner />
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-10">
+          {/* Name */}
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
+              Product Name
+            </label>
+            <input
+              type="text"
+              placeholder="Product name"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Size */}
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
+              Size (e.g., 100g, 200g)
+            </label>
+            <input
+              type="text"
+              placeholder="Enter sizes separated by commas"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
+              Description
+            </label>
+            <textarea
+              placeholder="Product description"
+              rows={4}
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              required
+            />
+          </div>
+          {/* Highlight */}
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
+              Highlights
+            </label>
+            {highLight.map((h, idx) => (
+              <div key={idx} className="flex items-center gap-2 mb-2">
+                <input
+                  type="text"
+                  value={h}
+                  onChange={(e) => handleHighlightChange(idx, e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="e.g., Rich in Vitamin C"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeHighlight(idx)}
+                  className="text-red-600 font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addHighlight}
+              className="mt-2 text-green-600 font-semibold"
+            >
+              + Add Highlight
+            </button>
+          </div>
+
+          {/* Ingredient */}
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
+              Ingredients
+            </label>
+            {ingredient.map((ing, idx) => (
+              <div key={idx} className="flex items-center gap-2 mb-2">
+                <input
+                  type="text"
+                  value={ing}
+                  onChange={(e) => handleIngredientChange(idx, e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="e.g., 100% Coconut Water"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeIngredient(idx)}
+                  className="text-red-600 font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addIngredient}
+              className="mt-2 text-green-600 font-semibold"
+            >
+              + Add Ingredient
+            </button>
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="block mb-2 font-semibold text-gray-700">
+              Category
+            </label>
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+              required
+            >
+              <option value="">Select a category</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Images */}
+          <div>
+            <label className="block mb-3 text-gray-700 font-semibold">
+              Product Images
+            </label>
+            <div className="flex flex-wrap gap-4 mb-4">
+              {images.map((img, idx) => {
+                const isBase64 = img.startsWith("data:");
+                return (
+                  <div
+                    key={idx}
+                    className="relative w-24 h-24 rounded-xl overflow-hidden border shadow"
+                  >
+                    {isBase64 ? (
+                      <img
+                        src={img}
+                        alt={`Preview ${idx}`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Image
+                        src={img}
+                        alt={`Preview ${idx}`}
+                        fill
+                        unoptimized={false} // allow Next.js optimization
+                        className="object-cover"
+                      />
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(idx)}
+                      className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full shadow"
+                      aria-label="Remove image"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleFilesChange}
+              ref={fileInputRef}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={loading}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-2xl"
+            >
+              + Add Images
+            </button>
+          </div>
+
+          {/* Top seller */}
+          <div className="p-4 bg-white rounded-lg shadow border border-gray-200 flex items-center space-x-3">
+            <input
+              id="isTopSeller"
+              type="checkbox"
+              checked={isTopSeller}
+              onChange={(e) => setIsTopSeller(e.target.checked)}
+              disabled={loading}
+              className="w-5 h-5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+            />
+            <label
+              htmlFor="isTopSeller"
+              className="text-sm font-semibold text-gray-700 select-none cursor-pointer"
+            >
+              Mark as Top Seller
+            </label>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-extrabold py-4 rounded-2xl shadow-lg transition"
+          >
+            {loading ? "Updating..." : "Update Product"}
+          </button>
+        </form>
       )}
       {error && (
         <div className="mb-6 p-5 bg-red-50 text-red-700 rounded-xl font-semibold border border-red-200">
           {error}
         </div>
       )}
-
-      <form onSubmit={handleSubmit} className="space-y-10">
-        {/* Name */}
-        <div>
-          <label className="block mb-2 font-semibold text-gray-700">
-            Product Name
-          </label>
-          <input
-            type="text"
-            placeholder="Product name"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-
-        {/* Size */}
-        <div>
-          <label className="block mb-2 font-semibold text-gray-700">
-            Size (e.g., 100g, 200g)
-          </label>
-          <input
-            type="text"
-            placeholder="Enter sizes separated by commas"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            value={size}
-            onChange={(e) => setSize(e.target.value)}
-            required
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="block mb-2 font-semibold text-gray-700">
-            Description
-          </label>
-          <textarea
-            placeholder="Product description"
-            rows={4}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-            required
-          />
-        </div>
-        {/* Highlight */}
-        <div>
-          <label className="block mb-2 font-semibold text-gray-700">
-            Highlights
-          </label>
-          {highLight.map((h, idx) => (
-            <div key={idx} className="flex items-center gap-2 mb-2">
-              <input
-                type="text"
-                value={h}
-                onChange={(e) => handleHighlightChange(idx, e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="e.g., Rich in Vitamin C"
-              />
-              <button
-                type="button"
-                onClick={() => removeHighlight(idx)}
-                className="text-red-600 font-bold"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addHighlight}
-            className="mt-2 text-green-600 font-semibold"
-          >
-            + Add Highlight
-          </button>
-        </div>
-
-        {/* Ingredient */}
-        <div>
-          <label className="block mb-2 font-semibold text-gray-700">
-            Ingredients
-          </label>
-          {ingredient.map((ing, idx) => (
-            <div key={idx} className="flex items-center gap-2 mb-2">
-              <input
-                type="text"
-                value={ing}
-                onChange={(e) => handleIngredientChange(idx, e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="e.g., 100% Coconut Water"
-              />
-              <button
-                type="button"
-                onClick={() => removeIngredient(idx)}
-                className="text-red-600 font-bold"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addIngredient}
-            className="mt-2 text-green-600 font-semibold"
-          >
-            + Add Ingredient
-          </button>
-        </div>
-
-        {/* Category */}
-        <div>
-          <label className="block mb-2 font-semibold text-gray-700">
-            Category
-          </label>
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            required
-          >
-            <option value="">Select a category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Images */}
-        <div>
-          <label className="block mb-3 text-gray-700 font-semibold">
-            Product Images
-          </label>
-          <div className="flex flex-wrap gap-4 mb-4">
-            {images.map((img, idx) => {
-              const isBase64 = img.startsWith("data:");
-              return (
-                <div
-                  key={idx}
-                  className="relative w-24 h-24 rounded-xl overflow-hidden border shadow"
-                >
-                  {isBase64 ? (
-                    <img
-                      src={img}
-                      alt={`Preview ${idx}`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Image
-                      src={img}
-                      alt={`Preview ${idx}`}
-                      fill
-                      unoptimized={false} // allow Next.js optimization
-                      className="object-cover"
-                    />
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full shadow"
-                    aria-label="Remove image"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleFilesChange}
-            ref={fileInputRef}
-            className="hidden"
-          />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={loading}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-2xl"
-          >
-            + Add Images
-          </button>
-        </div>
-
-        {/* Top seller */}
-        <div className="p-4 bg-white rounded-lg shadow border border-gray-200 flex items-center space-x-3">
-          <input
-            id="isTopSeller"
-            type="checkbox"
-            checked={isTopSeller}
-            onChange={(e) => setIsTopSeller(e.target.checked)}
-            disabled={loading}
-            className="w-5 h-5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-          />
-          <label
-            htmlFor="isTopSeller"
-            className="text-sm font-semibold text-gray-700 select-none cursor-pointer"
-          >
-            Mark as Top Seller
-          </label>
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-extrabold py-4 rounded-2xl shadow-lg transition"
-        >
-          {loading ? "Updating..." : "Update Product"}
-        </button>
-      </form>
 
       {/* Success toast */}
       <AnimatePresence>

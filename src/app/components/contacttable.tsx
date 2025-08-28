@@ -25,11 +25,11 @@ export default function ContactsTable() {
     null
   );
   const [showMessageModal, setShowMessageModal] = useState(false);
- const [selectedContact, setSelectedContact] = useState<{
-  fullName: string;
-  email: string;
-  message: string;
-} | null>(null);
+  const [selectedContact, setSelectedContact] = useState<{
+    fullName: string;
+    email: string;
+    message: string;
+  } | null>(null);
 
   const fetchContacts = async () => {
     try {
@@ -54,7 +54,9 @@ export default function ContactsTable() {
   const today = new Date().toDateString();
 
   const filteredContacts = contacts
-    .filter((c) => (c.fullName || "").toLowerCase().includes(search.toLowerCase()))
+    .filter((c) =>
+      (c.fullName || "").toLowerCase().includes(search.toLowerCase())
+    )
     .filter((c) => {
       if (filter === "today") {
         return new Date(c.createdAt).toDateString() === today;
@@ -65,7 +67,10 @@ export default function ContactsTable() {
       return true;
     });
 
-  const totalPages = Math.max(1, Math.ceil(filteredContacts.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredContacts.length / ITEMS_PER_PAGE)
+  );
   const paginatedContacts = filteredContacts.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -110,6 +115,9 @@ export default function ContactsTable() {
       console.error("Failed to mark as read:", error);
     }
   };
+  const Spinner = () => (
+    <div className="h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -170,8 +178,10 @@ export default function ContactsTable() {
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-10 text-gray-500">
-                    Loading contacts...
+                  <td colSpan={5}>
+                    <div className="flex items-center justify-center py-12 w-full">
+                      <Spinner />
+                    </div>
                   </td>
                 </tr>
               ) : paginatedContacts.length > 0 ? (
@@ -186,7 +196,9 @@ export default function ContactsTable() {
                       <td className="ps-4 py-4 font-medium">{fullName}</td>
                       <td className="ps-4 py-4">{email}</td>
                       <td className="ps-4 py-4 text-gray-600 max-w-xs truncate">
-                        {message.length > 10 ? message.substring(0, 10) + "..." : message}
+                        {message.length > 10
+                          ? message.substring(0, 10) + "..."
+                          : message}
                       </td>
                       <td className="px-4 py-4">
                         {createdAt
@@ -301,7 +313,8 @@ export default function ContactsTable() {
                 </button>
                 <button
                   onClick={() =>
-                    selectedContactId && handleDeleteConfirmed(selectedContactId)
+                    selectedContactId &&
+                    handleDeleteConfirmed(selectedContactId)
                   }
                   disabled={loading}
                   className={`px-4 py-2 rounded-lg font-semibold text-white transition cursor-pointer ${
@@ -318,50 +331,57 @@ export default function ContactsTable() {
         )}
       </AnimatePresence>
       <AnimatePresence>
-  {showMessageModal && (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 flex items-center justify-center z-50 bg-black/30"
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ duration: 0.25 }}
-        className="w-full max-w-lg p-6 rounded-2xl shadow-2xl bg-white"
-      >
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
-          Contact Message
-        </h2>
-        <div className="mb-4">
-          <p className="text-gray-800 font-medium"> <span className="font-semibold">Full Name: </span>  {selectedContact?.fullName}</p>
-          <p className="text-gray-800"> <span className="font-semibold">Email: </span>  {selectedContact?.email ?? ""}</p>
-        </div>
-
-        <div className="mb-6">
-          <p className="text-sm text-gray-500">Message</p>
-          <p className="text-gray-700 whitespace-pre-wrap">
-            {selectedContact?.message}
-          </p>
-        </div>
-        <div className="flex justify-end">
-          <button
-            onClick={() => {
-              setShowMessageModal(false);
-              setSelectedContact(null);
-            }}
-            className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition cursor-pointer"
+        {showMessageModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center z-50 bg-black/30"
           >
-            Close
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="w-full max-w-lg p-6 rounded-2xl shadow-2xl bg-white"
+            >
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                Contact Message
+              </h2>
+              <div className="mb-4">
+                <p className="text-gray-800 font-medium">
+                  {" "}
+                  <span className="font-semibold">Full Name: </span>{" "}
+                  {selectedContact?.fullName}
+                </p>
+                <p className="text-gray-800">
+                  {" "}
+                  <span className="font-semibold">Email: </span>{" "}
+                  {selectedContact?.email ?? ""}
+                </p>
+              </div>
 
+              <div className="mb-6">
+                <p className="text-sm text-gray-500">Message</p>
+                <p className="text-gray-700 whitespace-pre-wrap">
+                  {selectedContact?.message}
+                </p>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => {
+                    setShowMessageModal(false);
+                    setSelectedContact(null);
+                  }}
+                  className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

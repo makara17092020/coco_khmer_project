@@ -81,8 +81,8 @@ export default function WhereToFind() {
 
       <section className="py-20 px-6 md:px-40 bg-gray-50">
         {loading ? (
-          <div className="text-center text-xl font-semibold text-gray-700 py-20">
-            Loading...
+          <div className="flex items-center justify-center py-12">
+            <Spinner />
           </div>
         ) : (
           <>
@@ -130,3 +130,6 @@ export default function WhereToFind() {
     </div>
   );
 }
+const Spinner = () => (
+  <div className="h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+);

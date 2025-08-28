@@ -313,10 +313,10 @@ function ProductContent() {
   return (
     <main className="font-sans">
       {/* Hero Section */}
-      <section className="relative w-full h-screen flex items-center justify-start overflow-hidden">
+      <section className="relative w-full sm:h-[35rem] h-[20rem] flex items-center justify-start overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="/images/hero-prodact.jpg"
+            src="/images/heropro.jpg"
             alt="Coco Khmer Hero"
             fill
             className="object-cover object-center"
@@ -344,7 +344,9 @@ function ProductContent() {
         />
 
         {loading ? (
-          <p className="text-center text-gray-500">Loading products...</p>
+          <div className="flex items-center justify-center py-12">
+            <Spinner />
+          </div>
         ) : filteredProducts.length === 0 ? (
           <p className="text-center text-gray-500">No products found.</p>
         ) : (
@@ -491,3 +493,6 @@ export default function ProductPage() {
     </Suspense>
   );
 }
+const Spinner = () => (
+  <div className="h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+);

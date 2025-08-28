@@ -117,6 +117,9 @@ export default function CommunityTable() {
       setLoading(false);
     }
   };
+  const Spinner = () => (
+    <div className="h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -152,7 +155,15 @@ export default function CommunityTable() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {paginatedCommunity.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={5}>
+                    <div className="flex items-center justify-center py-12 w-full">
+                      <Spinner />
+                    </div>
+                  </td>
+                </tr>
+              ) : paginatedCommunity.length > 0 ? (
                 paginatedCommunity.map(({ id, createdAt, image, name }) => (
                   <tr key={id} className="hover:bg-green-50 transition">
                     <td className="px-4 py-4 whitespace-nowrap">

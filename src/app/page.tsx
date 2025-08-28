@@ -35,6 +35,9 @@ export default function HomePage() {
   const [mainImage, setMainImage] = useState<string>("/images/placeholder.jpg");
 
   const router = useRouter();
+  const Spinner = () => (
+    <div className="h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+  );
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -43,13 +46,16 @@ export default function HomePage() {
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
 
-        const productsWithWeight = data.products.map((p: Product) => ({
-          ...p,
-          weight: p.size ?? "N/A",
-          images: p.images?.length ? p.images : ["/images/placeholder.jpg"],
-        }));
+        if (data.products && Array.isArray(data.products)) {
+          const topSellers = data.products.filter(
+            (p: Product) => p.isTopSeller
+          );
 
-        setProducts(productsWithWeight);
+          setProducts(topSellers);
+          setError("");
+        } else {
+          throw new Error("Unexpected API response format");
+        }
       } catch (err) {
         console.error(err);
         setError("Failed to load products.");
@@ -162,7 +168,11 @@ export default function HomePage() {
         </h2>
         <p className="mt-2 text-lg text-gray-700">Our Best Seller</p>
 
-        {loading && <p className="mt-6 text-gray-500">Loading products...</p>}
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <Spinner />
+          </div>
+        )}
         {error && <p className="mt-6 text-red-500">{error}</p>}
 
         {!loading && !error && (

@@ -39,7 +39,11 @@ export default function CategoryFilter({
     fetchCategories();
   }, []);
   if (loading)
-    return <p className="text-center text-gray-500">Loading categories...</p>;
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Spinner />
+      </div>
+    );
 
   return (
     <section className="px-4">
@@ -62,3 +66,7 @@ export default function CategoryFilter({
     </section>
   );
 }
+
+const Spinner = () => (
+  <div className="h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+);

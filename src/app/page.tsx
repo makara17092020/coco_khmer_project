@@ -113,7 +113,7 @@ export default function HomePage() {
   };
 
   return (
-    <main className="font-[Alegreya]">
+    <main className="font-[Alegreya] ">
       {/* Hero Section */}
       <section className="relative w-full sm:h-140 h-100 flex items-center justify-between bg-slate-300 overflow-hidden">
         <div className="absolute sm:w-230 w-190 sm:h-140 h-100">
@@ -125,11 +125,11 @@ export default function HomePage() {
             priority
           />
         </div>
-        <div className="relative z-20 ml-auto w-full max-w-xl p-20">
+        <div className="relative z-20 ml-auto w-full max-w-xl p-10 md:p-20">
           <p className="text-sm md:text-base sm:text-emerald-900 text-white font-medium mb-2 uppercase tracking-wide">
             Welcome to CoCo Khmer Clean Skincare
           </p>
-          <h1 className="text-4xl md:text-7xl font-extrabold sm:text-emerald-900 text-white mb-6">
+          <h1 className="text-3xl md:text-7xl font-extrabold sm:text-emerald-900 text-white mb-6">
             Love Being <br /> in Your Skin
           </h1>
           <div className="flex gap-2">
@@ -151,7 +151,7 @@ export default function HomePage() {
         <h2 className="sm:text-4xl text-3xl font-extrabold text-emerald-900">
           Available At
         </h2>
-        <p className="mt-2 text-lg">
+        <p className="mt-2 text-lg px-5">
           Find Coco Khmer at these trusted retailers across Cambodia.
         </p>
         <ScrollSection />
@@ -177,7 +177,7 @@ export default function HomePage() {
 
         {!loading && !error && (
           <div
-            className="p-10 overflow-x-auto overflow-y-hidden flex gap-6 snap-x snap-mandatory scrollbar-hide scroll-smooth px-10 cursor-grab active:cursor-grabbing"
+            className="p-5 overflow-x-auto overflow-y-hidden flex gap-6 snap-x snap-mandatory scrollbar-hide scroll-smooth px-10 cursor-grab active:cursor-grabbing"
             ref={scrollRef}
             onMouseDown={onMouseDown}
             onMouseLeave={onMouseLeave}
@@ -218,7 +218,7 @@ export default function HomePage() {
               <div className="grid md:grid-cols-2 gap-10 sm:mt-0 mt-5 text-start">
                 {/* Left */}
                 <div>
-                  <div className="w-100 sm:w-full h-72 md:h-80 rounded-xl overflow-hidden shadow-lg bg-white relative">
+                  <div className="w-80 sm:w-full h-72 md:h-80 rounded-xl overflow-hidden shadow-lg bg-white relative">
                     <Image
                       src={mainImage}
                       alt={selectedProduct.name}
@@ -281,12 +281,12 @@ export default function HomePage() {
         )}
       </section>
       {/* Skincare & Room Care Sections */}
-      <section className="px-6 md:px-40 bg-slate-300 py-10">
+      <section className="px-5 md:px-40 bg-slate-300 py-10">
         <h2 className="sm:text-4xl text-3xl font-extrabold text-emerald-900 text-center">
           Discover the Perfect Touch — for You and Your Space
         </h2>
         <div className="py-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 items-stretch ">
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch ">
             <div className="relative w-full min-h-[500px] order-2 md:order-1">
               <Image
                 src="/images/facecare.avif"
@@ -302,7 +302,7 @@ export default function HomePage() {
                   <h3 className="text-2xl sm:text-3xl font-extrabold">
                     Skincare
                   </h3>
-                  <p className="text-lg py-3 leading-relaxed">
+                  <p className="text-sm sm:text-lg py-3 leading-relaxed">
                     At Coco Khmer, we believe that healthy, radiant skin begins
                     with nature. Our skincare line is thoughtfully crafted using
                     safe, effective, and natural ingredients that nourish,
@@ -326,14 +326,14 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch">
             <div className="flex items-center ">
               <div className="w-full h-full bg-[url('/images/assestss.png')] bg-[length:600px_600px] bg-left-top p-6 md:p-11">
                 <div className="bg-gray-300 p-6 md:p-10 text-emerald-900 shadow-md">
                   <h3 className="sm:text-3xl font-extrabold text-2xl">
                     Fragrance & Room Care
                   </h3>
-                  <p className="text-lg py-3 leading-relaxed">
+                  <p className="text-sm sm:text-lg py-3 leading-relaxed">
                     Bring harmony to your home and senses with our fragrance and
                     room care collection. Infused with pure essential oils and
                     plant-based ingredients, our sprays are designed to refresh
@@ -373,7 +373,7 @@ export default function HomePage() {
           <h2 className="sm:text-4xl text-3xl font-extrabold text-white">
             Why Coco Khmer?
           </h2>
-          <p className="text-lg py-5 leading-relaxed px-5 sm:px-70 text-white">
+          <p className="text-lg py-5 leading-relaxed px-5 lg:px-70 text-white">
             At Coco Khmer, we do more than create natural products — we create
             impact. Sustainability, community empowerment, and care for people
             and planet are our core mission.
@@ -385,7 +385,7 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="flex justify-center items-center relative py-20">
-          <div className="relative w-200 min-h-[400px]">
+          <div className="relative w-100 md:w-150 lg:w-200 min-h-[400px]">
             <Image
               src="/images/end2.avif"
               alt="Side Left1"
@@ -394,7 +394,7 @@ export default function HomePage() {
             />
           </div>
           <div className="absolute">
-            <div className="relative w-100 min-h-[500px]">
+            <div className="relative w-80 md:w-100 min-h-[500px]">
               <Image
                 src="/images/end.jpg"
                 alt="Side Left2"

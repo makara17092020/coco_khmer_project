@@ -29,7 +29,7 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="relative bg-green-100 text-black px-6 pt-12 pb-6 overflow-hidden font-[Alegreya]">
+      <footer className="relative bg-green-100 text-black px-5 pt-12 pb-6 overflow-hidden font-[Alegreya]">
         <div
           className="hidden md:block absolute right-0 top-0 h-full w-48 bg-no-repeat bg-contain bg-right opacity-20"
           style={{ backgroundImage: "url('/images/pattern.png')" }}

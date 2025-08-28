@@ -61,7 +61,7 @@ export default function WhereToFind() {
         <div className="absolute inset-0 bg-black/70"></div>
         <div className="relative z-10">
           <motion.h1
-            className="text-4xl md:text-6xl font-extrabold mb-4 text-white drop-shadow-lg"
+            className="text-3xl md:text-5xl font-extrabold mb-4 text-white drop-shadow-lg"
             initial={{ opacity: 0, y: -30, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}

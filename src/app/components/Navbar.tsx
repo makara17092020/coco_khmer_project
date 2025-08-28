@@ -88,7 +88,7 @@ export default function Navbar() {
 
             {/* Sliding Drawer - Slide from Right */}
             <motion.div
-              className="fixed top-0 right-0 w-[70%] h-full bg-[#0C5C4C]/95 z-50 shadow-lg px-6 py-10 backdrop-blur-sm"
+              className="fixed top-0 right-0 w-[70%] h-full bg-[#0C5C4C]/95 z-50 shadow-lg px-6 py-5 md:py-10 backdrop-blur-sm"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}

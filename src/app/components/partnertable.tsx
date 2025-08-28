@@ -36,13 +36,15 @@ export default function PartnershipsTable() {
     number | null
   >(null);
 
+  // Fetch all partnerships
   const fetchPartnerships = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/partnership/create");
+      const res = await fetch("/api/partnership"); // Ensure your API returns an array of partnerships
       if (!res.ok) throw new Error("Failed to fetch partnerships");
       const data = await res.json();
-      setPartnerships(Array.isArray(data) ? data : []);
+      // Sometimes data might be wrapped in { partnerships: [...] }
+      setPartnerships(Array.isArray(data) ? data : data.partnerships || []);
     } catch (error) {
       console.error("Failed to fetch partnerships:", error);
       setPartnerships([]);
@@ -56,7 +58,7 @@ export default function PartnershipsTable() {
       const res = await fetch("/api/categorypartnership");
       if (!res.ok) throw new Error("Failed to fetch categories");
       const data = await res.json();
-      setCategoriesPartnership(data);
+      setCategoriesPartnership(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
       setCategoriesPartnership([]);
@@ -96,6 +98,9 @@ export default function PartnershipsTable() {
   const handleCreatePartnership = () =>
     router.push("/admin/partnerships/create");
 
+  const handleEditPartnership = (id: number) =>
+    router.push(`/admin/partnerships/edit/${id}`);
+
   const handleDeletePartnership = (id: number) => {
     setSelectedPartnershipId(id);
     setShowDeleteModal(true);
@@ -118,6 +123,7 @@ export default function PartnershipsTable() {
       setLoading(false);
     }
   };
+
   const Spinner = () => (
     <div className="h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
   );
@@ -125,6 +131,7 @@ export default function PartnershipsTable() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-xl p-8">
+        {/* Filters & Add Button */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <input
             type="text"
@@ -160,6 +167,7 @@ export default function PartnershipsTable() {
           </button>
         </div>
 
+        {/* Table */}
         <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-md">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-green-100 text-green-900 font-semibold">
@@ -210,7 +218,14 @@ export default function PartnershipsTable() {
                           ? new Date(createdAt).toLocaleDateString()
                           : "—"}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-8 flex gap-2">
+                        {/* Changed Edit button to green */}
+                        <button
+                          onClick={() => handleEditPartnership(id)}
+                          className="px-3 py-1 rounded-full bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-900 font-semibold transition cursor-pointer"
+                        >
+                          Edit
+                        </button>
                         <button
                           onClick={() => handleDeletePartnership(id)}
                           disabled={loading}
@@ -225,7 +240,7 @@ export default function PartnershipsTable() {
               ) : (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={5}
                     className="text-center py-10 text-gray-400 italic"
                   >
                     No partnerships found.
@@ -236,6 +251,7 @@ export default function PartnershipsTable() {
           </table>
         </div>
 
+        {/* Pagination */}
         <div className="mt-6 flex justify-between items-center text-gray-700 text-sm">
           <button
             onClick={() => goToPage(currentPage - 1)}

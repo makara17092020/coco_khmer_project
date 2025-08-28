@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
 
+// GET partnership by ID
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  // const id = params.id;
   const numericId = parseInt(id || "");
 
   if (isNaN(numericId)) {
@@ -36,12 +36,12 @@ export async function GET(
   }
 }
 
+// DELETE partnership by ID
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  // const id = params.id;
   const numericId = parseInt(id || "");
 
   if (isNaN(numericId)) {
@@ -58,6 +58,48 @@ export async function DELETE(
     console.error("DELETE error:", error);
     return NextResponse.json(
       { message: "Failed to delete partnership" },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT (update) partnership by ID
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const numericId = parseInt(id || "");
+
+  if (isNaN(numericId)) {
+    return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
+  }
+
+  try {
+    const body = await request.json();
+    const { name, categoryPartnershipId, image } = body;
+
+    if (!name || !categoryPartnershipId) {
+      return NextResponse.json(
+        { message: "Name and categoryPartnershipId are required" },
+        { status: 400 }
+      );
+    }
+
+    const updatedPartnership = await prisma.partnership.update({
+      where: { id: numericId },
+      data: {
+        name,
+        categoryPartnershipId,
+        image,
+      },
+    });
+
+    return NextResponse.json(updatedPartnership);
+  } catch (error) {
+    console.error("PUT error:", error);
+    return NextResponse.json(
+      { message: "Failed to update partnership" },
       { status: 500 }
     );
   }

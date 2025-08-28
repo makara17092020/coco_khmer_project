@@ -376,7 +376,7 @@ function ProductContent() {
             <div className="grid md:grid-cols-2 gap-10 sm:mt-0 mt-5">
               {/* Left */}
               <div>
-                <div className="w-100 sm:w-full h-72 md:h-80 rounded-xl overflow-hidden shadow-lg bg-white relative">
+                <div className="w-80 sm:w-full h-72 md:h-80 rounded-xl overflow-hidden shadow-lg bg-white relative">
                   <Image
                     src={mainImage}
                     alt={selectedProduct.name}

@@ -137,7 +137,7 @@ export default function NagaBalmPromo() {
           </div>
           <div className="absolute inset-0 bg-black/40 -z-0"></div>
           <div className="relative z-10 w-full max-w-2xl p-10 md:p-20 text-left">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
               From Coconut to Care — Empowering Lives, Naturally.
             </h1>
             <p className="text-sm md:text-base text-white font-medium mb-4 leading-relaxed">
@@ -157,7 +157,7 @@ export default function NagaBalmPromo() {
         <div className="grid grid-cols-1 md:grid-cols-2 h-auto">
           <div className="flex items-center p-6 md:p-16 bg-slate-300">
             <div className="max-w-2xl">
-              <h1 className="text-4xl font-extrabold text-emerald-900 mb-6">
+              <h1 className="text-3xl font-extrabold text-emerald-900 mb-6">
                 OUR STORY
               </h1>
               <p className="text-lg mb-4">
@@ -316,7 +316,8 @@ export default function NagaBalmPromo() {
                     src={src}
                     alt={`Community image ${index + 1}`}
                     fill
-                    className="object-contain"
+                    className="object-cover"
+                    quality={100}
                   />
                 </div>
               ))}

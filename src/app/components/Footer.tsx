@@ -55,7 +55,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="flex-1 flex  sm:flex-row gap-10">
+          <div className="flex-1 flex  sm:flex-row gap-3 sm:gap-10">
             <div>
               <h3 className="font-bold mb-2 text-[#0C5C4C]">COMPANY</h3>
               <ul className="space-y-1 text-sm">
@@ -73,13 +73,15 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="font-bold mb-2 text-[#0C5C4C]">CONTACT US</h3>
-              <p className="text-sm hover:text-green-700 cursor-pointer">
-                info@cocokhmer.com
-              </p>
-              <p className="text-sm hover:text-green-700 cursor-pointer">
-                +855 12 269 359
-              </p>
+              <div className="">
+                <h3 className="font-bold mb-2 text-[#0C5C4C]">CONTACT US</h3>
+                <p className="text-sm hover:text-green-700 cursor-pointer">
+                  info@cocokhmer.com
+                </p>
+                <p className="text-sm hover:text-green-700 cursor-pointer">
+                  +855 12 269 359
+                </p>
+              </div>
               <h3 className="font-bold mt-4 mb-2 text-[#0C5C4C]">FOLLOW US</h3>
               <div className="flex space-x-4 text-lg">
                 <a href="#" className="hover:text-blue-600">
